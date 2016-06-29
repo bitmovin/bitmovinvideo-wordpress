@@ -100,14 +100,14 @@ function bitmovin_player_column($column, $post_id)
 add_action('add_meta_boxes', 'bitmovin_video_meta_box');
 function bitmovin_video_meta_box()
 {
-    add_meta_box("bitmovin_player_configuration_video", "Bitmovin Player Video", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_drm", "Bitmovin Player DRM", 'bitmovin_player_configuration_drm', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_ads", "Bitmovin Player Ads", 'bitmovin_player_configuration_ads', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_vr", "Bitmovin Player VR", 'bitmovin_player_configuration_vr', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_style", "Bitmovin Player Style", 'bitmovin_player_configuration_style', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_custom", "Bitmovin Player Custom", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_video", "Video", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_drm", "DRM", 'bitmovin_player_configuration_drm', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_ads", "Ads", 'bitmovin_player_configuration_ads', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_vr", "VR", 'bitmovin_player_configuration_vr', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_style", "Style", 'bitmovin_player_configuration_style', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_custom", "Custom", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
 
-    add_meta_box("bitmovin_player_preview", "Bitmovin Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
+    add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
 }
 
 function bitmovin_player_configuration_video()
