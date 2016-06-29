@@ -3,7 +3,7 @@
   Plugin Name: Bitmovin
   Plugin URI: http://bitmovin.com/wordpress-plugin
   Description: <strong>Bitmovin's</strong> encoding and adaptive streaming player in Wordpress
-  Version: 1.0.0
+  Version: 0.5.0
   Author: Bitmovin
   Author URI: http://bitmovin.com
   License: GPLv2 or later
