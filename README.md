@@ -1,6 +1,6 @@
 # Bitmovin Wordpress Plugin
 
-![Latest version](https://img.shields.io/badge/latest-1.0.0-green.svg)
+![Latest version](https://img.shields.io/badge/latest-0.5.0-green.svg)
 ![Wordpress 4.2](https://img.shields.io/badge/wordpress-4.2.x-blue.svg)
 ![Wordpress 4.1](https://img.shields.io/badge/wordpress-4.1.x-blue.svg)
 ![Wordpress 4.0](https://img.shields.io/badge/wordpress-4.0.x-blue.svg)
