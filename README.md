@@ -18,7 +18,7 @@ Installation
 6. Activate the plugin through the **Plugins** menu in Wordpress.
 7. Go to the **Bitmovin Settings** left menu page and fill in your API key.
 8. Go to the **Bitmovin** left menu videos page and add a video with your configuration.
-9. Copy the shortcode from the videos page table which looks like this **[bitmovin_player id='1'/]** to your post.
+9. Copy the shortcode from the videos page table which looks like this **[bitmovin_player id='1']** to your post.
 
 Configuration
 --------

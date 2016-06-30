@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Bitmovin
-  Plugin URI: http://bitmovin.com/wordpress-plugin
+  Plugin URI: https://github.com/bitmovin/bitmovinvideo-wordpress
   Description: <strong>Bitmovin's</strong> encoding and adaptive streaming player in Wordpress
   Version: 0.5.0
   Author: Bitmovin
@@ -92,7 +92,7 @@ function bitmovin_player_column($column, $post_id)
 {
     switch ($column) {
         case 'bitmovin_player_shortcode':
-            echo "[bitmovin_player id='$post_id'/]";
+            echo "[bitmovin_player id='$post_id']";
             break;
     }
 }
@@ -192,7 +192,7 @@ function bitmovin_player_preview()
 {
     global $post;
     $html = '<div>';
-    $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\'/]</strong> shortcode to your post.</strong>';
+    $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\']</strong> shortcode to your post.</strong>';
     $html .= '<div style="width: 600px; margin: auto">';
     $html .= generate_player(array("id"=>$post->ID));
     $html .= '</div>';
