@@ -1,8 +1,8 @@
 <?php
 /*
   Plugin Name: Bitmovin
-  Plugin URI: http://bitmovin.com/wordpress-plugin
-  Description: <strong>Bitmovin's</strong> encoding and adaptive streaming player in Wordpress
+  Plugin URI: https://github.com/bitmovin/bitmovinvideo-wordpress
+  Description: <strong>Bitmovin's</strong> HTML5 Adaptive Streaming Video Plugin for Wordpress.
   Version: 0.5.0
   Author: Bitmovin
   Author URI: http://bitmovin.com
@@ -21,12 +21,15 @@ function bitmovin__plugin_deactivation()
 
 }
 
+/*
+ *
 add_action('wp_enqueue_scripts', 'bitmovin_scripts');
 function bitmovin_scripts()
 {
-    wp_register_script('bitmovin_player_core', '//bitmovin-a.akamaihd.net/bitdash/5.0/bitdash.min.js');
-    wp_enqueue_script('bitmovin_player_core');
+    //wp_register_script('bitmovin_player_core', '//bitmovin-a.akamaihd.net/bitdash/5.0/bitdash.min.js');
+    //wp_enqueue_script('bitmovin_player_core');
 }
+*/
 
 add_action('admin_enqueue_scripts', 'bitmovin_admin_assets');
 function bitmovin_admin_assets()
@@ -37,8 +40,9 @@ function bitmovin_admin_assets()
     wp_register_style('bitmovin_style', plugins_url('css/bitstyle.css', __FILE__));
     wp_enqueue_style('bitmovin_style');
 
-    wp_register_script('bitmovin_player_core', '//bitmovin-a.akamaihd.net/bitdash/5.0/bitdash.min.js');
-    wp_enqueue_script('bitmovin_player_core');
+
+    //wp_register_script('bitmovin_player_core', '//bitmovin-a.akamaihd.net/bitdash/5.0/bitdash.min.js');
+    //wp_enqueue_script('bitmovin_player_core');
 }
 
 add_action('init', 'bitmovin_register');
@@ -92,7 +96,7 @@ function bitmovin_player_column($column, $post_id)
 {
     switch ($column) {
         case 'bitmovin_player_shortcode':
-            echo "[bitmovin_player id='$post_id'/]";
+            echo "[bitmovin_player id='$post_id']";
             break;
     }
 }
@@ -101,11 +105,13 @@ add_action('add_meta_boxes', 'bitmovin_video_meta_box');
 function bitmovin_video_meta_box()
 {
     add_meta_box("bitmovin_player_configuration_video", "Video", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_player", "Player", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_drm", "DRM", 'bitmovin_player_configuration_drm', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_ads", "Ads", 'bitmovin_player_configuration_ads', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_vr", "VR", 'bitmovin_player_configuration_vr', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_style", "Style", 'bitmovin_player_configuration_style', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Custom", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_advanced", "Advanced", 'bitmovin_player_configuration_advanced', "bitmovin_player", "normal", "high");
 
     add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
 }
@@ -117,6 +123,32 @@ function bitmovin_player_configuration_video()
     $html = '<div class="configSection">';
     $html .= '<div id="video">';
     $html .= getVideoTable($post->ID);
+    $html .= '</div>';
+    $html .= '</div>';
+
+    echo $html;
+}
+
+function bitmovin_player_configuration_player()
+{
+    global $post;
+
+    $html = '<div class="configSection">';
+    $html .= '<div id="video">';
+    $html .= getPlayerTable($post->ID);
+    $html .= '</div>';
+    $html .= '</div>';
+
+    echo $html;
+}
+
+function bitmovin_player_configuration_advanced()
+{
+    global $post;
+
+    $html = '<div class="configSection">';
+    $html .= '<div id="video">';
+    $html .= getAdvancedTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -192,7 +224,7 @@ function bitmovin_player_preview()
 {
     global $post;
     $html = '<div>';
-    $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\'/]</strong> shortcode to your post.</strong>';
+    $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\']</strong> shortcode to your post.</strong>';
     $html .= '<div style="width: 600px; margin: auto">';
     $html .= generate_player(array("id"=>$post->ID));
     $html .= '</div>';
@@ -215,9 +247,24 @@ function getVideoTable($id)
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
     $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
+
     $videoTable .= "</table>";
 
     return $videoTable;
+}
+
+function getPlayerTable($id)
+{
+    $player_channel = get_post_meta($id, "_config_player_channel", true);
+    $player_version = get_post_meta($id, "_config_player_version", true);
+
+    $playerTable = '<table class="wp-list-table widefat fixed striped">';
+    $playerTable .= "<tr><td colspan='2'>Player Channels/Versions</td></tr>";
+    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array("Stable", "Beta", "Staging"));
+    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array("Latest Version 5", "Latest Version 4", "5.0", "4.4", "4.3", "4.2", "4.1", "4.0"));
+    $playerTable .= "</table>";
+
+    return $playerTable;
 }
 
 function getDrmTable($id)
@@ -354,6 +401,20 @@ function getCustomTable($id)
     return $customTable;
 }
 
+function getAdvancedTable($id)
+{
+    $version_link = get_post_meta($id, "_config_version_link", true);
+
+    $advancedTable = "<table class='wp-list-table widefat fixed striped'>";
+    $advancedTable = "<tr><td><p></p>To provide our users the right version of our player, we have four public player channels available.
+    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
+    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</td></tr>";
+    $advancedTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
+    $advancedTable .= "</table>";
+
+    return $advancedTable;
+}
+
 function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
@@ -367,7 +428,15 @@ function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyVa
 function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption, $options)
 {
     $selectedOption = json_decode($selectedOption);
-    $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
+
+    if ($propertyDisplayName == "Channel")
+    {
+        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' onchange='getVersions()' name='" . $propertyName . "'>";
+    }
+    else
+    {
+        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
+    }
 
     foreach($options as $option) {
         $tableRowSelect .= "<option value='" . $option . "'". (($option == $selectedOption)?"selected=\"selected\"":"") .">" . $option . "</option>";
@@ -398,6 +467,16 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_src_hls", $hls_url);
         update_post_meta($post_id, "_config_src_prog", $prog_url);
         update_post_meta($post_id, "_config_src_poster", $poster_url);
+
+        $player_channel = getParameter("config_player_channel");
+        $player_version = getParameter("config_player_version");
+
+        update_post_meta($post_id, "_config_player_channel", $player_channel);
+        update_post_meta($post_id, "_config_player_version", $player_version);
+
+        $version_link = getParameter("config_version_link");
+
+        update_post_meta($post_id, "_config_version_link", $version_link);
 
         $widevine_la_url = getParameter("config_src_drm_widevine_la_url");
         $playready_la_url = getParameter("config_src_drm_playready_la_url");
@@ -478,15 +557,21 @@ function getParameter($param)
 }
 
 add_shortcode("bitmovin_player", "generate_player");
-function generate_player($attr)
+function generate_player($id)
 {
     extract(shortcode_atts(array(
         'id' => ''
-    ), $attr));
+    ), $id));
 
     $playerKey = get_option('bitmovin_player_key');
     if($playerKey == "") {
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
+    }
+
+    $advancedConfig = getAdvancedConfig($id);
+    if ($advancedConfig == 0)
+    {
+        getPlayerConfig($id);
     }
 
     $html = "<div id='bitmovin-player'></div>\n";
@@ -534,7 +619,7 @@ function generate_player($attr)
     $html .= "};\n";
 
     $html .= "player.setup(conf).then(function(value) {\n";
-    $html .= "console.log('Successfully created bitdash player instance');\n";
+    $html .= "console.log('Successfully created bitdash player instance'); console.log('Player Version: ' + player.getVersion());\n";
     $html .= "}, function(reason) {\n";
     $html .= "console.log('Error while creating bitdash player instance');\n";
     $html .= "});\n";
@@ -580,6 +665,40 @@ function getVideoConfig($id) {
     }
 
     return $video;
+}
+
+function getPlayerConfig($id)
+{
+    $player_channel = json_decode(get_post_meta($id, "_config_player_channel", true));
+    $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
+
+    $player_channel = strtolower($player_channel);
+
+    if ($player_version == 'Latest Version 5')
+    {
+        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/5/bitdash.min.js";
+    }
+    else if ($player_version == 'Latest Version 4')
+    {
+        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/4/bitdash.min.js";
+    }
+    else {
+        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/{$player_version}/bitdash.min.js";
+    }
+    wp_register_script('bitmovin_player_core', $src);
+    wp_enqueue_script('bitmovin_player_core');
+}
+
+function getAdvancedConfig($id)
+{
+    $version_link = json_decode(get_post_meta($id, "_config_version_link", true));
+    if ($version_link != "")
+    {
+        wp_register_script('bitmovin_player_core', $version_link);
+        wp_enqueue_script('bitmovin_player_core');
+        return 1;
+    }
+    return 0;
 }
 
 function getDrmConfig($id)
@@ -808,13 +927,18 @@ function bitmovin_plugin_display_settings()
 {
     $apiKey = get_option('bitmovin_api_key');
     $playerKey = get_option('bitmovin_player_key');
+    $image_url = plugins_url('images/info.png', __FILE__);
 
     $html = '<div class="wrap">
             <form id="bitmovinSettingsForm" method="post" name="options" action="options.php">
 
             <h2>Bitmovin Wordpress Plugin Settings</h2>'. wp_nonce_field('update-options') .'
             <table class="form-table">
-                <tr><td>Bitmovin Api Key</td><td><input id="apiKey" type="text" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/></td>
+                <tr><td class="tooltip">Bitmovin Api Key
+                <img src="' . $image_url . '" alt="Info" height="15" weight="15">
+                <span class="tooltiptext">Please insert Bitmovin API key here. <br> Do not confound it with your Player key.
+                <br> You can find your API key in the settings section of your Bitmovin Account <a href="https://app.bitmovin.com/settings">here</a>.</span></td>
+                <td><input id="apiKey" type="text" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/></td>
                 </tr>
             </table>
             <p id="messages"></p>

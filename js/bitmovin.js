@@ -38,3 +38,83 @@ function checkApiKey() {
         }
     });
 }
+
+function getVersions()
+{
+    removeAllOptions();
+
+    var option = document.createElement('option');
+    var channel = document.getElementById("config_player_channel");
+    var select = document.getElementById("config_player_version");
+    if (channel.options[channel.selectedIndex].value == "Beta")
+    {
+        var option = document.createElement('option');
+        option.text = "Latest Version 5";
+        select.add(option, 0);
+
+        option = document.createElement('option');
+        option.text = "5.1";
+        select.add(option, 1);
+
+        option = document.createElement('option');
+        option.text = "5.0";
+        select.add(option, 2);
+    }
+    else if (channel.options[channel.selectedIndex].value == "Staging")
+    {
+        var option = document.createElement('option');
+        option.text = "Latest Version 5";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "5.1.0-rc1";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "5.1";
+        select.add(option);
+    }
+    else
+    {
+        var option = document.createElement('option');
+        option.text = "Latest Version 5";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "Latest Version 4";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "5.0";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "4.4";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "4.3";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "4.2";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "4.1";
+        select.add(option);
+
+        option = document.createElement('option');
+        option.text = "4.0";
+        select.add(option);
+    }
+}
+
+function removeAllOptions()
+{
+    var select = document.getElementById("config_player_version");
+    while(select.firstChild)
+    {
+        select.removeChild(select.firstChild);
+    }
+}
