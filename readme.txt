@@ -1,7 +1,7 @@
 === Bitmovin Wordpress Plugin ===
-Contributors: Patrick@Bitmovin
-Donate link: http://example.com/ (tested on localhost)
-Tags: comments, spam
+Contributors: Lukas Kröpfl, Tristan Boyd, Patrick Struger
+Donate link:
+Tags:
 Requires at least: 4.5.3
 Tested up to: 4.5.3
 Stable tag: 4.5.3
