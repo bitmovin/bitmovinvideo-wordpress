@@ -38,3 +38,25 @@
     font-size: 1em;
     text-align: center;
 }
+
+/* Tooltip text */
+.tooltiptext {
+    width: 530px;
+    padding: 10px;
+    margin-top: 20px;
+    color: whitesmoke;
+    margin-left: -40px;
+    visibility: hidden;
+    position: absolute;
+    background-color: grey;
+    border-radius: 10px 10px;
+    box-shadow: 5px 5px 5px black;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    display: block;
+    position: absolute;
+    visibility: visible;
+
+}
