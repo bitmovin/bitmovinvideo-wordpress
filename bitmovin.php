@@ -21,16 +21,6 @@ function bitmovin__plugin_deactivation()
 
 }
 
-/*
- *
-add_action('wp_enqueue_scripts', 'bitmovin_scripts');
-function bitmovin_scripts()
-{
-    //wp_register_script('bitmovin_player_core', '//bitmovin-a.akamaihd.net/bitdash/5.0/bitdash.min.js');
-    //wp_enqueue_script('bitmovin_player_core');
-}
-*/
-
 add_action('admin_enqueue_scripts', 'bitmovin_admin_assets');
 function bitmovin_admin_assets()
 {
@@ -39,10 +29,6 @@ function bitmovin_admin_assets()
 
     wp_register_style('bitmovin_style', plugins_url('css/bitstyle.css', __FILE__));
     wp_enqueue_style('bitmovin_style');
-
-
-    //wp_register_script('bitmovin_player_core', '//bitmovin-a.akamaihd.net/bitdash/5.0/bitdash.min.js');
-    //wp_enqueue_script('bitmovin_player_core');
 }
 
 add_action('init', 'bitmovin_register');
