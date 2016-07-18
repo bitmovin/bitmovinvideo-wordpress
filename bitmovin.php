@@ -133,7 +133,7 @@ function bitmovin_player_configuration_encoding()
     global $post;
 
     $html = '<div class="configSection">';
-    $html .= '<div id="video">';
+    $html .= '<div id="encoding">';
     $html .= getEncodingTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
@@ -159,7 +159,7 @@ function bitmovin_player_configuration_player()
     global $post;
 
     $html = '<div class="configSection">';
-    $html .= '<div id="video">';
+    $html .= '<div id="playerConfig">';
     $html .= getPlayerTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
@@ -260,36 +260,47 @@ function bitmovin_player_preview()
 
 function getEncodingTable($id)
 {
+    $encoding_profile = get_post_meta($id, "_config_encoding_profile", true);
+    $video_width = get_post_meta($id, "_config_encoding_width", true);
+    $video_height = get_post_meta($id, "_config_encoding_height", true);
+    $video_bitrate = get_post_meta($id, "_config_encoding_video_bitrate", true);
+    $audio_bitrate = get_post_meta($id, "_config_encoding_audio_bitrate", true);
+
+    $encoding_video_src = get_post_meta($id, "_config_encoding_video_src", true);
+
     $ftp_server = get_post_meta($id, "_config_ftp_server", true);
     $ftp_usr = get_post_meta($id, "_config_ftp_usr", true);
     $ftp_pw = get_post_meta($id, "_config_ftp_pw", true);
 
-    $encoding_profile = get_post_meta($id, "_config_encoding_profile", true);
-    $video_bitrate = get_post_meta($id, "_config_encoding_video_bitrate", true);
-    $audio_bitrate = get_post_meta($id, "_config_encoding_audio_bitrate", true);
-
-    $external_video_src = get_post_meta($id, "_config_encoding_external_video_src", true);
-
-    $prefix = get_post_meta($id, "_config_encoding_s3_prefix", true);
-    $bucket = get_post_meta($id, "_config_encoding_s3_bucket", true);
-    $access_key = get_post_meta($id, "_config_encoding_s3_access_key", true);
-    $secret_key = get_post_meta($id, "_config_encoding_s3_secret_key", true);
+    $prefix = get_post_meta($id, "_config_s3_prefix", true);
+    $bucket = get_post_meta($id, "_config_s3_bucket", true);
+    $access_key = get_post_meta($id, "_config_s3_access_key", true);
+    $secret_key = get_post_meta($id, "_config_s3_secret_key", true);
 
     $encodingTable = '<table class="wp-list-table widefat fixed striped">';
     $encodingTable .= "<tr><td colspan='2'>Encoding Configuration</td></tr>";
 
     $encodingTable .= "<tr><td colspan='2'>General</td></tr>";
-    $encodingTable .= getTableRowInput("Encoding Profile", "config_encoding_profile", $encoding_profile, "My first Encoding Profile");
+    $encodingTable .= getTableRowInput("Encoding Profile", "config_encoding_profile", $encoding_profile, "My first Wordpress Encoding Profile");
+    $encodingTable .= getTableRowInput("Video Width", "config_encoding_width", $video_width, "e.g. 720");
+    $encodingTable .= getTableRowInput("Video Height", "config_encoding_height", $video_height, "e.g. 1080");
     $encodingTable .= getTableRowInput("Video Bitrate", "config_encoding_video_bitrate", $video_bitrate, "e.g. 1024000 Bits/s");
     $encodingTable .= getTableRowInput("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256000 Bits/s");
 
-    $encodingTable .= "<tr><td colspan='2'>External Video Source</td></tr>";
-    $encodingTable .= getTableRowInput("URL", "config_encoding_external_src", $external_video_src, "http://eu-storage.bitcodin.com/inputs/Sintel.2010.720p.mkv");
+    $encodingTable .= "<tr><td colspan='2'>Video Source</td></tr>";
+    $encodingTable .= getTableRowInput("Intern URL", "config_encoding_video_src", $encoding_video_src, "http://localhost/wordpress/wp-content/uploads/video.mkv");
 
-    $encodingTable .= "<tr><td colspan='2'>FTP Output</td></tr>";
+    $encodingTable .= "<tr><td colspan='2'>Output</td></tr>";
+    $encodingTable .= "<tr><td>";
+    $encodingTable .= "<form>";
+    $encodingTable .= getTableRowRadio("FTP", "config_encoding_output_ftp", "ftp");
+    $encodingTable .= getTableRowRadio("Cloud Storage", "config_encoding_output_s3", "s3");
+    $encodingTable .= "</form>";
+    $encodingTable .= "</td></tr>";
+
     $encodingTable .= getTableRowInput("FTP Server", "config_ftp_server", $ftp_server, "ftp://path/to/upload/directory");
     $encodingTable .= getTableRowInput("FTP Username", "config_ftp_usr", $ftp_usr, "FTP Username");
-    $encodingTable .= getTableRowInput("FTP Password", "config_ftp_usr", $ftp_pw, "FTP Password");
+    $encodingTable .= getTableRowInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
 
     $encodingTable .= "<tr><td colspan='2'>Bitmovin Cloud Storage Output</td></tr>";
     $encodingTable .= getTableRowInput("Access Key", "config_s3_access_key", $access_key, "yourAWSAccessKey");
@@ -498,13 +509,26 @@ function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyVa
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
 }
 
+function getTableRowRadio($propertyDisplayName, $propertyName, $propertyValue)
+{
+    if ($propertyValue == "ftp")
+    {
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutput()'>{$propertyDisplayName}<br><br>";
+    }
+    else
+    {
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutput()'>{$propertyDisplayName}<br><br>";
+    }
+}
+
 function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption, $options)
 {
     $selectedOption = json_decode($selectedOption);
 
-    if ($propertyDisplayName == "Version")
+    if ($propertyDisplayName == "Channel")
     {
-        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' oncreate='getVersions2()' name='" . $propertyName . "'>";
+        $apiKey = get_option('bitmovin_api_key');
+        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' onfocus='getVersions2({$apiKey})' name='" . $propertyName . "'>";
     }
     else
     {
@@ -530,6 +554,40 @@ function bitmovin_player_save_configuration($post_id)
 
     // check permissions
     if ('bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
+
+        $encoding_profile = getParameter("config_encoding_profile");
+        $video_width = getParameter("config_encoding_width");
+        $video_height = getParameter("config_encoding_height");
+        $video_bitrate = getParameter("config_encoding_video_bitrate");
+        $audio_bitrate = getParameter("config_encoding_audio_bitrate");
+
+        $encoding_video_src = getParameter("config_encoding_video_src");
+
+        $ftp_server = getParameter("config_ftp_server");
+        $ftp_usr = getParameter("config_ftp_usr");
+        $ftp_pw = getParameter("config_ftp_pw");
+
+        $prefix = getParameter("config_s3_prefix");
+        $bucket = getParameter("config_s3_bucket");
+        $access_key = getParameter("config_s3_access_key");
+        $secret_key = getParameter("config_s3_secret_key");
+
+        update_post_meta($post_id, "_config_encoding_profile", $encoding_profile);
+        update_post_meta($post_id, "_config_encoding_width", $video_width);
+        update_post_meta($post_id, "_config_encoding_height", $video_height);
+        update_post_meta($post_id, "_config_encoding_video_bitrate", $video_bitrate);
+        update_post_meta($post_id, "_config_encoding_audio_bitrate", $audio_bitrate);
+
+        update_post_meta($post_id, "_config_encoding_video_src", $encoding_video_src);
+
+        update_post_meta($post_id, "_config_ftp_server", $ftp_server);
+        update_post_meta($post_id, "_config_ftp_usr", $ftp_usr);
+        update_post_meta($post_id, "_config_ftp_pw", $ftp_pw);
+
+        update_post_meta($post_id, "_config_s3_prefix", $prefix);
+        update_post_meta($post_id, "_config_s3_bucket", $bucket);
+        update_post_meta($post_id, "_config_s3_access_key", $access_key);
+        update_post_meta($post_id, "_config_s3_secret_key", $secret_key);
 
         $dash_url = getParameter("config_src_dash");
         $hls_url = getParameter("config_src_hls");
@@ -738,6 +796,46 @@ function getVideoConfig($id) {
     }
 
     return $video;
+}
+
+function getEncodingConfig($id)
+{
+    $encoding_profile = json_decode(get_post_meta($id, "_config_encoding_profile", true));
+    $video_width = json_decode(get_post_meta($id, "_config_encoding_width", true));
+    $video_height = json_decode(get_post_meta($id, "_config_encoding_height", true));
+    $video_bitrate = json_decode(get_post_meta($id, "_config_encoding_video_bitrate", true));
+    $audio_bitrate = json_decode(get_post_meta($id, "_config_encoding_audio_bitrate", true));
+
+    $encoding_video_src = json_decode(get_post_meta($id, "_config_encoding_video_src", true));
+
+    $ftp_server = json_decode(get_post_meta($id, "_config_ftp_server", true));
+    $ftp_usr = json_decode(get_post_meta($id, "_config_ftp_usr", true));
+    $ftp_pw = json_decode(get_post_meta($id, "_config_ftp_pw", true));
+
+    $prefix = json_decode(get_post_meta($id, "_config_s3_prefix", true));
+    $bucket = json_decode(get_post_meta($id, "_config_s3_bucket", true));
+    $access_key = json_decode(get_post_meta($id, "_config_s3_access_key", true));
+    $secret_key = json_decode(get_post_meta($id, "_config_s3_secret_key", true));
+
+    /* Be sure that user filled out the encoding form correctly and completely */
+    if ($encoding_profile != "" && ($video_width != "" || $video_height != "") && $video_bitrate != "" && $audio_bitrate != "" &&
+        $encoding_video_src != "")
+    {
+        if ($ftp_server != "" && $ftp_usr != "" && $ftp_pw != "")
+        {
+            //Call Encoding function with FTP Output
+            //bitmovin_encoding_service();
+        }
+        else if ($prefix != "" && $bucket != "" && $access_key != "" && $secret_key != "")
+        {
+            //Call Encoding function with S3 Output
+            //bitmovin_encoding_service();
+        }
+        else
+        {
+            echo "Encoding wird nicht ausgeführt!";
+        }
+    }
 }
 
 function getPlayerConfig($id)
@@ -1027,12 +1125,12 @@ function bitmovin_plugin_display_settings()
     echo $html;
 }
 
-add_action('save_post', 'bitmovin_encoding_service');
+//add_action('save_post', 'bitmovin_encoding_service');
 function bitmovin_encoding_service() {
 
     phpAlert("Begin ENCODING");
     // CONFIGURATION
-    Bitcodin::setApiToken('d2b75b653c17598efe150693ee2250a3926a5fef8b6027416b225211ebb886f8');
+    Bitcodin::setApiToken(get_option('bitmovin_api_key'));
 
     $inputConfig = new HttpInputConfig();
     $inputConfig->url = 'https://www.dropbox.com/s/aaw7mj3k0iq953r/Erdbeermarmelade%21.mp4?dl=1';//'http://eu-storage.bitcodin.com/inputs/Sintel.2010.720p.mkv';
