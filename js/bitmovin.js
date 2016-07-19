@@ -41,8 +41,103 @@ function checkApiKey() {
     });
 }
 
-function getVersions2(apiKey) {
-    alert(apiKey);
+/* Encoding Button Click */
+$j(document).ready(function() {
+    $j("button#bEncode").click(function () {
+
+        var profile = document.getElementById('config_encoding_profile').value;
+        var video_width = document.getElementById('config_encoding_width').value;
+        var video_height = document.getElementById('config_encoding_height').value;
+        var video_bitrate = document.getElementById('config_encoding_video_bitrate').value;
+        var audio_bitrate = document.getElementById('config_encoding_audio_bitrate').value;
+
+        var video_src = document.getElementById('config_encoding_video_src').value;
+
+        /* Define variables for FTP output */
+        var ftp_usr;
+        var ftp_pw;
+        var ftp_server;
+
+        /* Define variables for S3 output */
+        var access_key;
+        var secret_key;
+        var bucket;
+        var prefix;
+
+        /* Represents ftp or s3 */
+        var output;
+
+        if (document.getElementsByName("output")[0].checked)
+        {
+            output = "ftp";
+            ftp_server = document.getElementById('config_ftp_server').value;
+            ftp_usr = document.getElementById('config_ftp_usr').value;
+            ftp_pw = document.getElementById('config_ftp_pw').value;
+        }
+        else if (document.getElementsByName("output")[1].checked)
+        {
+            output = "s3";
+            access_key = document.getElementById('config_s3_access_key').value;
+            secret_key = document.getElementById('config_s3_secret_key').value;
+            bucket = document.getElementById('config_s3_bucket').value;
+            prefix = document.getElementById('config_s3_prefix').value;
+        }
+        else
+        {
+            alert("Please select either FTP or S3 output");
+        }
+
+        if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && audio_bitrate != "" &&
+            video_src != "")
+        {
+            if ((ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (access_key != "" && secret_key != "" && bucket != "" && prefix != ""))
+            {
+                var url = bitmovin_script.plugin_url + "bitcoding.php";
+                $j.ajax({
+                    type: "POST",
+                    url: '',
+                    data: {
+                        apiKey: bitmovin_script.apiKey,
+                        method: "bitmovin_encoding_service",
+                        output:         output,
+                        profile:        profile,
+                        video_width:    video_width,
+                        video_height:   video_height,
+                        video_bitrate:  video_bitrate,
+                        audio_bitrate:  audio_bitrate,
+                        video_src:      video_src,
+                        ftp_server:     ftp_server,
+                        ftp_usr:        ftp_usr,
+                        ftp_pw:         ftp_pw,
+                        access_key:     access_key,
+                        secret_key:     secret_key,
+                        bucket:         bucket,
+                        prefix:         prefix
+                    },
+                    beforeSend: function() {
+                        $j('#response').html("<p>Loading...</p><img src='images/loading.gif' />");
+                    },
+                    success: function (content) {
+                        alert(content);
+                        $j('#response').html("<p>Encoding finished</p>");
+                    },
+                    error: function(error) {
+                        console.log("Error");
+                    }
+                });
+                /* Kein Neuladen der Website */
+                return false;
+            }
+        }
+        else
+        {
+            alert("You have to fill out the Uploads/Encoding form to create an output.");
+            return false;
+        }
+    });
+});
+
+function getVersions2() {
     $j.ajax({
         url: "https://app.bitmovin.com/api/player-versions",
         type: "GET",
