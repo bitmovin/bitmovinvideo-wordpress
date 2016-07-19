@@ -51,6 +51,8 @@ function bitmovin_admin_assets()
 {
     wp_register_script('bitmovin_script', plugins_url('js/bitmovin.js', __FILE__));
     wp_enqueue_script('bitmovin_script');
+    wp_localize_script( 'bitmovin_script', 'bitmovin_script', array( 'plugin_url' => plugins_url( 'bitmovinvideo-wordpress-master/'),
+        'apiKey' => get_option('bitmovin_api_key')));
 
     wp_register_style('bitmovin_style', plugins_url('css/bitstyle.css', __FILE__));
     wp_enqueue_style('bitmovin_style');
@@ -308,9 +310,11 @@ function getEncodingTable($id)
     $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");
     $encodingTable .= getTableRowInput("Prefix", "config_s3_prefix", $prefix, "path/to/your/output/destination");
 
-
+    //class="button button-primary button-large"
     $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_uploader_video()" data-editor="content">Upload Video</button></td></tr>';
-    $encodingTable .= '<tr><td><button id="publish" class="button button-primary button-large" name="encode" value="Encode Uploaded Video">Encode Uploaded Video</button></td></tr>';
+    $encodingTable .= '<tr><td><button id="bEncode" name="bEncode">Encode Uploaded Video</button></td>';
+    $encodingTable .= '<td><div id="response"></div></td>';
+    $encodingTable .= '</tr>';
 
     $encodingTable .= "</table>";
 
@@ -344,7 +348,7 @@ function getPlayerTable($id)
 
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
     $playerTable .= "<tr><td colspan='2'>Player Channels/Versions</td></tr>";
-    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(""));
+    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array("Stable", "Staging", "Beta"));
     $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
     $playerTable .= "</table>";
 
@@ -527,8 +531,8 @@ function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption,
 
     if ($propertyDisplayName == "Channel")
     {
-        $apiKey = get_option('bitmovin_api_key');
-        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' onfocus='getVersions2({$apiKey})' name='" . $propertyName . "'>";
+        //$apiKey = get_option('bitmovin_api_key');
+        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' onchange='getVersions()' name='" . $propertyName . "'>";
     }
     else
     {
@@ -796,46 +800,6 @@ function getVideoConfig($id) {
     }
 
     return $video;
-}
-
-function getEncodingConfig($id)
-{
-    $encoding_profile = json_decode(get_post_meta($id, "_config_encoding_profile", true));
-    $video_width = json_decode(get_post_meta($id, "_config_encoding_width", true));
-    $video_height = json_decode(get_post_meta($id, "_config_encoding_height", true));
-    $video_bitrate = json_decode(get_post_meta($id, "_config_encoding_video_bitrate", true));
-    $audio_bitrate = json_decode(get_post_meta($id, "_config_encoding_audio_bitrate", true));
-
-    $encoding_video_src = json_decode(get_post_meta($id, "_config_encoding_video_src", true));
-
-    $ftp_server = json_decode(get_post_meta($id, "_config_ftp_server", true));
-    $ftp_usr = json_decode(get_post_meta($id, "_config_ftp_usr", true));
-    $ftp_pw = json_decode(get_post_meta($id, "_config_ftp_pw", true));
-
-    $prefix = json_decode(get_post_meta($id, "_config_s3_prefix", true));
-    $bucket = json_decode(get_post_meta($id, "_config_s3_bucket", true));
-    $access_key = json_decode(get_post_meta($id, "_config_s3_access_key", true));
-    $secret_key = json_decode(get_post_meta($id, "_config_s3_secret_key", true));
-
-    /* Be sure that user filled out the encoding form correctly and completely */
-    if ($encoding_profile != "" && ($video_width != "" || $video_height != "") && $video_bitrate != "" && $audio_bitrate != "" &&
-        $encoding_video_src != "")
-    {
-        if ($ftp_server != "" && $ftp_usr != "" && $ftp_pw != "")
-        {
-            //Call Encoding function with FTP Output
-            //bitmovin_encoding_service();
-        }
-        else if ($prefix != "" && $bucket != "" && $access_key != "" && $secret_key != "")
-        {
-            //Call Encoding function with S3 Output
-            //bitmovin_encoding_service();
-        }
-        else
-        {
-            echo "Encoding wird nicht ausgeführt!";
-        }
-    }
 }
 
 function getPlayerConfig($id)
@@ -1123,62 +1087,5 @@ function bitmovin_plugin_display_settings()
 
         </div>';
     echo $html;
-}
-
-//add_action('save_post', 'bitmovin_encoding_service');
-function bitmovin_encoding_service() {
-
-    phpAlert("Begin ENCODING");
-    // CONFIGURATION
-    Bitcodin::setApiToken(get_option('bitmovin_api_key'));
-
-    $inputConfig = new HttpInputConfig();
-    $inputConfig->url = 'https://www.dropbox.com/s/aaw7mj3k0iq953r/Erdbeermarmelade%21.mp4?dl=1';//'http://eu-storage.bitcodin.com/inputs/Sintel.2010.720p.mkv';
-    $input = Input::create($inputConfig);
-
-    // CREATE VIDEO STREAM CONFIG
-    $videoStreamConfig = new VideoStreamConfig();
-//$videoStreamConfig->height = 720; //if you omit either width or height, our service will use the aspect ratio of your input-file
-    $videoStreamConfig->width = 1280;
-    $videoStreamConfig->bitrate = 1024000;
-
-    // CREATE AUDIO STREAM CONFIGS
-    $audioStreamConfig = new AudioStreamConfig();
-    $audioStreamConfig->bitrate = 256000;
-
-    $encodingProfileConfig = new EncodingProfileConfig();
-    $encodingProfileConfig->name = 'My first Encoding Profile';
-    $encodingProfileConfig->videoStreamConfigs[] = $videoStreamConfig;
-    $encodingProfileConfig->audioStreamConfigs[] = $audioStreamConfig;
-
-    // CREATE ENCODING PROFILE
-    $encodingProfile = EncodingProfile::create($encodingProfileConfig);
-
-    $jobConfig = new JobConfig();
-    $jobConfig->encodingProfile = $encodingProfile;
-    $jobConfig->input = $input;
-    $jobConfig->manifestTypes[] = ManifestTypes::M3U8;
-    $jobConfig->manifestTypes[] = ManifestTypes::MPD;
-
-    // CREATE JOB
-    $job = Job::create($jobConfig);
-
-    //WAIT TIL JOB IS FINISHED
-    do{
-        $job->update();
-        sleep(1);
-    } while($job->status != Job::STATUS_FINISHED);
-
-    $outputConfig = new FtpOutputConfig();
-    $outputConfig->name = "TestFtpOutput";
-    $outputConfig->host = 'whocares.bplaced.net';
-    $outputConfig->username = 'whocares';
-    $outputConfig->password = 'Royalflash93#';
-
-    $output = Output::create($outputConfig);
-    checkOutput($output);
-
-    // TRANSFER JOB OUTPUT
-    $job->transfer($output);
 }
 ?>
