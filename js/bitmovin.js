@@ -116,7 +116,7 @@ $j(document).ready(function() {
                         prefix:         prefix
                     },
                     beforeSend: function() {
-                        $j('#response').html("<img src='images/loading.gif' />");
+                        $j('#response').html("<p>Encoding...</p><img src='images/loading.gif' />");
                     },
                     success: function (content) {
                         alert(content);
@@ -162,6 +162,7 @@ function getVersions2() {
 
 function checkOutput()
 {
+    alert("Here");
     if (document.getElementsByName("output")[0].checked)
     {
         document.getElementById('config_ftp_server').disabled = false;
@@ -282,18 +283,26 @@ var media_uploader = null;
 
 function open_media_uploader_video()
 {
-    media_uploader = wp.media({
-        frame:    "video",
-        state:    "video-details",
+    media_uploader = wp.media.frames.file_frame = wp.media({
+        title: "Select Video for Encoding",
+        button: {
+            text: "Select Video"
+        },
+        library: { type: "video"},
+        multiple: false
     });
 
-    media_uploader.on("update", function(){
+    media_uploader.on("select", function(){
 
-        var extension = media_uploader.state().media.extension;
-        var video_url = media_uploader.state().media.attachment.changed.url;
-        var video_icon = media_uploader.state().media.attachment.changed.icon;
-        var video_title = media_uploader.state().media.attachment.changed.title;
-        var video_desc = media_uploader.state().media.attachment.changed.description;
+        /* get video url and insert into video src input */
+        var attachment = media_uploader.state().get('selection').first().toJSON();
+        $j('#config_encoding_video_src').val(attachment.url);
+        $j('#config_encoding_video_src').prop("disabled", true);
+        //var extension = media_uploader.state().media.extension;
+        //var video_url = media_uploader.state().media.attachment.url;
+        //var video_icon = media_uploader.state().media.attachment.changed.icon;
+        //var video_title = media_uploader.state().media.attachment.changed.title;
+        //var video_desc = media_uploader.state().media.attachment.changed.description;
     });
 
     media_uploader.open();
