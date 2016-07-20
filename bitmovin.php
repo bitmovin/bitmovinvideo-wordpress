@@ -284,8 +284,8 @@ function getEncodingTable($id)
 
     $encodingTable .= "<tr><td colspan='2'>General</td></tr>";
     $encodingTable .= getTableRowInput("Encoding Profile", "config_encoding_profile", $encoding_profile, "My first Wordpress Encoding Profile");
-    $encodingTable .= getTableRowInput("Video Width", "config_encoding_width", $video_width, "e.g. 720");
-    $encodingTable .= getTableRowInput("Video Height", "config_encoding_height", $video_height, "e.g. 1080");
+    $encodingTable .= getTableRowInput("Video Height", "config_encoding_height", $video_height, "e.g. 720");
+    $encodingTable .= getTableRowInput("Video Width", "config_encoding_width", $video_width, "e.g. 1280");
     $encodingTable .= getTableRowInput("Video Bitrate", "config_encoding_video_bitrate", $video_bitrate, "e.g. 1024000 Bits/s");
     $encodingTable .= getTableRowInput("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256000 Bits/s");
 
