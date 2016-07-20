@@ -1,3 +1,4 @@
+var channels = [];
 var versions = [];
 
 $j = jQuery.noConflict();
@@ -7,6 +8,32 @@ $j(document).ready(function() {
         if(!hasContent(configSections[i]))
             $j("#"+configSections[i]).addClass("closed");
     }
+
+    var apiKey = bitmovin_script.apiKey;
+    $j.ajax({
+        url: "https://app.bitmovin.com/api/player-versions",
+        type: "GET",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('bitcodin-api-key', apiKey);
+        },
+        success: function(data) {
+            var index = 0;
+            for (; index < data.length; index++)
+            {
+                versions.push({CHANNEL: data[index].category, VERSION: data[index].version});
+                var compare = channels.indexOf(data[index].category);
+                if (compare == -1)
+                {
+                    channels.push(data[index].category);
+                }
+            }
+            createChannels();
+            getVersions();
+        },
+        error: function(error) {
+            console.log(error.responseJSON.message);
+        }
+    });
 });
 function hasContent(configSection) {
     var contentFound = false;
@@ -138,31 +165,8 @@ $j(document).ready(function() {
     });
 });
 
-function getVersions2() {
-    $j.ajax({
-        url: "https://app.bitmovin.com/api/player-versions",
-        type: "GET",
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('bitcodin-api-key', apiKey);
-        },
-        success: function(data) {
-            var index = 0;
-            for (; index < data.length; index++)
-            {
-                versions.push({CHANNEL: data[index].category, VERSION: data[index].version});
-            }
-            console.log(versions);
-        },
-        error: function(error) {
-            //$j("#messages").text(error.responseJSON.message);
-            //alert(error.responseJSON.message);
-        }
-    });
-}
-
 function checkOutput()
 {
-    alert("Here");
     if (document.getElementsByName("output")[0].checked)
     {
         document.getElementById('config_ftp_server').disabled = false;
@@ -187,86 +191,41 @@ function checkOutput()
     }
 }
 
-function callEncodingPHP()
+function createChannels()
 {
-    jQuery.ajax({
-        type: "POST",
-        url: 'bitmovin-encoding.php',
-        data: {functionname: 'bitmovin_encoding_service', arguments: ""},//[$(".Txt_Nombre").val(), $(".Txt_Correo").val(), $(".Txt_Pregunta").val()]},
-        success:function(data) {
-            alert(data);
-        }
-    });
+    var index = 0;
+    var channel = document.getElementById("config_player_channel");
+    for (; index < channels.length; index++)
+    {
+        var option = document.createElement('option');
+        option.text = channels[index];
+        channel.add(option, index);
+    }
+    $j("#config_player_channel").val(channels[0]);
 }
 
 function getVersions()
 {
     removeAllOptions();
 
-    var option = document.createElement('option');
+    var index;
+    var cindex;
     var channel = document.getElementById("config_player_channel");
     var select = document.getElementById("config_player_version");
-    if (channel.options[channel.selectedIndex].value == "Beta")
+    for (cindex = 0; cindex < channels.length; cindex++)
     {
-        var option = document.createElement('option');
-        option.text = "Latest Version 5";
-        select.add(option, 0);
-
-        option = document.createElement('option');
-        option.text = "5.1";
-        select.add(option, 1);
-
-        option = document.createElement('option');
-        option.text = "5.0";
-        select.add(option, 2);
-    }
-    else if (channel.options[channel.selectedIndex].value == "Staging")
-    {
-        var option = document.createElement('option');
-        option.text = "Latest Version 5";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "5.1.0-rc1";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "5.1";
-        select.add(option);
-    }
-    else
-    {
-        var option = document.createElement('option');
-        option.text = "Latest Version 5";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "Latest Version 4";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "5.0";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "4.4";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "4.3";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "4.2";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "4.1";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "4.0";
-        select.add(option);
+        if (channel.options[channel.selectedIndex].value == channels[cindex])
+        {
+            for (index = 0; index < versions.length; index++)
+            {
+                if (versions[index].CHANNEL == channels[cindex])
+                {
+                    var option = document.createElement('option');
+                    option.text = versions[index].VERSION;
+                    select.add(option, index);
+                }
+            }
+        }
     }
 }
 
@@ -283,12 +242,12 @@ var media_uploader = null;
 
 function open_media_uploader_video()
 {
-    media_uploader = wp.media.frames.file_frame = wp.media({
+    media_uploader = wp.media({
         title: "Select Video for Encoding",
         button: {
             text: "Select Video"
         },
-        library: { type: "video"},
+        //library: { type: "video"},
         multiple: false
     });
 
@@ -297,7 +256,6 @@ function open_media_uploader_video()
         /* get video url and insert into video src input */
         var attachment = media_uploader.state().get('selection').first().toJSON();
         $j('#config_encoding_video_src').val(attachment.url);
-        $j('#config_encoding_video_src').prop("disabled", true);
         //var extension = media_uploader.state().media.extension;
         //var video_url = media_uploader.state().media.attachment.url;
         //var video_icon = media_uploader.state().media.attachment.changed.icon;
