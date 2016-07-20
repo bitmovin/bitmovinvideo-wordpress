@@ -18,6 +18,7 @@ use bitcodin\EncodingProfileConfig;
 use bitcodin\ManifestTypes;
 use bitcodin\Output;
 use bitcodin\FtpOutputConfig;
+use bitcodin\S3OutputConfig;
 
 require_once __DIR__.'/vendor/autoload.php';
 
@@ -27,60 +28,58 @@ if (isset($_POST['method']) && $_POST['method'] != "")
     if ($method == "bitmovin_encoding_service") {
 
         $apiKey = $_POST['apiKey'];
-        $output = $_POST['output'];
+        /*$output = $_POST['output'];
         $profile = $_POST['profile'];
         $video_width = $_POST['video_width'];
         $video_height = $_POST['video_height'];
         $video_bitrate = $_POST['video_bitrate'];
         $audio_bitrate = $_POST['audio_bitrate'];
         $video_src = $_POST['video_src'];
-        $ftp_server = $_POST['ftp_server'];
-        $ftp_usr = $_POST['ftp_usr'];
-        $ftp_pw = $_POST['ftp_pw'];
-        $access_key = $_POST['access_key'];
-        $secret_key = $_POST['secret_key'];
-        $bucket = $_POST['bucket'];
-        $prefix = $_POST['prefix'];
-        bitmovin_encoding_service($apiKey, $profile);
+
+        switch ($output) {
+            case ("ftp"):
+                $ftp_server = $_POST['ftp_server'];
+                $ftp_usr = $_POST['ftp_usr'];
+                $ftp_pw = $_POST['ftp_pw'];
+                break;
+            case ("s3"):
+                $access_key = $_POST['access_key'];
+                $secret_key = $_POST['secret_key'];
+                $bucket = $_POST['bucket'];
+                $prefix = $_POST['prefix'];
+                break;
+        }*/
+        bitmovin_encoding_service($apiKey);
     }
-    else {
-        phpConsole("Einfacher AJAX-Aufruf war erfolgreich!");
-    }
-}
-else {
-    echo "Einfacher AJAX-Aufruf war nicht erfolgreich!";
 }
 
-function phpConsole($msg) {
-    echo '<script type="text/javascript">console.log("' . $msg . '")</script>';
-}
+function bitmovin_encoding_service($apiKey) {
 
-function phpAlert($msg) {
-    echo '<script type="text/javascript">alert("' . $msg . '")</script>';
-}
-
-function bitmovin_encoding_service($apiKey, $profile) {
-
-    echo $apiKey;
     // CONFIGURATION
-    /*Bitcodin::setApiToken($apiKey);
+    Bitcodin::setApiToken($apiKey);
 
     $inputConfig = new HttpInputConfig();
-    $inputConfig->url = 'https://www.dropbox.com/s/aaw7mj3k0iq953r/Erdbeermarmelade%21.mp4?dl=1';//'http://eu-storage.bitcodin.com/inputs/Sintel.2010.720p.mkv';
+    $inputConfig->url = $_POST['video_src'];
     $input = Input::create($inputConfig);
 
     // CREATE VIDEO STREAM CONFIG
     $videoStreamConfig = new VideoStreamConfig();
-//$videoStreamConfig->height = 720; //if you omit either width or height, our service will use the aspect ratio of your input-file
-    $videoStreamConfig->width = 1280;
-    $videoStreamConfig->bitrate = 1024000;
+    if (isset($_POST['video_height']) && $_POST['video_height'] != "")
+    {
+        $videoStreamConfig->height = $_POST['video_height'];
+    }
+    if (isset($_POST['video_width']) && $_POST['video_width'] != "")
+    {
+        $videoStreamConfig->height = $_POST['video_width'];
+    }
+    $videoStreamConfig->bitrate = (int)$_POST['video_bitrate'];
 
     // CREATE AUDIO STREAM CONFIGS
     $audioStreamConfig = new AudioStreamConfig();
-    $audioStreamConfig->bitrate = 256000;
+    $audioStreamConfig->bitrate = (int)$_POST['audio_bitrate'];
 
     $encodingProfileConfig = new EncodingProfileConfig();
-    $encodingProfileConfig->name = 'My first Encoding Profile';
+    $encodingProfileConfig->name = $_POST['profile'];
     $encodingProfileConfig->videoStreamConfigs[] = $videoStreamConfig;
     $encodingProfileConfig->audioStreamConfigs[] = $audioStreamConfig;
 
@@ -102,17 +101,29 @@ function bitmovin_encoding_service($apiKey, $profile) {
         sleep(1);
     } while($job->status != Job::STATUS_FINISHED);
 
-    $outputConfig = new FtpOutputConfig();
-    $outputConfig->name = "TestFtpOutput";
-    $outputConfig->host = 'whocares.bplaced.net/live-access/wordpress/wordpress/wp-content/uploads';
-    $outputConfig->username = 'whocares';
-    $outputConfig->password = 'Royalflash93#';
+    if ($_POST['output'] == "ftp")
+    {
+        $outputConfig = new FtpOutputConfig();
+        $outputConfig->name = "My Wordpress FTP Output";
+        $outputConfig->host = $_POST['ftp_server'];
+        $outputConfig->username = $_POST['ftp_usr'];
+        $outputConfig->password = $_POST['ftp_pw'];
+    }
+    else    {
+        $outputConfig = new S3OutputConfig();
+        $outputConfig->name         = "My Wordpress S3 Output";
+        $outputConfig->accessKey    = $_POST['access_key'];
+        $outputConfig->secretKey    = $_POST['secret_key'];
+        $outputConfig->bucket       = $_POST['bucket'];
+        $outputConfig->prefix       = $_POST['prefix'];
+        $outputConfig->makePublic   = false;
+    }
 
     $output = Output::create($outputConfig);
 
     // TRANSFER JOB OUTPUT
     $job->transfer($output);
-    echo "Video wurde nach " + $output->host + " übertragen.";*/
+    echo "Video wurde nach " + $output->host + " übertragen.";
 }
 
 ?>
