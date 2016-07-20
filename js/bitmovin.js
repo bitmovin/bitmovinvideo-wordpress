@@ -29,6 +29,7 @@ $j(document).ready(function() {
             }
             createChannels();
             getVersions();
+            checkOutputChoice();
         },
         error: function(error) {
             console.log(error.responseJSON.message);
@@ -146,8 +147,8 @@ $j(document).ready(function() {
                         $j('#response').html("<p>Encoding...</p><img src='images/loading.gif' />");
                     },
                     success: function (content) {
-                        alert(content);
                         $j('#response').html("<p>Encoding finished</p>");
+                        $j('#config_src_hls').val(ftp_server + "/video_0_" + video_bitrate + "_hls.m3u8");
                     },
                     error: function(error) {
                         console.log("Error");
@@ -165,7 +166,7 @@ $j(document).ready(function() {
     });
 });
 
-function checkOutput()
+function checkOutputChoice()
 {
     if (document.getElementsByName("output")[0].checked)
     {
@@ -240,7 +241,7 @@ function removeAllOptions()
 
 var media_uploader = null;
 
-function open_media_uploader_video()
+function open_media_encoding_video()
 {
     media_uploader = wp.media({
         title: "Select Video for Encoding",
@@ -256,11 +257,43 @@ function open_media_uploader_video()
         /* get video url and insert into video src input */
         var attachment = media_uploader.state().get('selection').first().toJSON();
         $j('#config_encoding_video_src').val(attachment.url);
-        //var extension = media_uploader.state().media.extension;
-        //var video_url = media_uploader.state().media.attachment.url;
-        //var video_icon = media_uploader.state().media.attachment.changed.icon;
-        //var video_title = media_uploader.state().media.attachment.changed.title;
-        //var video_desc = media_uploader.state().media.attachment.changed.description;
+    });
+
+    media_uploader.open();
+}
+
+function open_media_progressive_video()
+{
+    media_uploader = wp.media({
+        title: "Select Video for Embedding",
+        button: {
+            text: "Select Video"
+        },
+        multiple: false
+    });
+
+    media_uploader.on("select", function(){
+
+        /* get video url and insert into right video src input */
+        var attachment = media_uploader.state().get('selection').first().toJSON();
+        if (attachment.subtype == "mpd")
+        {
+            $j('#config_src_dash').val(attachment.url);
+        }
+        else if (attachment.subtype == "m3u8")
+        {
+            $j('#config_src_hls').val(attachment.url);
+        }
+        else if (attachment.subtype == "mp4")
+        {
+            $j('#config_src_prog').val(attachment.url);
+        }
+        /* get all video properties */
+        //var image_data = media_uploader.state().get( 'selection' ).first().toJSON();
+        //for ( var image_property in image_data ) {
+
+           // console.log(image_property + ': ' + image_data[image_property]);
+        //}
     });
 
     media_uploader.open();
