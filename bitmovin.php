@@ -43,7 +43,6 @@ add_action("admin_enqueue_scripts", "enqueue_media_uploader");
 function enqueue_media_uploader()
 {
     wp_enqueue_media();
-    wp_enqueue_script("media-upload-demo", plugin_dir_url(__FILE__) . 'index.js', array("jquery"));
 }
 
 add_action('admin_enqueue_scripts', 'bitmovin_admin_assets');
@@ -290,7 +289,7 @@ function getEncodingTable($id)
     $encodingTable .= getTableRowInput("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256000 Bits/s");
 
     $encodingTable .= "<tr><td colspan='2'>Video Source</td></tr>";
-    $encodingTable .= getTableRowInput("Intern URL", "config_encoding_video_src", $encoding_video_src, "http://localhost/wordpress/wp-content/uploads/video.mkv");
+    $encodingTable .= getTableRowInput("Video URL", "config_encoding_video_src", $encoding_video_src, "http://localhost/wordpress/wp-content/uploads/video.mkv");
 
     $encodingTable .= "<tr><td colspan='2'>Output</td></tr>";
     $encodingTable .= "<tr><td>";
@@ -302,17 +301,17 @@ function getEncodingTable($id)
 
     $encodingTable .= getTableRowInput("FTP Server", "config_ftp_server", $ftp_server, "ftp://path/to/upload/directory");
     $encodingTable .= getTableRowInput("FTP Username", "config_ftp_usr", $ftp_usr, "FTP Username");
-    $encodingTable .= getTableRowInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
+    $encodingTable .= getTableRowPWInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
 
     $encodingTable .= "<tr><td colspan='2'>Bitmovin Cloud Storage Output</td></tr>";
     $encodingTable .= getTableRowInput("Access Key", "config_s3_access_key", $access_key, "yourAWSAccessKey");
-    $encodingTable .= getTableRowInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
+    $encodingTable .= getTableRowPWInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
     $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");
     $encodingTable .= getTableRowInput("Prefix", "config_s3_prefix", $prefix, "path/to/your/output/destination");
 
     //class="button button-primary button-large"
-    $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_uploader_video()" data-editor="content">Upload Video</button></td></tr>';
-    $encodingTable .= '<tr><td><button id="bEncode" name="bEncode">Encode Uploaded Video</button></td>';
+    $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_uploader_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
+    $encodingTable .= '<tr><td><button id="bEncode" class="button insert-media add_media" name="bEncode">Encode Uploaded Video</button></td>';
     $encodingTable .= '<td><div id="response"></div></td>';
     $encodingTable .= '</tr>';
 
@@ -508,6 +507,11 @@ function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
 }
 
+function getTableRowPWInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
+{
+    return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='password' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
+}
+
 function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
@@ -517,7 +521,7 @@ function getTableRowRadio($propertyDisplayName, $propertyName, $propertyValue)
 {
     if ($propertyValue == "ftp")
     {
-        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutput()'>{$propertyDisplayName}<br><br>";
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutput()' checked>{$propertyDisplayName}<br><br>";
     }
     else
     {

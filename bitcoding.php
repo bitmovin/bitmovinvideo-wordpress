@@ -28,27 +28,6 @@ if (isset($_POST['method']) && $_POST['method'] != "")
     if ($method == "bitmovin_encoding_service") {
 
         $apiKey = $_POST['apiKey'];
-        /*$output = $_POST['output'];
-        $profile = $_POST['profile'];
-        $video_width = $_POST['video_width'];
-        $video_height = $_POST['video_height'];
-        $video_bitrate = $_POST['video_bitrate'];
-        $audio_bitrate = $_POST['audio_bitrate'];
-        $video_src = $_POST['video_src'];
-
-        switch ($output) {
-            case ("ftp"):
-                $ftp_server = $_POST['ftp_server'];
-                $ftp_usr = $_POST['ftp_usr'];
-                $ftp_pw = $_POST['ftp_pw'];
-                break;
-            case ("s3"):
-                $access_key = $_POST['access_key'];
-                $secret_key = $_POST['secret_key'];
-                $bucket = $_POST['bucket'];
-                $prefix = $_POST['prefix'];
-                break;
-        }*/
         bitmovin_encoding_service($apiKey);
     }
 }
@@ -123,7 +102,7 @@ function bitmovin_encoding_service($apiKey) {
 
     // TRANSFER JOB OUTPUT
     $job->transfer($output);
-    echo "Video wurde nach " + $output->host + " übertragen.";
+    //echo $jobConfig::getRequestBody();
 }
 
 ?>
