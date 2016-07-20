@@ -87,6 +87,7 @@ function bitmovin_encoding_service($apiKey) {
         $outputConfig->host = $_POST['ftp_server'];
         $outputConfig->username = $_POST['ftp_usr'];
         $outputConfig->password = $_POST['ftp_pw'];
+        $outputConfig->createSubDirectory = false;
     }
     else    {
         $outputConfig = new S3OutputConfig();
@@ -96,6 +97,7 @@ function bitmovin_encoding_service($apiKey) {
         $outputConfig->bucket       = $_POST['bucket'];
         $outputConfig->prefix       = $_POST['prefix'];
         $outputConfig->makePublic   = false;
+        $outputConfig->createSubDirectory = false;
     }
 
     $output = Output::create($outputConfig);
