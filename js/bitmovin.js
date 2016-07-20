@@ -288,9 +288,8 @@ function open_media_progressive_video()
         {
             $j('#config_src_prog').val(attachment.url);
         }
-        /* get all video properties */
-        //var image_data = media_uploader.state().get( 'selection' ).first().toJSON();
-        //for ( var image_property in image_data ) {
+        /* leave me here for getting additional video properties */
+        //for ( var image_property in attachment ) {
 
            // console.log(image_property + ': ' + image_data[image_property]);
         //}

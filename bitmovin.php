@@ -295,7 +295,7 @@ function getEncodingTable($id)
     $encodingTable .= "<tr><td>";
     $encodingTable .= "<form>";
     $encodingTable .= getTableRowRadio("FTP", "config_encoding_output_ftp", "ftp");
-    $encodingTable .= getTableRowRadio("Cloud Storage", "config_encoding_output_s3", "s3");
+    $encodingTable .= getTableRowRadio("AWS", "config_encoding_output_s3", "s3");
     $encodingTable .= "</form>";
     $encodingTable .= "</td></tr>";
 
@@ -304,7 +304,7 @@ function getEncodingTable($id)
     $encodingTable .= getTableRowInput("FTP Username", "config_ftp_usr", $ftp_usr, "FTP Username");
     $encodingTable .= getTableRowPWInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
 
-    $encodingTable .= "<tr><td colspan='2'>Cloud Storage Configuration</td></tr>";
+    $encodingTable .= "<tr><td colspan='2'>AWS (Amazon Web Services) Configuration</td></tr>";
     $encodingTable .= getTableRowInput("Access Key", "config_s3_access_key", $access_key, "yourAWSAccessKey");
     $encodingTable .= getTableRowPWInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
     $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");

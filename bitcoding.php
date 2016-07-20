@@ -104,7 +104,6 @@ function bitmovin_encoding_service($apiKey) {
 
     // TRANSFER JOB OUTPUT
     $job->transfer($output);
-    //echo $jobConfig::getRequestBody();
 }
 
 ?>
