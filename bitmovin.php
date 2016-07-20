@@ -299,18 +299,19 @@ function getEncodingTable($id)
     $encodingTable .= "</form>";
     $encodingTable .= "</td></tr>";
 
+    $encodingTable .= "<tr><td colspan='2'>FTP Configuration</td></tr>";
     $encodingTable .= getTableRowInput("FTP Server", "config_ftp_server", $ftp_server, "ftp://path/to/upload/directory/myEncodedVideo");
     $encodingTable .= getTableRowInput("FTP Username", "config_ftp_usr", $ftp_usr, "FTP Username");
     $encodingTable .= getTableRowPWInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
 
-    $encodingTable .= "<tr><td colspan='2'>Bitmovin Cloud Storage Output</td></tr>";
+    $encodingTable .= "<tr><td colspan='2'>Cloud Storage Configuration</td></tr>";
     $encodingTable .= getTableRowInput("Access Key", "config_s3_access_key", $access_key, "yourAWSAccessKey");
     $encodingTable .= getTableRowPWInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
     $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");
     $encodingTable .= getTableRowInput("Prefix", "config_s3_prefix", $prefix, "path/to/your/output/destination");
 
     //class="button button-primary button-large"
-    $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_uploader_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
+    $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_encoding_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
     $encodingTable .= '<tr><td><button id="bEncode" class="button insert-media add_media" name="bEncode">Encode Uploaded Video</button></td>';
     $encodingTable .= '<td><div id="response"></div></td>';
     $encodingTable .= '</tr>';
@@ -334,6 +335,8 @@ function getVideoTable($id)
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
     $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
+
+    $videoTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
 
     $videoTable .= "</table>";
 
@@ -521,11 +524,11 @@ function getTableRowRadio($propertyDisplayName, $propertyName, $propertyValue)
 {
     if ($propertyValue == "ftp")
     {
-        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutput()' checked>{$propertyDisplayName}<br><br>";
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutputChoice()' checked>{$propertyDisplayName}<br><br>";
     }
     else
     {
-        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutput()'>{$propertyDisplayName}<br><br>";
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutputChoice()'>{$propertyDisplayName}<br><br>";
     }
 }
 
@@ -545,9 +548,9 @@ function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption,
 
 
     foreach($options as $option) {
-            if ($option != "") {
-                $tableRowSelect .= "<option value='" . $option . "'" . (($option == $selectedOption) ? "selected=\"selected\"" : "") . ">" . $option . "</option>";
-            }
+        if ($option != "") {
+            $tableRowSelect .= "<option value='" . $option . "'" . (($option == $selectedOption) ? "selected=\"selected\"" : "") . ">" . $option . "</option>";
+        }
     }
 
     $tableRowSelect .= "</select></td></tr>";
