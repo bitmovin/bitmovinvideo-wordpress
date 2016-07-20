@@ -93,9 +93,10 @@ $j(document).ready(function() {
             if ((ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (access_key != "" && secret_key != "" && bucket != "" && prefix != ""))
             {
                 var url = bitmovin_script.plugin_url + "bitcoding.php";
+                console.log(url);
                 $j.ajax({
                     type: "POST",
-                    url: '',
+                    url: url,
                     data: {
                         apiKey: bitmovin_script.apiKey,
                         method: "bitmovin_encoding_service",
@@ -115,7 +116,7 @@ $j(document).ready(function() {
                         prefix:         prefix
                     },
                     beforeSend: function() {
-                        $j('#response').html("<p>Loading...</p><img src='images/loading.gif' />");
+                        $j('#response').html("<img src='images/loading.gif' />");
                     },
                     success: function (content) {
                         alert(content);
