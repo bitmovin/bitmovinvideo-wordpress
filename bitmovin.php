@@ -543,8 +543,11 @@ function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption,
         $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
     }
 
+
     foreach($options as $option) {
-        $tableRowSelect .= "<option value='" . $option . "'". (($option == $selectedOption)?"selected=\"selected\"":"") .">" . $option . "</option>";
+            if ($option != "") {
+                $tableRowSelect .= "<option value='" . $option . "'" . (($option == $selectedOption) ? "selected=\"selected\"" : "") . ">" . $option . "</option>";
+            }
     }
 
     $tableRowSelect .= "</select></td></tr>";
