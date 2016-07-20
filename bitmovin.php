@@ -51,7 +51,7 @@ function bitmovin_admin_assets()
 {
     wp_register_script('bitmovin_script', plugins_url('js/bitmovin.js', __FILE__));
     wp_enqueue_script('bitmovin_script');
-    wp_localize_script( 'bitmovin_script', 'bitmovin_script', array( 'plugin_url' => plugins_url( 'bitmovinvideo-wordpress-master/'),
+    wp_localize_script( 'bitmovin_script', 'bitmovin_script', array( 'plugin_url' => plugins_url( 'bitmovin/'),
         'apiKey' => get_option('bitmovin_api_key')));
 
     wp_register_style('bitmovin_style', plugins_url('css/bitstyle.css', __FILE__));

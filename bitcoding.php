@@ -66,11 +66,11 @@ function bitmovin_encoding_service($apiKey) {
     $videoStreamConfig = new VideoStreamConfig();
     if (isset($_POST['video_height']) && $_POST['video_height'] != "")
     {
-        $videoStreamConfig->height = $_POST['video_height'];
+        $videoStreamConfig->height = (int)$_POST['video_height'];
     }
     if (isset($_POST['video_width']) && $_POST['video_width'] != "")
     {
-        $videoStreamConfig->height = $_POST['video_width'];
+        $videoStreamConfig->width = (int)$_POST['video_width'];
     }
     $videoStreamConfig->bitrate = (int)$_POST['video_bitrate'];
 
