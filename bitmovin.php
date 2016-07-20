@@ -299,7 +299,7 @@ function getEncodingTable($id)
     $encodingTable .= "</form>";
     $encodingTable .= "</td></tr>";
 
-    $encodingTable .= getTableRowInput("FTP Server", "config_ftp_server", $ftp_server, "ftp://path/to/upload/directory");
+    $encodingTable .= getTableRowInput("FTP Server", "config_ftp_server", $ftp_server, "ftp://path/to/upload/directory/myEncodedVideo");
     $encodingTable .= getTableRowInput("FTP Username", "config_ftp_usr", $ftp_usr, "FTP Username");
     $encodingTable .= getTableRowPWInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
 
@@ -347,7 +347,7 @@ function getPlayerTable($id)
 
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
     $playerTable .= "<tr><td colspan='2'>Player Channels/Versions</td></tr>";
-    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array("Stable", "Staging", "Beta"));
+    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(""));
     $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
     $playerTable .= "</table>";
 
