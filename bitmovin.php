@@ -23,15 +23,10 @@ function bitmovin__plugin_deactivation()
 
 }
 
-add_action("admin_enqueue_scripts", "bitmovin_media_uploader");
-function bitmovin_media_uploader()
-{
-    wp_enqueue_media();
-}
-
 add_action('admin_enqueue_scripts', 'bitmovin_admin_assets');
 function bitmovin_admin_assets()
 {
+    wp_enqueue_media();
     wp_register_script('bitmovin_script', plugins_url('js/bitmovin.js', __FILE__));
     wp_enqueue_script('bitmovin_script');
     wp_localize_script( 'bitmovin_script', 'bitmovin_script', array( 'plugin_url' => plugins_url( 'bitmovin/'),
@@ -274,6 +269,7 @@ function bitmovin_getEncodingTable($id)
     $encodingTable .= getTableRowInput("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256000 Bits/s");
 
     $encodingTable .= "<tr><td colspan='2'>Video Source</td></tr>";
+    $encodingTable .= '<tr><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>';
     $encodingTable .= getTableRowInput("Video URL", "config_encoding_video_src", $encoding_video_src, "http://localhost/wordpress/wp-content/uploads/video.mkv");
 
     $encodingTable .= "<tr><td colspan='2'>Output</td></tr>";
@@ -297,7 +293,6 @@ function bitmovin_getEncodingTable($id)
     $encodingTable .= getTableRowSelect("Region", "config_s3_region", $region, array("us-east-1", "us-west-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "sa-east-1", "cn-north-1", "us-gov-west-1"));
 
     //class="button button-primary button-large"
-    $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_encoding_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
     $encodingTable .= '<tr><td><button id="bEncode" class="button insert-media add_media" name="bEncode">Encode Uploaded Video</button></td>';
     $encodingTable .= '<td><div id="response"></div></td>';
     $encodingTable .= '</tr>';
@@ -322,7 +317,7 @@ function bitmovin_getVideoTable($id)
     $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
 
-    $videoTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
+    $videoTable .= '<tr><td></td></tr><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
 
     $videoTable .= "</table>";
 
