@@ -479,10 +479,9 @@ function bitmovin_getAdvancedTable($id)
 {
     $version_link = get_post_meta($id, "_config_version_link", true);
 
-    $advancedTable = "<table class='wp-list-table widefat fixed striped'>";
-    $advancedTable = "<tr><td><p></p>To provide our users the right version of our player, we have four public player channels available.
+    $advancedTable = "<table></table><tr><td><p>To provide our users the right version of our player, we have four public player channels available.
     In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
-    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</td></tr>";
+    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
     $advancedTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
     $advancedTable .= "</table>";
 
@@ -677,7 +676,7 @@ function bitmovin_player_save_configuration($post_id)
     }
 }
 
-function bitmovin_bitmovin_getParameter($param)
+function bitmovin_getParameter($param)
 {
     $param = (isset($_POST[$param]) ? $_POST[$param] : '');
     return strip_tags(json_encode($param));
@@ -1063,7 +1062,7 @@ function bitmovin_plugin_display_settings()
             <h2>Bitmovin Wordpress Plugin Settings</h2>'. wp_nonce_field('update-options') .'
             <table class="form-table">
                 <tr><td class="tooltip">Bitmovin Api Key
-                <img src="' . $image_url . '" alt="Info" height="15" weight="15">
+                <img src="' . $image_url . '" alt="Info" height="15" width="15">
                 <span class="tooltiptext">Please insert Bitmovin API key here. <br> Do not confound it with your Player key.
                 <br> You can find your API key in the settings section of your Bitmovin Account <a href="https://app.bitmovin.com/settings">here</a>.</span></td>
                 <td><input id="apiKey" type="text" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/></td>
