@@ -3,29 +3,13 @@
   Plugin Name: Bitmovin
   Plugin URI: http://bitmovin.com/wordpress-plugin
   Description: <strong>Bitmovin's</strong> encoding and adaptive streaming player in Wordpress
-  Version: 0.5.0
+  Version: 0.5.1
   Author: Bitmovin
   Author URI: http://bitmovin.com
   License: GPLv2 or later
 */
-use bitcodin\Bitcodin;
-use bitcodin\VideoStreamConfig;
-use bitcodin\AudioStreamConfig;
-use bitcodin\Job;
-use bitcodin\JobConfig;
-use bitcodin\Input;
-use bitcodin\HttpInputConfig;
-use bitcodin\EncodingProfile;
-use bitcodin\EncodingProfileConfig;
-use bitcodin\ManifestTypes;
-use bitcodin\Output;
-use bitcodin\FtpOutputConfig;
 
 require_once __DIR__.'/vendor/autoload.php';
-
-function phpAlert($msg) {
-    echo '<script type="text/javascript">alert("' . $msg . '")</script>';
-}
 
 register_activation_hook(__FILE__, 'bitmovin_plugin_activation');
 function bitmovin_plugin_activation()
@@ -39,8 +23,8 @@ function bitmovin__plugin_deactivation()
 
 }
 
-add_action("admin_enqueue_scripts", "enqueue_media_uploader");
-function enqueue_media_uploader()
+add_action("admin_enqueue_scripts", "bitmovin_media_uploader");
+function bitmovin_media_uploader()
 {
     wp_enqueue_media();
 }
@@ -135,7 +119,7 @@ function bitmovin_player_configuration_encoding()
 
     $html = '<div class="configSection">';
     $html .= '<div id="encoding">';
-    $html .= getEncodingTable($post->ID);
+    $html .= bitmovin_getEncodingTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -148,7 +132,7 @@ function bitmovin_player_configuration_video()
 
     $html = '<div class="configSection">';
     $html .= '<div id="video">';
-    $html .= getVideoTable($post->ID);
+    $html .= bitmovin_getVideoTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -161,7 +145,7 @@ function bitmovin_player_configuration_player()
 
     $html = '<div class="configSection">';
     $html .= '<div id="playerConfig">';
-    $html .= getPlayerTable($post->ID);
+    $html .= bitmovin_getPlayerTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -174,7 +158,7 @@ function bitmovin_player_configuration_advanced()
 
     $html = '<div class="configSection">';
     $html .= '<div id="video">';
-    $html .= getAdvancedTable($post->ID);
+    $html .= bitmovin_getAdvancedTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -187,7 +171,7 @@ function bitmovin_player_configuration_drm()
 
     $html = '<div class="configSection">';
     $html .= '<div id="drm" class="configContent">';
-    $html .= getDrmTable($post->ID);
+    $html .= bitmovin_getDrmTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -200,7 +184,7 @@ function bitmovin_player_configuration_ads()
 
     $html = '<div class="configSection">';
     $html .= '<div id="ads" class="configContent">';
-    $html .= getAdsTable($post->ID);
+    $html .= bitmovin_getAdsTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -213,7 +197,7 @@ function bitmovin_player_configuration_vr()
 
     $html = '<div class="configSection">';
     $html .= '<div id="vr" class="configContent">';
-    $html .= getVrTable($post->ID);
+    $html .= bitmovin_getVrTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -226,7 +210,7 @@ function bitmovin_player_configuration_style()
 
     $html = '<div class="configSection">';
     $html .= '<div id="style" class="configContent">';
-    $html .= getStyleTable($post->ID);
+    $html .= bitmovin_getStyleTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -239,7 +223,7 @@ function bitmovin_player_configuration_custom()
 
     $html = '<div class="configSection">';
     $html .= '<div id="custom" class="configContent">';
-    $html .= getCustomTable($post->ID);
+    $html .= bitmovin_getCustomTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -252,14 +236,14 @@ function bitmovin_player_preview()
     $html = '<div>';
     $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\']</strong> shortcode to your post.</strong>';
     $html .= '<div style="width: 600px; margin: auto">';
-    $html .= generate_player(array("id"=>$post->ID));
+    $html .= bitmovin_generate_player(array("id"=>$post->ID));
     $html .= '</div>';
     $html .= '</div>';
 
     echo $html;
 }
 
-function getEncodingTable($id)
+function bitmovin_getEncodingTable($id)
 {
     $encoding_profile = get_post_meta($id, "_config_encoding_profile", true);
     $video_width = get_post_meta($id, "_config_encoding_width", true);
@@ -273,7 +257,7 @@ function getEncodingTable($id)
     $ftp_usr = get_post_meta($id, "_config_ftp_usr", true);
     $ftp_pw = get_post_meta($id, "_config_ftp_pw", true);
 
-    $prefix = get_post_meta($id, "_config_s3_prefix", true);
+    $aws_name = get_post_meta($id, "_config_s3_name", true);
     $bucket = get_post_meta($id, "_config_s3_bucket", true);
     $access_key = get_post_meta($id, "_config_s3_access_key", true);
     $secret_key = get_post_meta($id, "_config_s3_secret_key", true);
@@ -305,10 +289,10 @@ function getEncodingTable($id)
     $encodingTable .= getTableRowPWInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
 
     $encodingTable .= "<tr><td colspan='2'>AWS (Amazon Web Services) Configuration</td></tr>";
+    $encodingTable .= getTableRowInput("Name", "config_s3_name", $aws_name, "Your AWS Output Name");
     $encodingTable .= getTableRowInput("Access Key", "config_s3_access_key", $access_key, "yourAWSAccessKey");
     $encodingTable .= getTableRowPWInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
     $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");
-    $encodingTable .= getTableRowInput("Prefix", "config_s3_prefix", $prefix, "path/to/your/output/destination");
 
     //class="button button-primary button-large"
     $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_encoding_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
@@ -321,7 +305,7 @@ function getEncodingTable($id)
     return $encodingTable;
 }
 
-function getVideoTable($id)
+function bitmovin_getVideoTable($id)
 {
     $dash_url = get_post_meta($id, "_config_src_dash", true);
     $hls_url = get_post_meta($id, "_config_src_hls", true);
@@ -343,7 +327,7 @@ function getVideoTable($id)
     return $videoTable;
 }
 
-function getPlayerTable($id)
+function bitmovin_getPlayerTable($id)
 {
     $player_channel = get_post_meta($id, "_config_player_channel", true);
     $player_version = get_post_meta($id, "_config_player_version", true);
@@ -357,7 +341,7 @@ function getPlayerTable($id)
     return $playerTable;
 }
 
-function getDrmTable($id)
+function bitmovin_getDrmTable($id)
 {
     $widevine_la_url = get_post_meta($id, "_config_src_drm_widevine_la_url", true);
     $playready_la_url = get_post_meta($id, "_config_src_drm_playready_la_url", true);
@@ -395,7 +379,7 @@ function getDrmTable($id)
     return $drmTable;
 }
 
-function getAdsTable($id)
+function bitmovin_getAdsTable($id)
 {
     $client = get_post_meta($id, "_config_advertising_client", true);
     $admessage = get_post_meta($id, "_config_advertising_admessage", true);
@@ -436,7 +420,7 @@ function getAdsTable($id)
     return $adsTable;
 }
 
-function getVrTable($id)
+function bitmovin_getVrTable($id)
 {
     $startupMode = get_post_meta($id, "_config_src_vr_startupMode", true);
     $startPosition = get_post_meta($id, "_config_src_vr_startPosition", true);
@@ -456,7 +440,7 @@ function getVrTable($id)
     return $vrTable;
 }
 
-function getStyleTable($id)
+function bitmovin_getStyleTable($id)
 {
     $width = get_post_meta($id, "_config_style_width", true);
     $height = get_post_meta($id, "_config_style_height", true);
@@ -474,7 +458,7 @@ function getStyleTable($id)
     return $styleTable;
 }
 
-function getCustomTable($id)
+function bitmovin_getCustomTable($id)
 {
     $customConf = json_decode(get_post_meta($id, "_config_custom_conf", true));
     $customSource = json_decode(get_post_meta($id, "_config_custom_source", true));
@@ -491,7 +475,7 @@ function getCustomTable($id)
     return $customTable;
 }
 
-function getAdvancedTable($id)
+function bitmovin_getAdvancedTable($id)
 {
     $version_link = get_post_meta($id, "_config_version_link", true);
 
@@ -538,14 +522,12 @@ function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption,
 
     if ($propertyDisplayName == "Channel")
     {
-        //$apiKey = get_option('bitmovin_api_key');
         $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' onchange='getVersions()' name='" . $propertyName . "'>";
     }
     else
     {
         $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
     }
-
 
     foreach($options as $option) {
         if ($option != "") {
@@ -569,22 +551,22 @@ function bitmovin_player_save_configuration($post_id)
     // check permissions
     if ('bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
 
-        $encoding_profile = getParameter("config_encoding_profile");
-        $video_width = getParameter("config_encoding_width");
-        $video_height = getParameter("config_encoding_height");
-        $video_bitrate = getParameter("config_encoding_video_bitrate");
-        $audio_bitrate = getParameter("config_encoding_audio_bitrate");
+        $encoding_profile = bitmovin_getParameter("config_encoding_profile");
+        $video_width = bitmovin_getParameter("config_encoding_width");
+        $video_height = bitmovin_getParameter("config_encoding_height");
+        $video_bitrate = bitmovin_getParameter("config_encoding_video_bitrate");
+        $audio_bitrate = bitmovin_getParameter("config_encoding_audio_bitrate");
 
-        $encoding_video_src = getParameter("config_encoding_video_src");
+        $encoding_video_src = bitmovin_getParameter("config_encoding_video_src");
 
-        $ftp_server = getParameter("config_ftp_server");
-        $ftp_usr = getParameter("config_ftp_usr");
-        $ftp_pw = getParameter("config_ftp_pw");
+        $ftp_server = bitmovin_getParameter("config_ftp_server");
+        $ftp_usr = bitmovin_getParameter("config_ftp_usr");
+        $ftp_pw = bitmovin_getParameter("config_ftp_pw");
 
-        $prefix = getParameter("config_s3_prefix");
-        $bucket = getParameter("config_s3_bucket");
-        $access_key = getParameter("config_s3_access_key");
-        $secret_key = getParameter("config_s3_secret_key");
+        $aws_name = bitmovin_getParameter("config_s3_name");
+        $bucket = bitmovin_getParameter("config_s3_bucket");
+        $access_key = bitmovin_getParameter("config_s3_access_key");
+        $secret_key = bitmovin_getParameter("config_s3_secret_key");
 
         update_post_meta($post_id, "_config_encoding_profile", $encoding_profile);
         update_post_meta($post_id, "_config_encoding_width", $video_width);
@@ -598,40 +580,40 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_ftp_usr", $ftp_usr);
         update_post_meta($post_id, "_config_ftp_pw", $ftp_pw);
 
-        update_post_meta($post_id, "_config_s3_prefix", $prefix);
+        update_post_meta($post_id, "_config_s3_name", $aws_name);
         update_post_meta($post_id, "_config_s3_bucket", $bucket);
         update_post_meta($post_id, "_config_s3_access_key", $access_key);
         update_post_meta($post_id, "_config_s3_secret_key", $secret_key);
 
-        $dash_url = getParameter("config_src_dash");
-        $hls_url = getParameter("config_src_hls");
-        $prog_url = getParameter("config_src_prog");
-        $poster_url = getParameter("config_src_poster");
+        $dash_url = bitmovin_getParameter("config_src_dash");
+        $hls_url = bitmovin_getParameter("config_src_hls");
+        $prog_url = bitmovin_getParameter("config_src_prog");
+        $poster_url = bitmovin_getParameter("config_src_poster");
 
         update_post_meta($post_id, "_config_src_dash", $dash_url);
         update_post_meta($post_id, "_config_src_hls", $hls_url);
         update_post_meta($post_id, "_config_src_prog", $prog_url);
         update_post_meta($post_id, "_config_src_poster", $poster_url);
 
-        $player_channel = getParameter("config_player_channel");
-        $player_version = getParameter("config_player_version");
+        $player_channel = bitmovin_getParameter("config_player_channel");
+        $player_version = bitmovin_getParameter("config_player_version");
 
         update_post_meta($post_id, "_config_player_channel", $player_channel);
         update_post_meta($post_id, "_config_player_version", $player_version);
 
-        $version_link = getParameter("config_version_link");
+        $version_link = bitmovin_getParameter("config_version_link");
 
         update_post_meta($post_id, "_config_version_link", $version_link);
 
-        $widevine_la_url = getParameter("config_src_drm_widevine_la_url");
-        $playready_la_url = getParameter("config_src_drm_playready_la_url");
-        $playready_customData = getParameter("config_src_drm_playready_customData");
-        $access_la_url = getParameter("config_src_drm_access_la_url");
-        $access_authToken = getParameter("config_src_drm_access_authToken");
-        $primetime_la_url = getParameter("config_src_drm_primetime_la_url");
-        $primetime_indivURL = getParameter("config_src_drm_primetime_indivURL");
-        $fairplay_la_url = getParameter("config_src_drm_fairplay_la_url");
-        $fairplay_certificateURL = getParameter("config_src_drm_fairplay_certificateURL");
+        $widevine_la_url = bitmovin_getParameter("config_src_drm_widevine_la_url");
+        $playready_la_url = bitmovin_getParameter("config_src_drm_playready_la_url");
+        $playready_customData = bitmovin_getParameter("config_src_drm_playready_customData");
+        $access_la_url = bitmovin_getParameter("config_src_drm_access_la_url");
+        $access_authToken = bitmovin_getParameter("config_src_drm_access_authToken");
+        $primetime_la_url = bitmovin_getParameter("config_src_drm_primetime_la_url");
+        $primetime_indivURL = bitmovin_getParameter("config_src_drm_primetime_indivURL");
+        $fairplay_la_url = bitmovin_getParameter("config_src_drm_fairplay_la_url");
+        $fairplay_certificateURL = bitmovin_getParameter("config_src_drm_fairplay_certificateURL");
 
         update_post_meta($post_id, "_config_src_drm_widevine_la_url", $widevine_la_url);
         update_post_meta($post_id, "_config_src_drm_playready_la_url", $playready_la_url);
@@ -643,16 +625,16 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_src_drm_fairplay_la_url", $fairplay_la_url);
         update_post_meta($post_id, "_config_src_drm_fairplay_certificateURL", $fairplay_certificateURL);
 
-        $client = getParameter("config_advertising_client");
-        $admessage = getParameter("config_advertising_admessage");
-        $schedule1Offset = getParameter("config_advertising_schedule1_offset");
-        $schedule1Tag = getParameter("config_advertising_schedule1_tag");
-        $schedule2Offset = getParameter("config_advertising_schedule2_offset");
-        $schedule2Tag = getParameter("config_advertising_schedule2_tag");
-        $schedule3Offset = getParameter("config_advertising_schedule3_offset");
-        $schedule3Tag = getParameter("config_advertising_schedule3_tag");
-        $schedule4Offset = getParameter("config_advertising_schedule4_offset");
-        $schedule4Tag = getParameter("config_advertising_schedule4_tag");
+        $client = bitmovin_getParameter("config_advertising_client");
+        $admessage = bitmovin_getParameter("config_advertising_admessage");
+        $schedule1Offset = bitmovin_getParameter("config_advertising_schedule1_offset");
+        $schedule1Tag = bitmovin_getParameter("config_advertising_schedule1_tag");
+        $schedule2Offset = bitmovin_getParameter("config_advertising_schedule2_offset");
+        $schedule2Tag = bitmovin_getParameter("config_advertising_schedule2_tag");
+        $schedule3Offset = bitmovin_getParameter("config_advertising_schedule3_offset");
+        $schedule3Tag = bitmovin_getParameter("config_advertising_schedule3_tag");
+        $schedule4Offset = bitmovin_getParameter("config_advertising_schedule4_offset");
+        $schedule4Tag = bitmovin_getParameter("config_advertising_schedule4_tag");
 
         update_post_meta($post_id, "_config_advertising_client", $client);
         update_post_meta($post_id, "_config_advertising_admessage", $admessage);
@@ -666,26 +648,26 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_advertising_schedule4_tag", $schedule4Tag);
 
 
-        $startupMode = getParameter("config_src_vr_startupMode");
-        $startPosition = getParameter("config_src_vr_startPosition");
-        $initialRotation = getParameter("config_src_vr_initialRotation");
-        $initialRotateRate = getParameter("config_src_vr_initialRotateRate");
+        $startupMode = bitmovin_getParameter("config_src_vr_startupMode");
+        $startPosition = bitmovin_getParameter("config_src_vr_startPosition");
+        $initialRotation = bitmovin_getParameter("config_src_vr_initialRotation");
+        $initialRotateRate = bitmovin_getParameter("config_src_vr_initialRotateRate");
 
         update_post_meta($post_id, "_config_src_vr_startupMode", $startupMode);
         update_post_meta($post_id, "_config_src_vr_startPosition", $startPosition);
         update_post_meta($post_id, "_config_src_vr_initialRotation", $initialRotation);
         update_post_meta($post_id, "_config_src_vr_initialRotateRate", $initialRotateRate);
 
-        $width = getParameter("config_style_width");
-        $height = getParameter("config_style_height");
-        $aspectRatio = getParameter("config_style_aspectRatio");
+        $width = bitmovin_getParameter("config_style_width");
+        $height = bitmovin_getParameter("config_style_height");
+        $aspectRatio = bitmovin_getParameter("config_style_aspectRatio");
 
         update_post_meta($post_id, "_config_style_width", $width);
         update_post_meta($post_id, "_config_style_height", $height);
         update_post_meta($post_id, "_config_style_aspectRatio", $aspectRatio);
 
-        $customSource = getParameter("config_custom_source");
-        $customConf = getParameter("config_custom_conf");
+        $customSource = bitmovin_getParameter("config_custom_source");
+        $customConf = bitmovin_getParameter("config_custom_conf");
 
         update_post_meta($post_id, "_config_custom_source", $customSource);
         update_post_meta($post_id, "_config_custom_conf", $customConf);
@@ -695,14 +677,14 @@ function bitmovin_player_save_configuration($post_id)
     }
 }
 
-function getParameter($param)
+function bitmovin_bitmovin_getParameter($param)
 {
     $param = (isset($_POST[$param]) ? $_POST[$param] : '');
     return strip_tags(json_encode($param));
 }
 
-add_shortcode("bitmovin_player", "generate_player");
-function generate_player($id)
+add_shortcode("bitmovin_player", "bitmovin_generate_player");
+function bitmovin_generate_player($id)
 {
     extract(shortcode_atts(array(
         'id' => ''
@@ -713,10 +695,11 @@ function generate_player($id)
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
     }
 
-    $advancedConfig = getAdvancedConfig($id);
+    /* use advanced config before using player config */
+    $advancedConfig = bm_getAdvancedConfig($id);
     if ($advancedConfig == 0)
     {
-        getPlayerConfig($id);
+        bm_getPlayerConfig($id);
     }
 
     $html = "<div id='bitmovin-player'></div>\n";
@@ -727,14 +710,14 @@ function generate_player($id)
     $html .= "var conf = {\n";
     $html .= "key: '" . $playerKey ."',\n";
     $html .= "source: {\n";
-    $html .= getVideoConfig($id);
+    $html .= bm_getVideoConfig($id);
 
-    $drm = getDrmConfig($id);
+    $drm = bm_getDrmConfig($id);
     if ($drm != "") {
         $html .= ",drm: " . $drm . "\n";
     }
 
-    $vr = getVrConfig($id);
+    $vr = bm_getVrConfig($id);
     if ($vr != "") {
         $html .= ",vr: " . $vr . "\n";
     }
@@ -746,12 +729,12 @@ function generate_player($id)
 
     $html .= "}\n";
 
-    $ads = getAdsConfig($id);
+    $ads = bm_getAdsConfig($id);
     if ($ads != "") {
         $html .= ",advertising: " . $ads . "\n";
     }
 
-    $style = getStyleConfig($id);
+    $style = bm_getStyleConfig($id);
     if ($style != "") {
         $html .= ",style: " . $style . "\n";
     }
@@ -775,7 +758,7 @@ function generate_player($id)
     return $html;
 }
 
-function getVideoConfig($id) {
+function bm_getVideoConfig($id) {
     $dash = json_decode(get_post_meta($id, "_config_src_dash", true));
     $hls = json_decode(get_post_meta($id, "_config_src_hls", true));
     $prog = json_decode(get_post_meta($id, "_config_src_prog", true));
@@ -812,7 +795,7 @@ function getVideoConfig($id) {
     return $video;
 }
 
-function getPlayerConfig($id)
+function bm_getPlayerConfig($id)
 {
     $player_channel = json_decode(get_post_meta($id, "_config_player_channel", true));
     $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
@@ -834,7 +817,7 @@ function getPlayerConfig($id)
     wp_enqueue_script('bitmovin_player_core');
 }
 
-function getAdvancedConfig($id)
+function bm_getAdvancedConfig($id)
 {
     $version_link = json_decode(get_post_meta($id, "_config_version_link", true));
     if ($version_link != "")
@@ -846,7 +829,7 @@ function getAdvancedConfig($id)
     return 0;
 }
 
-function getDrmConfig($id)
+function bm_getDrmConfig($id)
 {
     $widevine_la_url = json_decode(get_post_meta($id, "_config_src_drm_widevine_la_url", true));
     $playready_la_url = json_decode(get_post_meta($id, "_config_src_drm_playready_la_url", true));
@@ -917,7 +900,7 @@ function getDrmConfig($id)
     return $drm;
 }
 
-function getAdsConfig($id)
+function bm_getAdsConfig($id)
 {
     $client = json_decode(get_post_meta($id, "_config_advertising_client", true));
 
@@ -994,7 +977,7 @@ function getAdsConfig($id)
     return $ads;
 }
 
-function getVrConfig($id)
+function bm_getVrConfig($id)
 {
     $startupMode = json_decode(get_post_meta($id, "_config_src_vr_startupMode", true));
     $startPosition = json_decode(get_post_meta($id, "_config_src_vr_startPosition", true));
@@ -1023,7 +1006,7 @@ function getVrConfig($id)
     return $vr;
 }
 
-function getStyleConfig($id)
+function bm_getStyleConfig($id)
 {
     $width = json_decode(get_post_meta($id, "_config_style_width", true));
     $height = json_decode(get_post_meta($id, "_config_style_height", true));
