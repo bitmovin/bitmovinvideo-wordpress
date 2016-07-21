@@ -81,7 +81,6 @@ function bitmovin_encoding_service($apiKey) {
         sleep(1);
     } while($job->status != Job::STATUS_FINISHED);
 
-    $outputConfig = 0;
     if ($_POST['output'] == "ftp")
     {
         $outputConfig = new FtpOutputConfig();
@@ -111,5 +110,3 @@ function bitmovin_encoding_service($apiKey) {
         $job->transfer($output);
     }
 }
-
-?>
