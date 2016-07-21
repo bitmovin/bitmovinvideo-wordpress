@@ -152,7 +152,7 @@ $j(document).ready(function() {
                         $j('#config_src_hls').val(ftp_server + "/video_0_" + video_bitrate + "_hls.m3u8");
                     },
                     error: function(error) {
-                        console.log("Error");
+                        console.log(error.responseJSON.message);
                     }
                 });
                 /* Kein Neuladen der Website */
