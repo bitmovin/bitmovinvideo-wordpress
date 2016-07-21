@@ -120,7 +120,7 @@ $j(document).ready(function() {
         if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && audio_bitrate != "" &&
             video_src != "")
         {
-            if ((ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (access_key != "" && secret_key != "" && bucket != "" && aws_name != "" && region != ""))
+            if ((output == "ftp" && ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (output == "s3" && access_key != "" && secret_key != "" && bucket != "" && aws_name != "" && region != ""))
             {
                 var url = bitmovin_script.plugin_url + "bitcoding.php";
                 console.log(url);
@@ -161,10 +161,14 @@ $j(document).ready(function() {
                 /* Kein Neuladen der Website */
                 return false;
             }
+            else {
+                alert("You have to fill out the selected Output Configuration to create an correct output.");
+                return false;
+            }
         }
         else
         {
-            alert("You have to fill out the Uploads/Encoding form to create an output.");
+            alert("You have to fill out the Uploads/Encoding form to encode your video.");
             return false;
         }
     });
