@@ -91,6 +91,7 @@ $j(document).ready(function() {
         var secret_key;
         var bucket;
         var aws_name;
+        var region;
 
         /* Represents ftp or s3 */
         var output;
@@ -109,6 +110,7 @@ $j(document).ready(function() {
             access_key = document.getElementById('config_s3_access_key').value;
             secret_key = document.getElementById('config_s3_secret_key').value;
             bucket = document.getElementById('config_s3_bucket').value;
+            region = document.getElementById('config_s3_region').value;
         }
         else
         {
@@ -118,7 +120,7 @@ $j(document).ready(function() {
         if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && audio_bitrate != "" &&
             video_src != "")
         {
-            if ((ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (access_key != "" && secret_key != "" && bucket != "" && aws_name != ""))
+            if ((ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (access_key != "" && secret_key != "" && bucket != "" && aws_name != "" && region != ""))
             {
                 var url = bitmovin_script.plugin_url + "bitcoding.php";
                 console.log(url);
@@ -141,7 +143,8 @@ $j(document).ready(function() {
                         access_key:     access_key,
                         secret_key:     secret_key,
                         bucket:         bucket,
-                        aws_name:       aws_name
+                        aws_name:       aws_name,
+                        region:         region
                     },
                     beforeSend: function() {
                         $j('#response').html("<p>Encoding...</p><img src='images/loading.gif' />");
@@ -179,6 +182,7 @@ function checkOutputChoice()
         document.getElementById('config_s3_secret_key').disabled = true;
         document.getElementById('config_s3_bucket').disabled = true;
         document.getElementById('config_s3_name').disabled = true;
+        document.getElementById('config_s3_region').disabled = true;
     }
     else
     {
@@ -190,6 +194,7 @@ function checkOutputChoice()
         document.getElementById('config_s3_secret_key').disabled = false;
         document.getElementById('config_s3_bucket').disabled = false;
         document.getElementById('config_s3_name').disabled = false;
+        document.getElementById('config_s3_region').disabled = false;
     }
 }
 

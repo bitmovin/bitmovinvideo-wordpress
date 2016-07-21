@@ -261,6 +261,7 @@ function bitmovin_getEncodingTable($id)
     $bucket = get_post_meta($id, "_config_s3_bucket", true);
     $access_key = get_post_meta($id, "_config_s3_access_key", true);
     $secret_key = get_post_meta($id, "_config_s3_secret_key", true);
+    $region = get_post_meta($id, "_config_s3_region", true);
 
     $encodingTable = '<table class="wp-list-table widefat fixed striped">';
     $encodingTable .= "<tr><td colspan='2'>Encoding Configuration</td></tr>";
@@ -293,6 +294,7 @@ function bitmovin_getEncodingTable($id)
     $encodingTable .= getTableRowInput("Access Key", "config_s3_access_key", $access_key, "yourAWSAccessKey");
     $encodingTable .= getTableRowPWInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
     $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");
+    $encodingTable .= getTableRowSelect("Region", "config_s3_region", $region, array("us-east-1", "us-west-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "sa-east-1", "cn-north-1", "us-gov-west-1"));
 
     //class="button button-primary button-large"
     $encodingTable .= '<tr><td></td></tr><button id="insert-media-button" class="button insert-media add_media" type="button" onclick="open_media_encoding_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
@@ -566,6 +568,7 @@ function bitmovin_player_save_configuration($post_id)
         $bucket = bitmovin_getParameter("config_s3_bucket");
         $access_key = bitmovin_getParameter("config_s3_access_key");
         $secret_key = bitmovin_getParameter("config_s3_secret_key");
+        $region = bitmovin_getParameter("config_s3_region");
 
         update_post_meta($post_id, "_config_encoding_profile", $encoding_profile);
         update_post_meta($post_id, "_config_encoding_width", $video_width);
@@ -583,6 +586,7 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_s3_bucket", $bucket);
         update_post_meta($post_id, "_config_s3_access_key", $access_key);
         update_post_meta($post_id, "_config_s3_secret_key", $secret_key);
+        update_post_meta($post_id, "_config_s3_region", $region);
 
         $dash_url = bitmovin_getParameter("config_src_dash");
         $hls_url = bitmovin_getParameter("config_src_hls");

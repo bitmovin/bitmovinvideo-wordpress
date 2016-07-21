@@ -101,7 +101,7 @@ function bitmovin_encoding_service($apiKey) {
         $outputConfig->accessKey    = $_POST['access_key'];
         $outputConfig->secretKey    = $_POST['secret_key'];
         $outputConfig->bucket       = $_POST['bucket'];
-        $outputConfig->region       = AwsRegion::EU_WEST_1;
+        $outputConfig->region       = $_POST['region'];
         $outputConfig->makePublic   = false;
 
         $output = Output::create($outputConfig);
