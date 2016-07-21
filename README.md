@@ -1,4 +1,4 @@
-# Bitmovin Wordpress Plugin
+# Bitmovin Video Wordpress Plugin
 
 ![Latest version](https://img.shields.io/badge/latest-0.5.0-green.svg)
 ![Wordpress 4.2](https://img.shields.io/badge/wordpress-4.2.x-blue.svg)
