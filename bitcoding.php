@@ -19,7 +19,6 @@ use bitcodin\ManifestTypes;
 use bitcodin\Output;
 use bitcodin\FtpOutputConfig;
 use bitcodin\S3OutputConfig;
-use bitcodin\AwsRegion;
 
 require_once __DIR__.'/vendor/autoload.php';
 
