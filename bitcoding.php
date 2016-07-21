@@ -19,6 +19,7 @@ use bitcodin\ManifestTypes;
 use bitcodin\Output;
 use bitcodin\FtpOutputConfig;
 use bitcodin\S3OutputConfig;
+use bitcodin\AwsRegion;
 
 require_once __DIR__.'/vendor/autoload.php';
 
@@ -80,6 +81,7 @@ function bitmovin_encoding_service($apiKey) {
         sleep(1);
     } while($job->status != Job::STATUS_FINISHED);
 
+    $outputConfig = 0;
     if ($_POST['output'] == "ftp")
     {
         $outputConfig = new FtpOutputConfig();
@@ -88,22 +90,26 @@ function bitmovin_encoding_service($apiKey) {
         $outputConfig->username = $_POST['ftp_usr'];
         $outputConfig->password = $_POST['ftp_pw'];
         $outputConfig->createSubDirectory = false;
+
+        $output = Output::create($outputConfig);
+
+        // TRANSFER JOB OUTPUT
+        $job->transfer($output);
     }
     else    {
         $outputConfig = new S3OutputConfig();
-        $outputConfig->name         = "My Wordpress S3 Output";
+        $outputConfig->name         = $_POST['aws_name'];
         $outputConfig->accessKey    = $_POST['access_key'];
         $outputConfig->secretKey    = $_POST['secret_key'];
         $outputConfig->bucket       = $_POST['bucket'];
-        $outputConfig->prefix       = $_POST['prefix'];
+        $outputConfig->region       = AwsRegion::EU_WEST_1;
         $outputConfig->makePublic   = false;
-        $outputConfig->createSubDirectory = false;
+
+        $output = Output::create($outputConfig);
+
+        // TRANSFER JOB OUTPUT
+        $job->transfer($output);
     }
-
-    $output = Output::create($outputConfig);
-
-    // TRANSFER JOB OUTPUT
-    $job->transfer($output);
 }
 
 ?>
