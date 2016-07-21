@@ -90,7 +90,7 @@ $j(document).ready(function() {
         var access_key;
         var secret_key;
         var bucket;
-        var prefix;
+        var aws_name;
 
         /* Represents ftp or s3 */
         var output;
@@ -105,10 +105,10 @@ $j(document).ready(function() {
         else if (document.getElementsByName("output")[1].checked)
         {
             output = "s3";
+            aws_name = document.getElementById('config_s3_name').value;
             access_key = document.getElementById('config_s3_access_key').value;
             secret_key = document.getElementById('config_s3_secret_key').value;
             bucket = document.getElementById('config_s3_bucket').value;
-            prefix = document.getElementById('config_s3_prefix').value;
         }
         else
         {
@@ -118,7 +118,7 @@ $j(document).ready(function() {
         if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && audio_bitrate != "" &&
             video_src != "")
         {
-            if ((ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (access_key != "" && secret_key != "" && bucket != "" && prefix != ""))
+            if ((ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (access_key != "" && secret_key != "" && bucket != "" && aws_name != ""))
             {
                 var url = bitmovin_script.plugin_url + "bitcoding.php";
                 console.log(url);
@@ -141,12 +141,13 @@ $j(document).ready(function() {
                         access_key:     access_key,
                         secret_key:     secret_key,
                         bucket:         bucket,
-                        prefix:         prefix
+                        aws_name:       aws_name
                     },
                     beforeSend: function() {
                         $j('#response').html("<p>Encoding...</p><img src='images/loading.gif' />");
                     },
                     success: function (content) {
+                        console.log(content);
                         $j('#response').html("<p>Encoding finished</p>");
                         $j('#config_src_hls').val(ftp_server + "/video_0_" + video_bitrate + "_hls.m3u8");
                     },
@@ -177,7 +178,7 @@ function checkOutputChoice()
         document.getElementById('config_s3_access_key').disabled = true;
         document.getElementById('config_s3_secret_key').disabled = true;
         document.getElementById('config_s3_bucket').disabled = true;
-        document.getElementById('config_s3_prefix').disabled = true;
+        document.getElementById('config_s3_name').disabled = true;
     }
     else
     {
@@ -188,7 +189,7 @@ function checkOutputChoice()
         document.getElementById('config_s3_access_key').disabled = false;
         document.getElementById('config_s3_secret_key').disabled = false;
         document.getElementById('config_s3_bucket').disabled = false;
-        document.getElementById('config_s3_prefix').disabled = false;
+        document.getElementById('config_s3_name').disabled = false;
     }
 }
 
