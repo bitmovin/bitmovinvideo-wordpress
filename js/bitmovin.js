@@ -151,10 +151,17 @@ $j(document).ready(function() {
                     },
                     success: function (content) {
                         console.log(content);
-                        $j('#response').html("<p>Encoding finished</p>");
-                        $j('#config_src_hls').val(ftp_server + "/video_0_" + video_bitrate + "_hls.m3u8");
+                        if (content == "")
+                        {
+                            $j('#response').html("<p>Encoding finished</p>");
+                            $j('#config_src_hls').val(ftp_server + "/video_0_" + video_bitrate + "_hls.m3u8");
+                        }
+                        else {
+                            $j('#response').html("<img src='images/error.png' /><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
+                        }
                     },
                     error: function(error) {
+                        $j('#response').html("<img src='images/error.png' /><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
                         console.log(error.responseJSON.message);
                     }
                 });
