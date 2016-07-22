@@ -95,15 +95,14 @@ function bitmovin_player_column($column, $post_id)
 add_action('add_meta_boxes', 'bitmovin_video_meta_box');
 function bitmovin_video_meta_box()
 {
-    add_meta_box("bitmovin_player_configuration_encoding", "Upload/Encoding", 'bitmovin_player_configuration_encoding', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_video", "Video", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_player", "Player", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_player", "Version", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_drm", "DRM", 'bitmovin_player_configuration_drm', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_ads", "Ads", 'bitmovin_player_configuration_ads', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_vr", "VR", 'bitmovin_player_configuration_vr', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_style", "Style", 'bitmovin_player_configuration_style', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Custom", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_advanced", "Advanced", 'bitmovin_player_configuration_advanced', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_encoding", "Encoding", 'bitmovin_player_configuration_encoding', "bitmovin_player", "normal", "high");
 
     add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
 }
@@ -140,20 +139,7 @@ function bitmovin_player_configuration_player()
 
     $html = '<div class="configSection">';
     $html .= '<div id="playerConfig">';
-    $html .= bitmovin_getPlayerTable($post->ID);
-    $html .= '</div>';
-    $html .= '</div>';
-
-    echo $html;
-}
-
-function bitmovin_player_configuration_advanced()
-{
-    global $post;
-
-    $html = '<div class="configSection">';
-    $html .= '<div id="video">';
-    $html .= bitmovin_getAdvancedTable($post->ID);
+    $html .= bitmovin_getVersionTable($post->ID);
     $html .= '</div>';
     $html .= '</div>';
 
@@ -269,7 +255,7 @@ function bitmovin_getEncodingTable($id)
     $encodingTable .= getTableRowInput("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256000 Bits/s");
 
     $encodingTable .= "<tr><td colspan='2'>Video Source</td></tr>";
-    $encodingTable .= '<tr><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>';
+    $encodingTable .= '<tr><th></th><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>';
     $encodingTable .= getTableRowInput("Video URL", "config_encoding_video_src", $encoding_video_src, "http://localhost/wordpress/wp-content/uploads/video.mkv");
 
     $encodingTable .= "<tr><td colspan='2'>Output</td></tr>";
@@ -317,22 +303,30 @@ function bitmovin_getVideoTable($id)
     $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
 
-    $videoTable .= '<tr><td></td></tr><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Video from Mediathek</button></td></tr>';
+    $videoTable .= '<tr><td></td></tr><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select MP4 from Mediathek</button></td></tr>';
 
     $videoTable .= "</table>";
 
     return $videoTable;
 }
 
-function bitmovin_getPlayerTable($id)
+function bitmovin_getVersionTable($id)
 {
     $player_channel = get_post_meta($id, "_config_player_channel", true);
     $player_version = get_post_meta($id, "_config_player_version", true);
+    $version_link = get_post_meta($id, "_config_version_link", true);
 
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
-    $playerTable .= "<tr><td colspan='2'>Player Channels/Versions</td></tr>";
+    $playerTable .= "<tr><td colspan='2'>Player Version Configuration</td></tr>";
     $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(""));
     $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
+
+    $playerTable .= "<tr><td colspan='2'>Advanced</td></tr>";
+    $playerTable .= "<tr><td><p>To provide our users the right version of our player, we have four public player channels available.
+    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
+    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
+    $playerTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
+
     $playerTable .= "</table>";
 
     return $playerTable;
@@ -472,21 +466,12 @@ function bitmovin_getCustomTable($id)
     return $customTable;
 }
 
-function bitmovin_getAdvancedTable($id)
-{
-    $version_link = get_post_meta($id, "_config_version_link", true);
-
-    $advancedTable = "<table></table><tr><td><p>To provide our users the right version of our player, we have four public player channels available.
-    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
-    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
-    $advancedTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
-    $advancedTable .= "</table>";
-
-    return $advancedTable;
-}
-
 function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
+    if ($propertyName == "config_version_link")
+    {
+        return "<tr><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
+    }
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
 }
 
@@ -697,7 +682,7 @@ function bitmovin_generate_player($id)
     $advancedConfig = bm_getAdvancedConfig($id);
     if ($advancedConfig == 0)
     {
-        bm_getPlayerConfig($id);
+        bm_getVersionConfig($id);
     }
 
     $html = "<div id='bitmovin-player'></div>\n";
@@ -793,7 +778,7 @@ function bm_getVideoConfig($id) {
     return $video;
 }
 
-function bm_getPlayerConfig($id)
+function bm_getVersionConfig($id)
 {
     $player_channel = json_decode(get_post_meta($id, "_config_player_channel", true));
     $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
