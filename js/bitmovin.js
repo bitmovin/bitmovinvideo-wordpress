@@ -282,7 +282,7 @@ function open_media_progressive_video()
         button: {
             text: "Select Video for Embedding"
         },
-        library: { type: "video"},
+        library: { type: "video/mp4" },
         multiple: false
     });
 
@@ -290,18 +290,8 @@ function open_media_progressive_video()
 
         /* get video url and insert into right video src input */
         var attachment = media_uploader.state().get('selection').first().toJSON();
-        if (attachment.subtype == "mpd")
-        {
-            $j('#config_src_dash').val(attachment.url);
-        }
-        else if (attachment.subtype == "m3u8")
-        {
-            $j('#config_src_hls').val(attachment.url);
-        }
-        else if (attachment.subtype == "mp4")
-        {
-            $j('#config_src_prog').val(attachment.url);
-        }
+        $j('#config_src_prog').val(attachment.url);
+
         /* leave me here for getting additional video properties */
         //for ( var image_property in attachment ) {
 
