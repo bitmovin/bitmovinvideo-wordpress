@@ -238,7 +238,7 @@ function bitmovin_getEncodingTable($id)
 
     $encoding_video_src = get_post_meta($id, "_config_encoding_video_src", true);
 
-    $ftp_server = get_post_meta($id, "_config_ftp_server", true);
+    /*$ftp_server = get_post_meta($id, "_config_ftp_server", true);
     $ftp_usr = get_post_meta($id, "_config_ftp_usr", true);
     $ftp_pw = get_post_meta($id, "_config_ftp_pw", true);
 
@@ -246,7 +246,7 @@ function bitmovin_getEncodingTable($id)
     $bucket = get_post_meta($id, "_config_s3_bucket", true);
     $access_key = get_post_meta($id, "_config_s3_access_key", true);
     $secret_key = get_post_meta($id, "_config_s3_secret_key", true);
-    $region = get_post_meta($id, "_config_s3_region", true);
+    $region = get_post_meta($id, "_config_s3_region", true);*/
 
     $encodingTable = '<table class="wp-list-table widefat fixed striped">';
     $encodingTable .= "<tr><td colspan='2'>Encoding Configuration</td></tr>";
@@ -270,7 +270,7 @@ function bitmovin_getEncodingTable($id)
     $encodingTable .= "</form>";
     $encodingTable .= "</td></tr>";
 
-    $encodingTable .= "<tr><td colspan='2'>FTP Configuration</td></tr>";
+    /*$encodingTable .= "<tr><td colspan='2'>FTP Configuration</td></tr>";
     $encodingTable .= getTableRowInput("FTP Server", "config_ftp_server", $ftp_server, "ftp://path/to/upload/directory/myEncodedVideo");
     $encodingTable .= getTableRowInput("FTP Username", "config_ftp_usr", $ftp_usr, "FTP Username");
     $encodingTable .= getTableRowPWInput("FTP Password", "config_ftp_pw", $ftp_pw, "FTP Password");
@@ -281,7 +281,7 @@ function bitmovin_getEncodingTable($id)
     $encodingTable .= getTableRowPWInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
     $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");
     $encodingTable .= getTableRowSelect("Region", "config_s3_region", $region, array("us-east-1", "us-west-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "sa-east-1", "cn-north-1", "us-gov-west-1"));
-
+*/
     //class="button button-primary button-large"
     $encodingTable .= '<tr><td><button id="bEncode" class="button" name="bEncode">Encode Uploaded Video</button></td>';
     $encodingTable .= '<td><div id="response"></div></td>';
@@ -687,6 +687,8 @@ function bitmovin_generate_player($id)
         'id' => ''
     ), $id));
 
+    $ftp = "FTP-Server: " + get_option('bitmovin_ftp_server');
+    echo $ftp;
     $playerKey = get_option('bitmovin_player_key');
     if($playerKey == "") {
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
@@ -810,7 +812,6 @@ function bm_getVersionConfig($id)
     else {
         $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/{$player_version}/bitdash.min.js";
     }
-    echo $src;
     wp_register_script('bitmovin_player_core', $src);
     wp_enqueue_script('bitmovin_player_core');
 }
@@ -1053,6 +1054,13 @@ function bitmovin_plugin_display_settings()
 {
     $apiKey = get_option('bitmovin_api_key');
     $playerKey = get_option('bitmovin_player_key');
+
+    $ftp_server = get_option('bitmovin_ftp_server');
+    $ftp_usr = get_option('bitmovin_ftp_usr');
+    $ftp_pw = get_option('bitmovin_ftp_pw');
+
+
+
     $image_url = plugins_url('images/info.png', __FILE__);
 
     $html = '<div class="wrap">
@@ -1075,6 +1083,33 @@ function bitmovin_plugin_display_settings()
                 <input type="button" class="button" value="Save" onclick="checkApiKey()"/>
             </p>
             </form>
+            
+            <form id="bitmovinFTPSettings" method="post" name="options" action="options.php">
+                <h2>Bitmovin FTP Output Configuration</h2>'. wp_nonce_field('update-options') .'
+                <table>
+                    <tr><th>FTP Server</th><td><input type="text" id="config_ftp_server" value="' . $ftp_server. '" placeholder="ftp://path/to/upload/directory/myEncodedVideo"/></td></tr>
+                    <tr><th>FTP Username</th><td><input type="text" id="config_ftp_usr" value="' . $ftp_usr. '" placeholder="FTP Username"/></td></tr>
+                    <tr><th>FTP Password</th><td><input type="text" id="config_ftp_pw" value="' . $ftp_pw. '" placeholder="FTP Password"/></td></tr>
+                </table>
+                <p class="submit">
+                    <input type="hidden" name="action" value="update" />
+                    <!--<input id="bitmovin_ftp" type="hidden" name="bitmovin_player_key" size="50" value="' . $playerKey. '"/>
+                    <input type="hidden" name="page_options" value="bitmovin_player_key,bitmovin_api_key" />
+                    -->
+                    <input type="hidden" name="page_options" value="bitmovin_ftp_server" />
+                    <input type="submit" class="button" value="Save FTP Configuration"/>
+                </p>
+            </form>
+            
+     
+
+    <!--$encodingTable .= "<tr><td colspan=\'2\'>AWS (Amazon Web Services) Configuration</td></tr>";
+    $encodingTable .= getTableRowInput("Name", "config_s3_name", $aws_name, "Your AWS Output Name");
+    $encodingTable .= getTableRowInput("Access Key", "config_s3_access_key", $access_key, "yourAWSAccessKey");
+    $encodingTable .= getTableRowPWInput("Secret Key", "config_s3_secret_key", $secret_key, "yourAWSSecretKey");
+    $encodingTable .= getTableRowInput("Bucket", "config_s3_bucket", $bucket, "yourBucketName");
+    $encodingTable .= getTableRowSelect("Region", "config_s3_region", $region, array("us-east-1", "us-west-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "sa-east-1", "cn-north-1", "us-gov-west-1"));
+    -->
 
         </div>';
     echo $html;
