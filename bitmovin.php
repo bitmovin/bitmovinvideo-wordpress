@@ -27,10 +27,14 @@ add_action('admin_enqueue_scripts', 'bitmovin_admin_assets');
 function bitmovin_admin_assets()
 {
     wp_enqueue_media();
+
     wp_register_script('bitmovin_script', plugins_url('js/bitmovin.js', __FILE__));
     wp_enqueue_script('bitmovin_script');
-    wp_localize_script( 'bitmovin_script', 'bitmovin_script', array( 'plugin_url' => plugins_url( 'bitmovin/'),
-        'apiKey' => get_option('bitmovin_api_key')));
+    wp_localize_script( 'bitmovin_script', 'bitmovin_script', array( 'dest_encoding_script' => plugins_url( 'bitcoding.php', __FILE__),
+        'apiKey' => get_option('bitmovin_api_key'), 'error_image' => plugins_url( 'images/error.png', __FILE__), 'load_image' => plugins_url('images/ajax-loader.gif', __FILE__)));
+
+    wp_register_script('player_script', 'https://bitmovin-a.akamaihd.net/bitmovin-player/stable/5/bitdash.min.js');
+    wp_enqueue_script('player_script');
 
     wp_register_style('bitmovin_style', plugins_url('css/bitstyle.css', __FILE__));
     wp_enqueue_style('bitmovin_style');
@@ -41,7 +45,7 @@ function bitmovin_register()
 {
     $labels = array(
         'name' => __('Videos', 'bitmovin_player'),
-        'singular_name' => __('Video', 'bitmovin_player'),
+        'singular_name' => __('Videos', 'bitmovin_player'),
         'menu_name' => __('Bitmovin', 'bitmovin_player'),
         'add_new' => __('Add New Video', 'bitmovin_player'),
         'add_new_item' => __('Add New Video', 'bitmovin_player'),
@@ -249,10 +253,10 @@ function bitmovin_getEncodingTable($id)
 
     $encodingTable .= "<tr><td colspan='2'>General</td></tr>";
     $encodingTable .= getTableRowInput("Encoding Profile", "config_encoding_profile", $encoding_profile, "My first Wordpress Encoding Profile");
-    $encodingTable .= getTableRowInput("Video Height", "config_encoding_height", $video_height, "e.g. 720");
-    $encodingTable .= getTableRowInput("Video Width", "config_encoding_width", $video_width, "e.g. 1280");
-    $encodingTable .= getTableRowInput("Video Bitrate", "config_encoding_video_bitrate", $video_bitrate, "e.g. 1024000 Bits/s");
-    $encodingTable .= getTableRowInput("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256000 Bits/s");
+    $encodingTable .= getTableRowInputNumber("Video Height", "config_encoding_height", $video_height, "e.g. 720");
+    $encodingTable .= getTableRowInputNumber("Video Width", "config_encoding_width", $video_width, "e.g. 1280");
+    $encodingTable .= getTableRowInputNumber("Video Bitrate", "config_encoding_video_bitrate", $video_bitrate, "e.g. 1024 kbps");
+    $encodingTable .= getTableRowInputNumber("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256 kbps");
 
     $encodingTable .= "<tr><td colspan='2'>Video Source</td></tr>";
     $encodingTable .= '<tr><th></th><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>';
@@ -279,7 +283,7 @@ function bitmovin_getEncodingTable($id)
     $encodingTable .= getTableRowSelect("Region", "config_s3_region", $region, array("us-east-1", "us-west-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "sa-east-1", "cn-north-1", "us-gov-west-1"));
 
     //class="button button-primary button-large"
-    $encodingTable .= '<tr><td><button id="bEncode" class="button insert-media add_media" name="bEncode">Encode Uploaded Video</button></td>';
+    $encodingTable .= '<tr><td><button id="bEncode" class="button" name="bEncode">Encode Uploaded Video</button></td>';
     $encodingTable .= '<td><div id="response"></div></td>';
     $encodingTable .= '</tr>';
 
@@ -303,7 +307,7 @@ function bitmovin_getVideoTable($id)
     $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
 
-    $videoTable .= '<tr><td></td></tr><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select MP4 from Mediathek</button></td></tr>';
+    $videoTable .= '<tr><td></td></tr><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Webm/MP4 from Mediathek</button></td></tr>';
 
     $videoTable .= "</table>";
 
@@ -472,6 +476,7 @@ function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $
     {
         return "<tr><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
     }
+
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
 }
 
@@ -482,6 +487,15 @@ function getTableRowPWInput($propertyDisplayName, $propertyName, $propertyValue,
 
 function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
+    if ($propertyName == "config_encoding_video_bitrate")
+    {
+        return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' step='0.0001' value='" . json_decode($propertyValue) . "' max='20000' onkeyup='video_bitrate()' placeholder='" . $placeHolder . "'/><p id='vbitrate' class='bitrate'>kbps</p></td></tr>";
+    }
+    if ($propertyName == "config_encoding_audio_bitrate")
+    {
+        return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' step='0.0001' value='" . json_decode($propertyValue) . "' max='256' onkeyup='audio_bitrate()' placeholder='" . $placeHolder . "'/><p id='abitrate' class='bitrate'>kbps</p></td></tr>";
+    }
+
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
 }
 
@@ -796,6 +810,7 @@ function bm_getVersionConfig($id)
     else {
         $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/{$player_version}/bitdash.min.js";
     }
+    echo $src;
     wp_register_script('bitmovin_player_core', $src);
     wp_enqueue_script('bitmovin_player_core');
 }
@@ -1031,7 +1046,7 @@ function bm_getStyleConfig($id)
 add_action('admin_menu', 'bitmovin_player_plugin_settings');
 function bitmovin_player_plugin_settings()
 {
-    add_menu_page('bitmovin_player', 'Bitmovin Settings', 'administrator', 'bitmovin_settings', 'bitmovin_plugin_display_settings');
+    add_submenu_page('edit.php?post_type=bitmovin_player', 'settings', 'Settings', 'manage_options', 'bitmovin_settings', 'bitmovin_plugin_display_settings');
 }
 
 function bitmovin_plugin_display_settings()
@@ -1057,11 +1072,10 @@ function bitmovin_plugin_display_settings()
                 <input type="hidden" name="action" value="update" />
                 <input id="playerKey" type="hidden" name="bitmovin_player_key" size="50" value="' . $playerKey. '"/>
                 <input type="hidden" name="page_options" value="bitmovin_player_key,bitmovin_api_key" />
-                <input type="button" value="Save" onclick="checkApiKey()"/>
+                <input type="button" class="button" value="Save" onclick="checkApiKey()"/>
             </p>
             </form>
 
         </div>';
     echo $html;
 }
-?>
