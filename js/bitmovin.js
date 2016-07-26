@@ -29,7 +29,6 @@ $j(document).ready(function() {
             }
             createChannels();
             getVersions();
-            checkOutputChoice();
             audio_bitrate();
             video_bitrate();
         },
@@ -229,34 +228,6 @@ function checkVideoBitrate(bitrate)
     else
     {
         return 0;
-    }
-}
-
-function checkOutputChoice()
-{
-    if (document.getElementsByName("output")[0].checked)
-    {
-        document.getElementById('config_ftp_server').disabled = false;
-        document.getElementById('config_ftp_usr').disabled = false;
-        document.getElementById('config_ftp_pw').disabled = false;
-
-        document.getElementById('config_s3_access_key').disabled = true;
-        document.getElementById('config_s3_secret_key').disabled = true;
-        document.getElementById('config_s3_bucket').disabled = true;
-        document.getElementById('config_s3_name').disabled = true;
-        document.getElementById('config_s3_region').disabled = true;
-    }
-    else
-    {
-        document.getElementById('config_ftp_server').disabled = true;
-        document.getElementById('config_ftp_usr').disabled = true;
-        document.getElementById('config_ftp_pw').disabled = true;
-
-        document.getElementById('config_s3_access_key').disabled = false;
-        document.getElementById('config_s3_secret_key').disabled = false;
-        document.getElementById('config_s3_bucket').disabled = false;
-        document.getElementById('config_s3_name').disabled = false;
-        document.getElementById('config_s3_region').disabled = false;
     }
 }
 
