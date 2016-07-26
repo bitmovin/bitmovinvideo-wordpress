@@ -30,6 +30,8 @@ $j(document).ready(function() {
             createChannels();
             getVersions();
             checkOutputChoice();
+            audio_bitrate();
+            video_bitrate();
         },
         error: function(error) {
             console.log(error.responseJSON.message);
@@ -76,8 +78,8 @@ $j(document).ready(function() {
         var profile = document.getElementById('config_encoding_profile').value;
         var video_width = document.getElementById('config_encoding_width').value;
         var video_height = document.getElementById('config_encoding_height').value;
-        var video_bitrate = document.getElementById('config_encoding_video_bitrate').value;
-        var audio_bitrate = document.getElementById('config_encoding_audio_bitrate').value;
+        var video_bitrate = document.getElementById('config_encoding_video_bitrate').value * 1000;
+        var audio_bitrate = document.getElementById('config_encoding_audio_bitrate').value * 1000;
 
         var video_src = document.getElementById('config_encoding_video_src').value;
 
@@ -117,13 +119,12 @@ $j(document).ready(function() {
             alert("Please select either FTP or S3 output");
         }
 
-        if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && audio_bitrate != "" &&
+        if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && video_bitrate <= 20000000 && audio_bitrate != "" && audio_bitrate <= 256000 &&
             video_src != "")
         {
             if ((output == "ftp" && ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (output == "s3" && access_key != "" && secret_key != "" && bucket != "" && aws_name != "" && region != ""))
             {
-                var url = bitmovin_script.plugin_url + "bitcoding.php";
-                console.log(url);
+                var url = bitmovin_script.dest_encoding_script;
                 $j.ajax({
                     type: "POST",
                     url: url,
@@ -147,7 +148,7 @@ $j(document).ready(function() {
                         region:         region
                     },
                     beforeSend: function() {
-                        $j('#response').html("<p>Encoding...</p><img src='images/loading.gif' />");
+                        $j('#response').html("<p>Encoding...</p><img src='" + bitmovin_script.load_image + "' />");
                     },
                     success: function (content) {
                         console.log(content);
@@ -157,12 +158,12 @@ $j(document).ready(function() {
                             $j('#config_src_hls').val(ftp_server + "/video_0_" + video_bitrate + "_hls.m3u8");
                         }
                         else {
-                            $j('#response').html("<img src='images/error.png' /><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
+                            $j('#response').html("<img src='" + bitmovin_script.error_image + "' width='30' height='30'/><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
                         }
                     },
                     error: function(error) {
-                        $j('#response').html("<img src='images/error.png' /><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
-                        console.log(error.responseJSON.message);
+                        $j('#response').html("<img src='" + bitmovin_script.error_image + "' /><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
+                        //console.log(error.responseJSON.message);
                     }
                 });
                 /* Kein Neuladen der Website */
@@ -180,6 +181,56 @@ $j(document).ready(function() {
         }
     });
 });
+
+function video_bitrate()
+{
+    var video_bitrate = document.getElementById("config_encoding_video_bitrate").value;
+    var res = checkVideoBitrate(video_bitrate);
+    if (res == 1)
+    {
+        document.getElementById("vbitrate").innerHTML = video_bitrate + " kbps";
+        $j("#vbitrate").css("background-color","#31b0d5");
+    }
+    else if (res == 2)
+    {
+        document.getElementById("vbitrate").innerHTML = video_bitrate/1000 + " Mbps";
+        $j("#vbitrate").css("background-color","#31b0d5");
+    }
+    else {
+        document.getElementById("vbitrate").innerHTML = "max. 20 Mbps allowed!";
+        $j("#vbitrate").css("background-color","red");
+    }
+}
+
+function audio_bitrate()
+{
+    var audio_bitrate = document.getElementById("config_encoding_audio_bitrate").value;
+    if (audio_bitrate <= 256)
+    {
+        document.getElementById("abitrate").innerHTML = audio_bitrate + " kbps";
+        $j("#abitrate").css("background-color","#31b0d5");
+    }
+    else {
+        document.getElementById("abitrate").innerHTML = "max. 256 kbps allowed!";
+        $j("#abitrate").css("background-color","red");
+    }
+}
+
+function checkVideoBitrate(bitrate)
+{
+    if (bitrate < 1000)
+    {
+        return 1;
+    }
+    else if (bitrate >= 1000 && bitrate <= 20000)
+    {
+        return 2;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 function checkOutputChoice()
 {
@@ -289,7 +340,7 @@ function open_media_progressive_video()
         button: {
             text: "Select Video for Embedding"
         },
-        library: { type: "video/mp4" },
+        library: { type: "video" },
         multiple: false
     });
 
