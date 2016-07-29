@@ -280,6 +280,7 @@ function bitmovin_getOutputTable()
     $aws_access_key = get_option('bitmovin_aws_access_key');
     $aws_secret_key = get_option('bitmovin_aws_secret_key');
     $aws_bucket = get_option('bitmovin_aws_bucket');
+    $aws_prefix = get_option('bitmovin_aws_prefix');
     $aws_region = get_option('bitmovin_aws_region');
 
     $outputTable  = getInputHidden("config_ftp_server", $ftp_server);
@@ -290,6 +291,7 @@ function bitmovin_getOutputTable()
     $outputTable .= getInputHidden("config_s3_access_key", $aws_access_key);
     $outputTable .= getInputHidden("config_s3_secret_key", $aws_secret_key);
     $outputTable .= getInputHidden("config_s3_bucket", $aws_bucket);
+    $outputTable .= getInputHidden("config_s3_prefix", $aws_prefix);
     $outputTable .= getInputHidden("config_s3_region", $aws_region);
 
     return $outputTable;
@@ -1069,6 +1071,7 @@ function bitmovin_plugin_display_settings()
     $aws_access_key = get_option('bitmovin_aws_access_key');
     $aws_secret_key = get_option('bitmovin_aws_secret_key');
     $aws_bucket = get_option('bitmovin_aws_bucket');
+    $aws_prefix = get_option('bitmovin_aws_prefix');
     $aws_region = get_option('bitmovin_aws_region');
 
     $image_url = plugins_url('images/info.png', __FILE__);
@@ -1097,9 +1100,9 @@ function bitmovin_plugin_display_settings()
             <form id="bitmovinFTPSettings" method="post" name="options" action="options.php">
                 <h2>Bitmovin FTP Output Configuration</h2>'. wp_nonce_field('update-options') .'
                 <table>
-                    <tr><th>FTP Server</th><td><input type="text" id="config_ftp_server" name="bitmovin_ftp_server" size="80" value="' . $ftp_server. '" placeholder="ftp://path/to/upload/directory/myEncodedVideo"/></td></tr>
-                    <tr><th>FTP Username</th><td><input type="text" id="config_ftp_usr" name="bitmovin_ftp_usr" size="80" value="' . $ftp_usr. '" placeholder="FTP Username"/></td></tr>
-                    <tr><th>FTP Password</th><td><input type="password" id="config_ftp_pw" name="bitmovin_ftp_pw" size="80" value="' . $ftp_pw. '" placeholder="FTP Password"/></td></tr>
+                    <tr><th>FTP Server</th><td><input type="text" id="config_ftp_server" name="bitmovin_ftp_server" size="80" value="' . $ftp_server. '" placeholder="ftp://path/to/upload/directory/myEncodedVideo" required/></td></tr>
+                    <tr><th>FTP Username</th><td><input type="text" id="config_ftp_usr" name="bitmovin_ftp_usr" size="80" value="' . $ftp_usr. '" placeholder="FTP Username" required/></td></tr>
+                    <tr><th>FTP Password</th><td><input type="password" id="config_ftp_pw" name="bitmovin_ftp_pw" size="80" value="' . $ftp_pw. '" placeholder="FTP Password" required/></td></tr>
                 </table>
                 <p class="submit">
                     <input type="hidden" name="action" value="update" />
@@ -1111,10 +1114,11 @@ function bitmovin_plugin_display_settings()
             <form id="bitmovinAWSSettings" method="post" name="options" action="options.php">
                 <h2>Bitmovin AWS Output Configuration <br>(Amazon Web Services)</h2>'. wp_nonce_field('update-options') .'
                 <table>
-                    <tr><th>AWS Name</th><td><input type="text" id="config_aws_name" name="bitmovin_aws_name" size="30" value="' . $aws_name. '" placeholder="Your AWS Output Name"/></td></tr>
-                    <tr><th>Access Key</th><td><input type="text" id="config_aws_access_key" name="bitmovin_aws_access_key"size="30" value="' . $aws_access_key. '" placeholder="Your AWS Access Key"/></td></tr>
-                    <tr><th>Secret Key</th><td><input type="password" id="config_aws_secret_key" name="bitmovin_aws_secret_key" size="30" value="' . $aws_secret_key. '" placeholder="Your AWS Secret Key"/></td></tr>
-                    <tr><th>Bucket</th><td><input type="text" id="config_aws_bucket" name="bitmovin_aws_bucket" size="30" value="' . $aws_bucket. '" placeholder="Your Bucket Name"/></td></tr>
+                    <tr><th>AWS Name</th><td><input type="text" id="config_aws_name" name="bitmovin_aws_name" size="30" value="' . $aws_name. '" placeholder="Your AWS Output Name" required/></td></tr>
+                    <tr><th>Access Key</th><td><input type="text" id="config_aws_access_key" name="bitmovin_aws_access_key"size="30" value="' . $aws_access_key. '" placeholder="Your AWS Access Key" required/></td></tr>
+                    <tr><th>Secret Key</th><td><input type="password" id="config_aws_secret_key" name="bitmovin_aws_secret_key" size="30" value="' . $aws_secret_key. '" placeholder="Your AWS Secret Key" required/></td></tr>
+                    <tr><th>Bucket</th><td><input type="text" id="config_aws_bucket" name="bitmovin_aws_bucket" size="30" value="' . $aws_bucket. '" placeholder="Your Bucket Name" required/></td></tr>
+                    <tr><th>Prefix</th><td><input type="text" id="config_aws_prefix" name="bitmovin_aws_prefix" size="30" value="' . $aws_prefix. '" placeholder="Folder name created for output" required/></td></tr>
                     <tr><th>Region</th><td>
                         <select id="config_s3_region" name="bitmovin_aws_region" value="' . $aws_region. '">
                             <option value="us-east-1">us-east-1</option>
@@ -1128,12 +1132,12 @@ function bitmovin_plugin_display_settings()
                             <option value="sa-east-1">sa-east-1</option>
                             <option value="cn-north-1">cn-north-1</option>
                             <option value="us-gov-west-1">us-gov-west-1</option>
-                        </select>
+                        </select>             
                     </td></tr>
                 </table>
                 <p class="submit">
                     <input type="hidden" name="action" value="update" />
-                    <input type="hidden" name="page_options" value="bitmovin_aws_name, bitmovin_aws_access_key, bitmovin_aws_secret_key, bitmovin_aws_bucket, bitmovin_aws_region" />
+                    <input type="hidden" name="page_options" value="bitmovin_aws_name, bitmovin_aws_access_key, bitmovin_aws_secret_key, bitmovin_aws_bucket, bitmovin_aws_prefix, bitmovin_aws_region" />
                     <input type="submit" class="button" value="Save AWS Configuration"/>
                 </p>
             </form>
