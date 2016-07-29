@@ -93,6 +93,7 @@ function bitmovin_encoding_service($apiKey) {
 
         // TRANSFER JOB OUTPUT
         $job->transfer($output);
+        //echo $output->host + $output->path;
     }
     else    {
         $outputConfig = new S3OutputConfig();
@@ -101,11 +102,22 @@ function bitmovin_encoding_service($apiKey) {
         $outputConfig->secretKey    = $_POST['secret_key'];
         $outputConfig->bucket       = $_POST['bucket'];
         $outputConfig->region       = $_POST['region'];
-        $outputConfig->makePublic   = false;
+        $outputConfig->prefix       = $_POST['prefix'];
+        $outputConfig->createSubDirectory = false;
+        $outputConfig->makePublic   = true;
 
         $output = Output::create($outputConfig);
 
         // TRANSFER JOB OUTPUT
         $job->transfer($output);
     }
+
+    /* send mpd and m3u8 data */
+    $response = new stdClass();
+    $response->host =  $output->host;
+    $response->path =  $output->path;
+    $response->mpd  =  $job->manifestUrls->mpdUrl;
+    $response->m3u8 =  $job->manifestUrls->m3u8Url;
+
+    echo json_encode($response);
 }
