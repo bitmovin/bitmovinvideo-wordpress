@@ -91,6 +91,7 @@ $j(document).ready(function() {
         var access_key;
         var secret_key;
         var bucket;
+        var prefix;
         var aws_name;
         var region;
 
@@ -111,6 +112,7 @@ $j(document).ready(function() {
             access_key = document.getElementById('config_s3_access_key').value;
             secret_key = document.getElementById('config_s3_secret_key').value;
             bucket = document.getElementById('config_s3_bucket').value;
+            prefix = document.getElementById('config_s3_prefix').value;
             region = document.getElementById('config_s3_region').value;
         }
         else
@@ -121,7 +123,7 @@ $j(document).ready(function() {
         if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && video_bitrate <= 20000000 && audio_bitrate != "" && audio_bitrate <= 256000 &&
             video_src != "")
         {
-            if ((output == "ftp" && ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (output == "s3" && access_key != "" && secret_key != "" && bucket != "" && aws_name != "" && region != ""))
+            if ((output == "ftp" && ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (output == "s3" && access_key != "" && secret_key != "" && bucket != "" && aws_name != "" && region != "" && prefix != ""))
             {
                 var url = bitmovin_script.dest_encoding_script;
                 $j.ajax({
@@ -144,19 +146,36 @@ $j(document).ready(function() {
                         secret_key:     secret_key,
                         bucket:         bucket,
                         aws_name:       aws_name,
+                        prefix:         prefix,
                         region:         region
                     },
                     beforeSend: function() {
                         $j('#response').html("<p>Encoding...</p><img src='" + bitmovin_script.load_image + "' />");
                     },
                     success: function (content) {
-                        console.log(content);
-                        if (content == "")
+                        var error = content.toString().includes("error");
+                        if (!error)
                         {
-                            $j('#response').html("<p>Encoding finished</p>");
-                            $j('#config_src_hls').val(ftp_server + "/video_0_" + video_bitrate + "_hls.m3u8");
+                            var myObj = $j.parseJSON(content);
+                            var regEx = new RegExp('\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))','g')
+                            var mpd = myObj.mpd.match(regEx);
+                            var m3u8 = myObj.m3u8.match(regEx);
+
+                            var mpdOutput = myObj.host + "/" + myObj.path + mpd;
+                            var m3u8Output = myObj.host + "/" + myObj.path + m3u8;
+
+                            if (output == "ftp") {
+                                $j('#config_src_dash').val("http://" + mpdOutput);
+                                $j('#config_src_hls').val("http://" + m3u8Output);
+                            }
+                            if (output == "s3") {
+                                $j('#config_src_dash').val("https://" + mpdOutput);
+                                $j('#config_src_hls').val("https://" + m3u8Output);
+                            }
+                            $j('#response').html("<p>Encoding finished<br>Finally just click the <b>Update button</b> to implement the encoded video in the player.</p>");
                         }
                         else {
+                            console.log(content);
                             $j('#response').html("<img src='" + bitmovin_script.error_image + "' width='30' height='30'/><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
                         }
                     },
