@@ -512,11 +512,11 @@ function getTableRowRadio($propertyDisplayName, $propertyName, $propertyValue)
 {
     if ($propertyValue == "ftp")
     {
-        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutputChoice()' checked>{$propertyDisplayName}<br><br>";
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' checked>{$propertyDisplayName}<br><br>";
     }
     else
     {
-        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' onclick='checkOutputChoice()'>{$propertyDisplayName}<br><br>";
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}'>{$propertyDisplayName}<br><br>";
     }
 }
 
