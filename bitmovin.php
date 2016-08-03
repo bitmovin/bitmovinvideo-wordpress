@@ -309,10 +309,9 @@ function bitmovin_getVideoTable($id)
 
     $videoTable .= getTableRowInput("Dash URL", "config_src_dash", $dash_url, "http://path/to/mpd/file.mpd");
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
+    $videoTable .= '<tr><th></th><td><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Progressive from Mediathek</button></td></tr>';
     $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
-
-    $videoTable .= '<tr><td></td></tr><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Webm/MP4 from Mediathek</button></td></tr>';
 
     $videoTable .= "</table>";
 
