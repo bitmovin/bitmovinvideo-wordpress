@@ -48,7 +48,6 @@ function getVersions()
     var select = document.getElementById("config_player_version");
     if (channel.options[channel.selectedIndex].value == "Beta")
     {
-        var option = document.createElement('option');
         option.text = "Latest Version 5";
         select.add(option, 0);
 
@@ -62,7 +61,6 @@ function getVersions()
     }
     else if (channel.options[channel.selectedIndex].value == "Staging")
     {
-        var option = document.createElement('option');
         option.text = "Latest Version 5";
         select.add(option);
 
@@ -76,7 +74,6 @@ function getVersions()
     }
     else
     {
-        var option = document.createElement('option');
         option.text = "Latest Version 5";
         select.add(option);
 
