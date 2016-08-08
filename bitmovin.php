@@ -98,6 +98,8 @@ function bitmovin_player_column($column, $post_id)
 add_action('add_meta_boxes', 'bitmovin_video_meta_box');
 function bitmovin_video_meta_box()
 {
+    add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal", "high");
+
     add_meta_box("bitmovin_player_configuration_video", "Video", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_player", "Version", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_drm", "DRM", 'bitmovin_player_configuration_drm', "bitmovin_player", "normal", "high");
@@ -106,8 +108,6 @@ function bitmovin_video_meta_box()
     add_meta_box("bitmovin_player_configuration_style", "Style", 'bitmovin_player_configuration_style', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Custom", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_encoding", "Encoding", 'bitmovin_player_configuration_encoding', "bitmovin_player", "normal", "high");
-
-    add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
 }
 
 function bitmovin_player_configuration_encoding()
@@ -1050,6 +1050,16 @@ function bm_getStyleConfig($id)
     return $style;
 }
 
+add_action('admin_menu', 'bitmovin_player_plugin_encoding');
+function bitmovin_player_plugin_encoding()
+{
+    add_submenu_page('edit.php?post_type=bitmovin_player', 'settings', 'Encode Video', 'manage_options', 'bitmovin_encoding', 'bitmovin_plugin_display_encoding');
+}
+
+function bitmovin_plugin_display_encoding()
+{
+    //TODO
+}
 
 add_action('admin_menu', 'bitmovin_player_plugin_settings');
 function bitmovin_player_plugin_settings()
