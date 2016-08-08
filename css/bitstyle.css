@@ -33,6 +33,31 @@
     background-color: #31b0d5;
 }
 
+#response {
+    color: red;
+    font-size: 14pt;
+}
+
+#ApiKeyError {
+    color: red;
+    font-size: 14pt;
+    text-align: center;
+}
+
+#bUpload1 {
+    width: 100%;
+    margin-bottom: 15px;
+    border: 1px solid #31b0d5;
+}
+
+#AddSchedule {
+    border: 1px solid #31b0d5;
+}
+
+#bEncode {
+    border: 1px solid #31b0d5;
+}
+
 #bUpload {
     width: 45%;
 }

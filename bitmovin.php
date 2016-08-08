@@ -404,19 +404,18 @@ function bitmovin_getAdsTable($id)
     $adsTable .= "<tr><td colspan='2'>Schedule 1</td></tr>";
     $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $schedule1Offset);
     $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $schedule1Tag);
-    $adsTable .= "<tr><td colspan='2'>Schedule 2</td></tr>";
-    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule2_offset", $schedule2Offset);
-    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule2_tag", $schedule2Tag);
-    $adsTable .= "<tr><td colspan='2'>Schedule 3</td></tr>";
-    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule3_offset", $schedule3Offset);
-    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule3_tag", $schedule3Tag);
-    $adsTable .= "<tr><td colspan='2'>Schedule 4</td></tr>";
-    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule4_offset", $schedule4Offset);
-    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule4_tag", $schedule4Tag);
+
+    $adsTable .= '<tr><th></th><td><button id="AddSchedule" class="button" type="button" onclick="addSchedule()" data-editor="content">+ Add another schedule</button></td></tr>';
 
     $adsTable .= "</table>";
 
     return $adsTable;
+}
+
+function bla() {
+    echo '<script type="text/javascript" language="Javascript"> 
+            alert("Vielen Dank! Ihre Daten wurden uns zugesandt.") 
+          </script> ';
 }
 
 function bitmovin_getVrTable($id)
@@ -698,7 +697,7 @@ function bitmovin_generate_player($id)
 
     $playerKey = get_option('bitmovin_player_key');
     if($playerKey == "") {
-        return "<pre>No correct api key set in Bitmovin Settings.</pre>";
+        return "<pre id='ApiKeyError'>No correct api key set in Bitmovin Settings.</pre>";
     }
 
     /* use advanced config before using player config */
@@ -708,8 +707,8 @@ function bitmovin_generate_player($id)
         bm_getVersionConfig($id);
     }
 
-    $html = "<div id='bitmovin-player'></div>\n";
-
+    $html  = '<input type="button" id="bUpload1" class="button" onclick="open_media_progressive_video()" value="Insert Video from Library">';
+    $html .= "<div id='bitmovin-player'></div>\n";
     $html .= "<script type='text/javascript'>\n";
     $html .= "window.onload = function() {\n";
     $html .= "var player = bitdash('bitmovin-player');\n";
@@ -1058,7 +1057,32 @@ function bitmovin_player_plugin_encoding()
 
 function bitmovin_plugin_display_encoding()
 {
-    //TODO
+    $apiKey = get_option('bitmovin_api_key');
+    wp_register_script('bitcodin_script', plugins_url('js/bitcodin.js', __FILE__));
+    wp_enqueue_script('bitcodin_script');
+    wp_localize_script( 'bitcodin_script', 'bitcodin_script', array( 'apiKey' => $apiKey));
+
+    $html = '<div class="wrap">
+            <form id="bitcodinConf" method="post" name="options" action="options.php">
+                <h2>Bitmovin Encoding Configuration</h2>'. wp_nonce_field('update-options') .'
+                <table>
+                    <tr><th>Select Encoding Profile</th>
+                    <td><select id="config_s3_region" name="bitmovin_aws_region" value="">
+                        <option value="default">default</option>
+                    </select></td></tr>
+                    <tr><th></th><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>
+                    <tr><th>Video URL</th><td><input type="text" id="config_video_src" name="bitcodin_video_src" size="80" value="" placeholder="path/to/your/video"/></td></tr>
+                </table>
+                <p class="submit">
+                    <input type="hidden" name="action" value="update" />
+                    <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
+                    <input type="hidden" name="page_options" value="bitmovin_ftp_server,bitmovin_ftp_usr,bitmovin_ftp_pw" />
+                    <input type="button" id="bEncode" class="button" value="Encode Selected Video" onclick="checkApiKey()"/>
+                </p>
+            </form>
+            </div>
+            <div id="response"></div>';
+    echo $html;
 }
 
 add_action('admin_menu', 'bitmovin_player_plugin_settings');

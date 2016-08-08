@@ -65,9 +65,15 @@ function checkApiKey() {
             $j("#bitmovinSettingsForm").submit();
         },
         error: function(error) {
+            $j("#playerKey").val(data.key);
+            $j("#bitmovinSettingsForm").submit();
             $j("#messages").text(error.responseJSON.message);
         }
     });
+}
+
+function addSchedule() {
+    alert("TODO");
 }
 
 /* Encoding Button Click */
@@ -295,31 +301,6 @@ function removeAllOptions()
     {
         select.removeChild(select.firstChild);
     }
-}
-
-var media_uploader = null;
-
-function open_media_encoding_video()
-{
-    /* Custom Uploader only showing video files */
-    media_uploader = wp.media({
-        title:  "Select Video for Encoding",
-        frame:  "select",
-        button: {
-            text: "Select Video for Encoding"
-        },
-        library: { type: "video"},
-        multiple: false
-    });
-
-    media_uploader.on("select", function(){
-
-        /* get video url and insert into video src input */
-        var attachment = media_uploader.state().get('selection').first().toJSON();
-        $j('#config_encoding_video_src').val(attachment.url);
-    });
-
-    media_uploader.open();
 }
 
 function open_media_progressive_video()
