@@ -74,15 +74,6 @@ function checkApiKey() {
 $j(document).ready(function() {
     $j("button#bEncode").click(function () {
 
-<<<<<<< HEAD
-    var option = document.createElement('option');
-    var channel = document.getElementById("config_player_channel");
-    var select = document.getElementById("config_player_version");
-    if (channel.options[channel.selectedIndex].value == "Beta")
-    {
-        option.text = "Latest Version 5";
-        select.add(option, 0);
-=======
         var profile = document.getElementById('config_encoding_profile').value;
         var video_width = document.getElementById('config_encoding_width').value;
         var video_height = document.getElementById('config_encoding_height').value;
@@ -103,7 +94,6 @@ $j(document).ready(function() {
         var prefix;
         var aws_name;
         var region;
->>>>>>> origin/feature/encoding
 
         /* Represents ftp or s3 */
         var output;
@@ -221,10 +211,6 @@ function video_bitrate()
     }
     else if (res == 2)
     {
-<<<<<<< HEAD
-        option.text = "Latest Version 5";
-        select.add(option);
-=======
         document.getElementById("vbitrate").innerHTML = video_bitrate/1000 + " Mbps";
         $j("#vbitrate").css("background-color","#31b0d5");
     }
@@ -233,7 +219,6 @@ function video_bitrate()
         $j("#vbitrate").css("background-color","red");
     }
 }
->>>>>>> origin/feature/encoding
 
 function audio_bitrate()
 {
@@ -261,30 +246,9 @@ function checkVideoBitrate(bitrate)
     }
     else
     {
-<<<<<<< HEAD
-        option.text = "Latest Version 5";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "Latest Version 4";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "5.0";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "4.4";
-        select.add(option);
-
-        option = document.createElement('option');
-        option.text = "4.3";
-        select.add(option);
-=======
         return 0;
     }
 }
->>>>>>> origin/feature/encoding
 
 function createChannels()
 {
@@ -355,7 +319,7 @@ function open_media_encoding_video()
         $j('#config_encoding_video_src').val(attachment.url);
     });
 
-   media_uploader.open();
+    media_uploader.open();
 }
 
 function open_media_progressive_video()
@@ -379,7 +343,7 @@ function open_media_progressive_video()
         /* leave me here for getting additional video properties */
         //for ( var image_property in attachment ) {
 
-           // console.log(image_property + ': ' + image_data[image_property]);
+        // console.log(image_property + ': ' + image_data[image_property]);
         //}
     });
 

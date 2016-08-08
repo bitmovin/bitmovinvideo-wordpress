@@ -1,13 +1,8 @@
 <?php
 /*
   Plugin Name: Bitmovin
-<<<<<<< HEAD
-  Plugin URI: https://github.com/bitmovin/bitmovinvideo-wordpress
-  Description: <strong>Bitmovin's</strong> HTML5 Adaptive Streaming Video Plugin for Wordpress.
-=======
   Plugin URI: http://bitmovin.com/wordpress-plugin
   Description: <strong>Bitmovin's</strong> encoding and adaptive streaming player in Wordpress
->>>>>>> origin/feature/encoding
   Version: 0.5.1
   Author: Bitmovin
   Author URI: http://bitmovin.com
@@ -120,14 +115,9 @@ function bitmovin_player_configuration_encoding()
     global $post;
 
     $html = '<div class="configSection">';
-<<<<<<< HEAD
-    $html .= '<div id="video">';
-    $html .= bitmovin_getVideoTable($post->ID);
-=======
     $html .= '<div id="encoding">';
     $html .= bitmovin_getEncodingTable($post->ID);
     $html .= bitmovin_getOutputTable();
->>>>>>> origin/feature/encoding
     $html .= '</div>';
     $html .= '</div>';
 
@@ -140,11 +130,7 @@ function bitmovin_player_configuration_video()
 
     $html = '<div class="configSection">';
     $html .= '<div id="video">';
-<<<<<<< HEAD
-    $html .= bitmovin_getPlayerTable($post->ID);
-=======
     $html .= bitmovin_getVideoTable($post->ID);
->>>>>>> origin/feature/encoding
     $html .= '</div>';
     $html .= '</div>';
 
@@ -156,13 +142,8 @@ function bitmovin_player_configuration_player()
     global $post;
 
     $html = '<div class="configSection">';
-<<<<<<< HEAD
-    $html .= '<div id="video">';
-    $html .= bitmovin_getAdvancedTable($post->ID);
-=======
     $html .= '<div id="playerConfig">';
     $html .= bitmovin_getVersionTable($post->ID);
->>>>>>> origin/feature/encoding
     $html .= '</div>';
     $html .= '</div>';
 
@@ -247,8 +228,6 @@ function bitmovin_player_preview()
     echo $html;
 }
 
-<<<<<<< HEAD
-=======
 function bitmovin_getEncodingTable($id)
 {
     $encoding_profile = get_post_meta($id, "_config_encoding_profile", true);
@@ -318,7 +297,6 @@ function bitmovin_getOutputTable()
     return $outputTable;
 }
 
->>>>>>> origin/feature/encoding
 function bitmovin_getVideoTable($id)
 {
     $dash_url = get_post_meta($id, "_config_src_dash", true);
@@ -340,11 +318,7 @@ function bitmovin_getVideoTable($id)
     return $videoTable;
 }
 
-<<<<<<< HEAD
-function bitmovin_getPlayerTable($id)
-=======
 function bitmovin_getVersionTable($id)
->>>>>>> origin/feature/encoding
 {
     $player_channel = get_post_meta($id, "_config_player_channel", true);
     $player_version = get_post_meta($id, "_config_player_version", true);
@@ -500,27 +474,15 @@ function bitmovin_getCustomTable($id)
     return $customTable;
 }
 
-<<<<<<< HEAD
-function bitmovin_getAdvancedTable($id)
-=======
 function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
->>>>>>> origin/feature/encoding
 {
     if ($propertyName == "config_version_link")
     {
         return "<tr><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
     }
 
-<<<<<<< HEAD
-    $advancedTable = "<table></table><tr><td><p>To provide our users the right version of our player, we have four public player channels available.
-    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
-    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
-    $advancedTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
-    $advancedTable .= "</table>";
-=======
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
 }
->>>>>>> origin/feature/encoding
 
 function getInputHidden($propertyName, $propertyValue)
 {
@@ -593,8 +555,6 @@ function bitmovin_player_save_configuration($post_id)
     // check permissions
     if ('bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
 
-<<<<<<< HEAD
-=======
         $encoding_profile = bitmovin_getParameter("config_encoding_profile");
         $video_width = bitmovin_getParameter("config_encoding_width");
         $video_height = bitmovin_getParameter("config_encoding_height");
@@ -631,7 +591,6 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_s3_secret_key", $secret_key);
         update_post_meta($post_id, "_config_s3_region", $region);
 
->>>>>>> origin/feature/encoding
         $dash_url = bitmovin_getParameter("config_src_dash");
         $hls_url = bitmovin_getParameter("config_src_hls");
         $prog_url = bitmovin_getParameter("config_src_prog");
@@ -742,18 +701,11 @@ function bitmovin_generate_player($id)
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
     }
 
-<<<<<<< HEAD
-    $advancedConfig = bm_getAdvancedConfig($id);
-    if ($advancedConfig == 0)
-    {
-        bm_getPlayerConfig($id);
-=======
     /* use advanced config before using player config */
     $advancedConfig = bm_getAdvancedConfig($id);
     if ($advancedConfig == 0)
     {
         bm_getVersionConfig($id);
->>>>>>> origin/feature/encoding
     }
 
     $html = "<div id='bitmovin-player'></div>\n";
@@ -849,11 +801,7 @@ function bm_getVideoConfig($id) {
     return $video;
 }
 
-<<<<<<< HEAD
-function bm_getPlayerConfig($id)
-=======
 function bm_getVersionConfig($id)
->>>>>>> origin/feature/encoding
 {
     $player_channel = json_decode(get_post_meta($id, "_config_player_channel", true));
     $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
@@ -1204,8 +1152,4 @@ function bitmovin_plugin_display_settings()
             </form>
         </div>';
     echo $html;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/feature/encoding
