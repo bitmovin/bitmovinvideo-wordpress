@@ -25,6 +25,17 @@
     position: absolute;
     right: 18px;
 }
+
+.bitrate {
+    padding: 5px;
+    font-weight: bold;
+    border-radius: 5px 5px;
+    background-color: #31b0d5;
+}
+
+#bUpload {
+    width: 45%;
+}
 #custom .intend1 {
     margin-left: 30px;
 }

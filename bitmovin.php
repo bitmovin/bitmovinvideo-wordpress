@@ -1,13 +1,19 @@
 <?php
 /*
   Plugin Name: Bitmovin
+<<<<<<< HEAD
   Plugin URI: https://github.com/bitmovin/bitmovinvideo-wordpress
   Description: <strong>Bitmovin's</strong> HTML5 Adaptive Streaming Video Plugin for Wordpress.
+=======
+  Plugin URI: http://bitmovin.com/wordpress-plugin
+  Description: <strong>Bitmovin's</strong> encoding and adaptive streaming player in Wordpress
+>>>>>>> origin/feature/encoding
   Version: 0.5.1
   Author: Bitmovin
   Author URI: http://bitmovin.com
   License: GPLv2 or later
 */
+header("Access-Control-Allow-Origin: *");
 
 register_activation_hook(__FILE__, 'bitmovin_plugin_activation');
 function bitmovin_plugin_activation()
@@ -24,8 +30,15 @@ function bitmovin__plugin_deactivation()
 add_action('admin_enqueue_scripts', 'bitmovin_admin_assets');
 function bitmovin_admin_assets()
 {
+    wp_enqueue_media();
+
     wp_register_script('bitmovin_script', plugins_url('js/bitmovin.js', __FILE__));
     wp_enqueue_script('bitmovin_script');
+    wp_localize_script( 'bitmovin_script', 'bitmovin_script', array( 'dest_encoding_script' => plugins_url( 'bitcoding.php', __FILE__),
+        'apiKey' => get_option('bitmovin_api_key'), 'error_image' => plugins_url( 'images/error.png', __FILE__), 'load_image' => plugins_url('images/ajax-loader.gif', __FILE__)));
+
+    wp_register_script('player_script', 'https://bitmovin-a.akamaihd.net/bitmovin-player/stable/5/bitdash.min.js');
+    wp_enqueue_script('player_script');
 
     wp_register_style('bitmovin_style', plugins_url('css/bitstyle.css', __FILE__));
     wp_enqueue_style('bitmovin_style');
@@ -36,7 +49,7 @@ function bitmovin_register()
 {
     $labels = array(
         'name' => __('Videos', 'bitmovin_player'),
-        'singular_name' => __('Video', 'bitmovin_player'),
+        'singular_name' => __('Videos', 'bitmovin_player'),
         'menu_name' => __('Bitmovin', 'bitmovin_player'),
         'add_new' => __('Add New Video', 'bitmovin_player'),
         'add_new_item' => __('Add New Video', 'bitmovin_player'),
@@ -82,7 +95,7 @@ function bitmovin_player_column($column, $post_id)
 {
     switch ($column) {
         case 'bitmovin_player_shortcode':
-            echo "[bitmovin_player id='$post_id']";
+            echo "[bitmovin_player id='$post_id'/]";
             break;
     }
 }
@@ -90,16 +103,35 @@ function bitmovin_player_column($column, $post_id)
 add_action('add_meta_boxes', 'bitmovin_video_meta_box');
 function bitmovin_video_meta_box()
 {
+    add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal", "high");
+
     add_meta_box("bitmovin_player_configuration_video", "Video", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_player", "Player", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_player", "Version", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_drm", "DRM", 'bitmovin_player_configuration_drm', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_ads", "Ads", 'bitmovin_player_configuration_ads', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_vr", "VR", 'bitmovin_player_configuration_vr', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_style", "Style", 'bitmovin_player_configuration_style', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Custom", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_advanced", "Advanced", 'bitmovin_player_configuration_advanced', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_encoding", "Encoding", 'bitmovin_player_configuration_encoding', "bitmovin_player", "normal", "high");
+}
 
-    add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
+function bitmovin_player_configuration_encoding()
+{
+    global $post;
+
+    $html = '<div class="configSection">';
+<<<<<<< HEAD
+    $html .= '<div id="video">';
+    $html .= bitmovin_getVideoTable($post->ID);
+=======
+    $html .= '<div id="encoding">';
+    $html .= bitmovin_getEncodingTable($post->ID);
+    $html .= bitmovin_getOutputTable();
+>>>>>>> origin/feature/encoding
+    $html .= '</div>';
+    $html .= '</div>';
+
+    echo $html;
 }
 
 function bitmovin_player_configuration_video()
@@ -108,7 +140,11 @@ function bitmovin_player_configuration_video()
 
     $html = '<div class="configSection">';
     $html .= '<div id="video">';
+<<<<<<< HEAD
+    $html .= bitmovin_getPlayerTable($post->ID);
+=======
     $html .= bitmovin_getVideoTable($post->ID);
+>>>>>>> origin/feature/encoding
     $html .= '</div>';
     $html .= '</div>';
 
@@ -120,21 +156,13 @@ function bitmovin_player_configuration_player()
     global $post;
 
     $html = '<div class="configSection">';
-    $html .= '<div id="video">';
-    $html .= bitmovin_getPlayerTable($post->ID);
-    $html .= '</div>';
-    $html .= '</div>';
-
-    echo $html;
-}
-
-function bitmovin_player_configuration_advanced()
-{
-    global $post;
-
-    $html = '<div class="configSection">';
+<<<<<<< HEAD
     $html .= '<div id="video">';
     $html .= bitmovin_getAdvancedTable($post->ID);
+=======
+    $html .= '<div id="playerConfig">';
+    $html .= bitmovin_getVersionTable($post->ID);
+>>>>>>> origin/feature/encoding
     $html .= '</div>';
     $html .= '</div>';
 
@@ -219,6 +247,78 @@ function bitmovin_player_preview()
     echo $html;
 }
 
+<<<<<<< HEAD
+=======
+function bitmovin_getEncodingTable($id)
+{
+    $encoding_profile = get_post_meta($id, "_config_encoding_profile", true);
+    $video_width = get_post_meta($id, "_config_encoding_width", true);
+    $video_height = get_post_meta($id, "_config_encoding_height", true);
+    $video_bitrate = get_post_meta($id, "_config_encoding_video_bitrate", true);
+    $audio_bitrate = get_post_meta($id, "_config_encoding_audio_bitrate", true);
+
+    $encoding_video_src = get_post_meta($id, "_config_encoding_video_src", true);
+
+    $encodingTable = '<table class="wp-list-table widefat fixed striped">';
+    $encodingTable .= "<tr><td colspan='2'>Encoding Configuration</td></tr>";
+
+    $encodingTable .= "<tr><td colspan='2'>General</td></tr>";
+    $encodingTable .= getTableRowInput("Encoding Profile", "config_encoding_profile", $encoding_profile, "My first Wordpress Encoding Profile");
+    $encodingTable .= getTableRowInputNumber("Video Height", "config_encoding_height", $video_height, "e.g. 720");
+    $encodingTable .= getTableRowInputNumber("Video Width", "config_encoding_width", $video_width, "e.g. 1280");
+    $encodingTable .= getTableRowInputNumber("Video Bitrate", "config_encoding_video_bitrate", $video_bitrate, "e.g. 1024 kbps");
+    $encodingTable .= getTableRowInputNumber("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256 kbps");
+
+    $encodingTable .= "<tr><td colspan='2'>Video Source</td></tr>";
+    $encodingTable .= '<tr><th></th><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>';
+    $encodingTable .= getTableRowInput("Video URL", "config_encoding_video_src", $encoding_video_src, "http://localhost/wordpress/wp-content/uploads/video.mkv");
+
+    $encodingTable .= "<tr><td colspan='2'>Output</td></tr>";
+    $encodingTable .= "<tr><td>";
+    $encodingTable .= "<form>";
+    $encodingTable .= getTableRowRadio("FTP", "config_encoding_output_ftp", "ftp");
+    $encodingTable .= getTableRowRadio("AWS", "config_encoding_output_s3", "s3");
+    $encodingTable .= "</form>";
+    $encodingTable .= "</td></tr>";
+
+    //class="button button-primary button-large"
+    $encodingTable .= '<tr><td><button id="bEncode" class="button" name="bEncode">Encode Uploaded Video</button></td>';
+    $encodingTable .= '<td><div id="response"></div></td>';
+    $encodingTable .= '</tr>';
+
+    $encodingTable .= "</table>";
+
+    return $encodingTable;
+}
+
+function bitmovin_getOutputTable()
+{
+    $ftp_server = get_option('bitmovin_ftp_server');
+    $ftp_usr = get_option('bitmovin_ftp_usr');
+    $ftp_pw = get_option('bitmovin_ftp_pw');
+
+    $aws_name = get_option('bitmovin_aws_name');
+    $aws_access_key = get_option('bitmovin_aws_access_key');
+    $aws_secret_key = get_option('bitmovin_aws_secret_key');
+    $aws_bucket = get_option('bitmovin_aws_bucket');
+    $aws_prefix = get_option('bitmovin_aws_prefix');
+    $aws_region = get_option('bitmovin_aws_region');
+
+    $outputTable  = getInputHidden("config_ftp_server", $ftp_server);
+    $outputTable .= getInputHidden("config_ftp_usr", $ftp_usr);
+    $outputTable .= getInputHidden("config_ftp_pw", $ftp_pw);
+
+    $outputTable .= getInputHidden("config_s3_name", $aws_name);
+    $outputTable .= getInputHidden("config_s3_access_key", $aws_access_key);
+    $outputTable .= getInputHidden("config_s3_secret_key", $aws_secret_key);
+    $outputTable .= getInputHidden("config_s3_bucket", $aws_bucket);
+    $outputTable .= getInputHidden("config_s3_prefix", $aws_prefix);
+    $outputTable .= getInputHidden("config_s3_region", $aws_region);
+
+    return $outputTable;
+}
+
+>>>>>>> origin/feature/encoding
 function bitmovin_getVideoTable($id)
 {
     $dash_url = get_post_meta($id, "_config_src_dash", true);
@@ -231,6 +331,7 @@ function bitmovin_getVideoTable($id)
 
     $videoTable .= getTableRowInput("Dash URL", "config_src_dash", $dash_url, "http://path/to/mpd/file.mpd");
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
+    $videoTable .= '<tr><th></th><td><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Progressive from Mediathek</button></td></tr>';
     $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
 
@@ -239,15 +340,27 @@ function bitmovin_getVideoTable($id)
     return $videoTable;
 }
 
+<<<<<<< HEAD
 function bitmovin_getPlayerTable($id)
+=======
+function bitmovin_getVersionTable($id)
+>>>>>>> origin/feature/encoding
 {
     $player_channel = get_post_meta($id, "_config_player_channel", true);
     $player_version = get_post_meta($id, "_config_player_version", true);
+    $version_link = get_post_meta($id, "_config_version_link", true);
 
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
-    $playerTable .= "<tr><td colspan='2'>Player Channels/Versions</td></tr>";
-    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array("Stable", "Beta", "Staging"));
-    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array("Latest Version 5", "Latest Version 4", "5.0", "4.4", "4.3", "4.2", "4.1", "4.0"));
+    $playerTable .= "<tr><td colspan='2'>Player Version Configuration</td></tr>";
+    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(""));
+    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
+
+    $playerTable .= "<tr><td colspan='2'>Advanced</td></tr>";
+    $playerTable .= "<tr><td><p>To provide our users the right version of our player, we have four public player channels available.
+    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
+    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
+    $playerTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
+
     $playerTable .= "</table>";
 
     return $playerTable;
@@ -387,27 +500,62 @@ function bitmovin_getCustomTable($id)
     return $customTable;
 }
 
+<<<<<<< HEAD
 function bitmovin_getAdvancedTable($id)
+=======
+function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
+>>>>>>> origin/feature/encoding
 {
-    $version_link = get_post_meta($id, "_config_version_link", true);
+    if ($propertyName == "config_version_link")
+    {
+        return "<tr><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
+    }
 
+<<<<<<< HEAD
     $advancedTable = "<table></table><tr><td><p>To provide our users the right version of our player, we have four public player channels available.
     In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
     More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
     $advancedTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
     $advancedTable .= "</table>";
+=======
+    return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
+}
+>>>>>>> origin/feature/encoding
 
-    return $advancedTable;
+function getInputHidden($propertyName, $propertyValue)
+{
+    return "<input id='" . $propertyName . "' name='" . $propertyName . "' type='hidden' value='" . $propertyValue . "'/>";
 }
 
-function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
+function getTableRowPWInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
-    return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
+    return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='password' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
 }
 
 function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
+    if ($propertyName == "config_encoding_video_bitrate")
+    {
+        return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' step='0.0001' value='" . json_decode($propertyValue) . "' max='20000' onkeyup='video_bitrate()' placeholder='" . $placeHolder . "'/><p id='vbitrate' class='bitrate'>kbps</p></td></tr>";
+    }
+    if ($propertyName == "config_encoding_audio_bitrate")
+    {
+        return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' step='0.0001' value='" . json_decode($propertyValue) . "' max='256' onkeyup='audio_bitrate()' placeholder='" . $placeHolder . "'/><p id='abitrate' class='bitrate'>kbps</p></td></tr>";
+    }
+
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
+}
+
+function getTableRowRadio($propertyDisplayName, $propertyName, $propertyValue)
+{
+    if ($propertyValue == "ftp")
+    {
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' checked>{$propertyDisplayName}<br><br>";
+    }
+    else
+    {
+        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}'>{$propertyDisplayName}<br><br>";
+    }
 }
 
 function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption, $options)
@@ -424,7 +572,9 @@ function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption,
     }
 
     foreach($options as $option) {
-        $tableRowSelect .= "<option value='" . $option . "'". (($option == $selectedOption)?"selected=\"selected\"":"") .">" . $option . "</option>";
+        if ($option != "") {
+            $tableRowSelect .= "<option value='" . $option . "'" . (($option == $selectedOption) ? "selected=\"selected\"" : "") . ">" . $option . "</option>";
+        }
     }
 
     $tableRowSelect .= "</select></td></tr>";
@@ -443,6 +593,45 @@ function bitmovin_player_save_configuration($post_id)
     // check permissions
     if ('bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
 
+<<<<<<< HEAD
+=======
+        $encoding_profile = bitmovin_getParameter("config_encoding_profile");
+        $video_width = bitmovin_getParameter("config_encoding_width");
+        $video_height = bitmovin_getParameter("config_encoding_height");
+        $video_bitrate = bitmovin_getParameter("config_encoding_video_bitrate");
+        $audio_bitrate = bitmovin_getParameter("config_encoding_audio_bitrate");
+
+        $encoding_video_src = bitmovin_getParameter("config_encoding_video_src");
+
+        $ftp_server = bitmovin_getParameter("config_ftp_server");
+        $ftp_usr = bitmovin_getParameter("config_ftp_usr");
+        $ftp_pw = bitmovin_getParameter("config_ftp_pw");
+
+        $aws_name = bitmovin_getParameter("config_s3_name");
+        $bucket = bitmovin_getParameter("config_s3_bucket");
+        $access_key = bitmovin_getParameter("config_s3_access_key");
+        $secret_key = bitmovin_getParameter("config_s3_secret_key");
+        $region = bitmovin_getParameter("config_s3_region");
+
+        update_post_meta($post_id, "_config_encoding_profile", $encoding_profile);
+        update_post_meta($post_id, "_config_encoding_width", $video_width);
+        update_post_meta($post_id, "_config_encoding_height", $video_height);
+        update_post_meta($post_id, "_config_encoding_video_bitrate", $video_bitrate);
+        update_post_meta($post_id, "_config_encoding_audio_bitrate", $audio_bitrate);
+
+        update_post_meta($post_id, "_config_encoding_video_src", $encoding_video_src);
+
+        update_post_meta($post_id, "_config_ftp_server", $ftp_server);
+        update_post_meta($post_id, "_config_ftp_usr", $ftp_usr);
+        update_post_meta($post_id, "_config_ftp_pw", $ftp_pw);
+
+        update_post_meta($post_id, "_config_s3_name", $aws_name);
+        update_post_meta($post_id, "_config_s3_bucket", $bucket);
+        update_post_meta($post_id, "_config_s3_access_key", $access_key);
+        update_post_meta($post_id, "_config_s3_secret_key", $secret_key);
+        update_post_meta($post_id, "_config_s3_region", $region);
+
+>>>>>>> origin/feature/encoding
         $dash_url = bitmovin_getParameter("config_src_dash");
         $hls_url = bitmovin_getParameter("config_src_hls");
         $prog_url = bitmovin_getParameter("config_src_prog");
@@ -553,10 +742,18 @@ function bitmovin_generate_player($id)
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
     }
 
+<<<<<<< HEAD
     $advancedConfig = bm_getAdvancedConfig($id);
     if ($advancedConfig == 0)
     {
         bm_getPlayerConfig($id);
+=======
+    /* use advanced config before using player config */
+    $advancedConfig = bm_getAdvancedConfig($id);
+    if ($advancedConfig == 0)
+    {
+        bm_getVersionConfig($id);
+>>>>>>> origin/feature/encoding
     }
 
     $html = "<div id='bitmovin-player'></div>\n";
@@ -652,7 +849,11 @@ function bm_getVideoConfig($id) {
     return $video;
 }
 
+<<<<<<< HEAD
 function bm_getPlayerConfig($id)
+=======
+function bm_getVersionConfig($id)
+>>>>>>> origin/feature/encoding
 {
     $player_channel = json_decode(get_post_meta($id, "_config_player_channel", true));
     $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
@@ -901,17 +1102,39 @@ function bm_getStyleConfig($id)
     return $style;
 }
 
+add_action('admin_menu', 'bitmovin_player_plugin_encoding');
+function bitmovin_player_plugin_encoding()
+{
+    add_submenu_page('edit.php?post_type=bitmovin_player', 'settings', 'Encode Video', 'manage_options', 'bitmovin_encoding', 'bitmovin_plugin_display_encoding');
+}
+
+function bitmovin_plugin_display_encoding()
+{
+    //TODO
+}
 
 add_action('admin_menu', 'bitmovin_player_plugin_settings');
 function bitmovin_player_plugin_settings()
 {
-    add_menu_page('bitmovin_player', 'Bitmovin Settings', 'administrator', 'bitmovin_settings', 'bitmovin_plugin_display_settings');
+    add_submenu_page('edit.php?post_type=bitmovin_player', 'settings', 'Settings', 'manage_options', 'bitmovin_settings', 'bitmovin_plugin_display_settings');
 }
 
 function bitmovin_plugin_display_settings()
 {
     $apiKey = get_option('bitmovin_api_key');
     $playerKey = get_option('bitmovin_player_key');
+
+    $ftp_server = get_option('bitmovin_ftp_server');
+    $ftp_usr = get_option('bitmovin_ftp_usr');
+    $ftp_pw = get_option('bitmovin_ftp_pw');
+
+    $aws_name = get_option('bitmovin_aws_name');
+    $aws_access_key = get_option('bitmovin_aws_access_key');
+    $aws_secret_key = get_option('bitmovin_aws_secret_key');
+    $aws_bucket = get_option('bitmovin_aws_bucket');
+    $aws_prefix = get_option('bitmovin_aws_prefix');
+    $aws_region = get_option('bitmovin_aws_region');
+
     $image_url = plugins_url('images/info.png', __FILE__);
 
     $html = '<div class="wrap">
@@ -931,10 +1154,58 @@ function bitmovin_plugin_display_settings()
                 <input type="hidden" name="action" value="update" />
                 <input id="playerKey" type="hidden" name="bitmovin_player_key" size="50" value="' . $playerKey. '"/>
                 <input type="hidden" name="page_options" value="bitmovin_player_key,bitmovin_api_key" />
-                <input type="button" value="Save" onclick="checkApiKey()"/>
+                <input type="button" class="button" value="Save API Key" onclick="checkApiKey()"/>
             </p>
             </form>
-
+            
+            <form id="bitmovinFTPSettings" method="post" name="options" action="options.php">
+                <h2>Bitmovin FTP Output Configuration</h2>'. wp_nonce_field('update-options') .'
+                <table>
+                    <tr><th>FTP Server</th><td><input type="text" id="config_ftp_server" name="bitmovin_ftp_server" size="80" value="' . $ftp_server. '" placeholder="ftp://path/to/upload/directory/myEncodedVideo" required/></td></tr>
+                    <tr><th>FTP Username</th><td><input type="text" id="config_ftp_usr" name="bitmovin_ftp_usr" size="80" value="' . $ftp_usr. '" placeholder="FTP Username" required/></td></tr>
+                    <tr><th>FTP Password</th><td><input type="password" id="config_ftp_pw" name="bitmovin_ftp_pw" size="80" value="' . $ftp_pw. '" placeholder="FTP Password" required/></td></tr>
+                </table>
+                <p class="submit">
+                    <input type="hidden" name="action" value="update" />
+                    <input type="hidden" name="page_options" value="bitmovin_ftp_server,bitmovin_ftp_usr,bitmovin_ftp_pw" />
+                    <input type="submit" class="button" value="Save FTP Configuration"/>
+                </p>
+            </form>
+            
+            <form id="bitmovinAWSSettings" method="post" name="options" action="options.php">
+                <h2>Bitmovin AWS Output Configuration <br>(Amazon Web Services)</h2>'. wp_nonce_field('update-options') .'
+                <table>
+                    <tr><th>AWS Name</th><td><input type="text" id="config_aws_name" name="bitmovin_aws_name" size="30" value="' . $aws_name. '" placeholder="Your AWS Output Name" required/></td></tr>
+                    <tr><th>Access Key</th><td><input type="text" id="config_aws_access_key" name="bitmovin_aws_access_key"size="30" value="' . $aws_access_key. '" placeholder="Your AWS Access Key" required/></td></tr>
+                    <tr><th>Secret Key</th><td><input type="password" id="config_aws_secret_key" name="bitmovin_aws_secret_key" size="30" value="' . $aws_secret_key. '" placeholder="Your AWS Secret Key" required/></td></tr>
+                    <tr><th>Bucket</th><td><input type="text" id="config_aws_bucket" name="bitmovin_aws_bucket" size="30" value="' . $aws_bucket. '" placeholder="Your Bucket Name" required/></td></tr>
+                    <tr><th>Prefix</th><td><input type="text" id="config_aws_prefix" name="bitmovin_aws_prefix" size="30" value="' . $aws_prefix. '" placeholder="Folder name created for output" required/></td></tr>
+                    <tr><th>Region</th><td>
+                        <select id="config_s3_region" name="bitmovin_aws_region" value="' . $aws_region. '">
+                            <option value="us-east-1">us-east-1</option>
+                            <option value="us-west-1">us-west-1</option>
+                            <option value="us-west-2">us-west-2</option>
+                            <option value="eu-west-1">eu-west-1</option>
+                            <option value="eu-central-1">eu-central-1</option>
+                            <option value="ap-southeast-1">ap-southeast-1</option>
+                            <option value="ap-southeast-2">ap-southeast-2</option>
+                            <option value="ap-northeast-1">ap-northeast-1</option>
+                            <option value="sa-east-1">sa-east-1</option>
+                            <option value="cn-north-1">cn-north-1</option>
+                            <option value="us-gov-west-1">us-gov-west-1</option>
+                        </select>             
+                    </td></tr>
+                </table>
+                <p class="submit">
+                    <input type="hidden" name="action" value="update" />
+                    <input type="hidden" name="page_options" value="bitmovin_aws_name, bitmovin_aws_access_key, bitmovin_aws_secret_key, bitmovin_aws_bucket, bitmovin_aws_prefix, bitmovin_aws_region" />
+                    <input type="submit" class="button" value="Save AWS Configuration"/>
+                </p>
+            </form>
         </div>';
     echo $html;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/feature/encoding
