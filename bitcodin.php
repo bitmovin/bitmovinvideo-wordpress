@@ -30,6 +30,10 @@ if (isset($_POST['method']) && $_POST['method'] != "")
         $apiKey = $_POST['apiKey'];
         bitmovin_encoding_service($apiKey);
     }
+    else if ($method == "get_bitcodin_profiles") {
+        $apiKey = $_POST['apiKey'];
+        get_bitcodin_profiles($apiKey);
+    }
 }
 
 function bitmovin_encoding_service($apiKey) {
@@ -38,11 +42,11 @@ function bitmovin_encoding_service($apiKey) {
     Bitcodin::setApiToken($apiKey);
 
     $inputConfig = new HttpInputConfig();
-    $inputConfig->url = $_POST['video_src'];
+    $inputConfig->url = $_POST['videoSrc'];
     $input = Input::create($inputConfig);
 
     // CREATE VIDEO STREAM CONFIG
-    $videoStreamConfig = new VideoStreamConfig();
+    /*$videoStreamConfig = new VideoStreamConfig();
     if (isset($_POST['video_height']) && $_POST['video_height'] != "")
     {
         $videoStreamConfig->height = (int)$_POST['video_height'];
@@ -63,7 +67,9 @@ function bitmovin_encoding_service($apiKey) {
     $encodingProfileConfig->audioStreamConfigs[] = $audioStreamConfig;
 
     // CREATE ENCODING PROFILE
-    $encodingProfile = EncodingProfile::create($encodingProfileConfig);
+    $encodingProfile = EncodingProfile::create($encodingProfileConfig);*/
+
+    $encodingProfile = EncodingProfile::get($_POST['profileID']);
 
     $jobConfig = new JobConfig();
     $jobConfig->encodingProfile = $encodingProfile;
@@ -80,7 +86,7 @@ function bitmovin_encoding_service($apiKey) {
         sleep(1);
     } while($job->status != Job::STATUS_FINISHED);
 
-    if ($_POST['output'] == "ftp")
+    /*if ($_POST['output'] == "ftp")
     {
         $outputConfig = new FtpOutputConfig();
         $outputConfig->name = "My Wordpress FTP Output";
@@ -112,12 +118,22 @@ function bitmovin_encoding_service($apiKey) {
         $job->transfer($output);
     }
 
-    /* send mpd and m3u8 data */
+    // send mpd and m3u8 data
     $response = new stdClass();
     $response->host =  $output->host;
     $response->path =  $output->path;
     $response->mpd  =  $job->manifestUrls->mpdUrl;
     $response->m3u8 =  $job->manifestUrls->m3u8Url;
 
+    echo json_encode($response);*/
+}
+
+function get_bitcodin_profiles($apiKey) {
+
+    Bitcodin::setApiToken($apiKey);
+    $encodingProfiles = EncodingProfile::getListAll();
+
+    /* convert array into object array */
+    $response = json_decode (json_encode($encodingProfiles), FALSE);
     echo json_encode($response);
 }

@@ -206,55 +206,7 @@ $j(document).ready(function() {
     });
 });
 
-function video_bitrate()
-{
-    var video_bitrate = document.getElementById("config_encoding_video_bitrate").value;
-    var res = checkVideoBitrate(video_bitrate);
-    if (res == 1)
-    {
-        document.getElementById("vbitrate").innerHTML = video_bitrate + " kbps";
-        $j("#vbitrate").css("background-color","#31b0d5");
-    }
-    else if (res == 2)
-    {
-        document.getElementById("vbitrate").innerHTML = video_bitrate/1000 + " Mbps";
-        $j("#vbitrate").css("background-color","#31b0d5");
-    }
-    else {
-        document.getElementById("vbitrate").innerHTML = "max. 20 Mbps allowed!";
-        $j("#vbitrate").css("background-color","red");
-    }
-}
 
-function audio_bitrate()
-{
-    var audio_bitrate = document.getElementById("config_encoding_audio_bitrate").value;
-    if (audio_bitrate <= 256)
-    {
-        document.getElementById("abitrate").innerHTML = audio_bitrate + " kbps";
-        $j("#abitrate").css("background-color","#31b0d5");
-    }
-    else {
-        document.getElementById("abitrate").innerHTML = "max. 256 kbps allowed!";
-        $j("#abitrate").css("background-color","red");
-    }
-}
-
-function checkVideoBitrate(bitrate)
-{
-    if (bitrate < 1000)
-    {
-        return 1;
-    }
-    else if (bitrate >= 1000 && bitrate <= 20000)
-    {
-        return 2;
-    }
-    else
-    {
-        return 0;
-    }
-}
 
 function createChannels()
 {
