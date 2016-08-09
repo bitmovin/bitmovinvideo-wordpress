@@ -8,7 +8,6 @@
   Author URI: http://bitmovin.com
   License: GPLv2 or later
 */
-header("Access-Control-Allow-Origin: *");
 
 register_activation_hook(__FILE__, 'bitmovin_plugin_activation');
 function bitmovin_plugin_activation()
@@ -674,6 +673,7 @@ function bitmovin_player_save_configuration($post_id)
     } else {
         return $post_id;
     }
+    return $post_id;
 }
 
 function bitmovin_getParameter($param)
@@ -1051,25 +1051,18 @@ function bitmovin_player_plugin_encoding()
 
 function submenu_encoding_output_tabs( $current = 'encoding_profiles') {
 
+    global $pagenow;
     $tabs = array( 'encoding_profiles' => 'Encoding Profiles', 'output_profiles' => 'Output Profiles');
-    foreach( $tabs as $tab => $name) {
 
-        if ($tab == $current) {
+    echo '<h2 class="nav-tab-wrapper">';
+    foreach( $tabs as $tab => $name ){
+        $class = ( $tab == $current ) ? ' nav-tab-active' : '';
+        echo "<a class='nav-tab$class' href='?post_type=bitmovin_player&page=bitmovin_encoding&tab=$tab'>$name</a>";
 
-            $links[] = "<a class='nav-tab-active' href='edit.php?post_type=bitmovin_player&page=bitmovin_encoding&tab=$tab'>$name</a> ";
-        }
-        else {
-
-            $links[] = "<a class='nav-tab-inactive' href='edit.php?post_type=bitmovin_player&page=bitmovin_encoding&tab=$tab'>$name</a> ";
-        }
-    }
-    echo '<h2>';
-    foreach ($links as $link) {
-        echo $link;
     }
     echo '</h2>';
 
-    if ($_GET['page'] == 'bitmovin_encoding') {
+    if ($pagenow == 'edit.php' && $_GET['page'] == 'bitmovin_encoding') {
 
         if (isset ( $_GET['tab'])) {
             $tab = $_GET['tab'];
@@ -1213,18 +1206,18 @@ function bitmovin_plugin_display_settings()
                     <tr><th>Bucket</th><td><input type="text" id="config_aws_bucket" name="bitmovin_aws_bucket" size="30" value="' . $aws_bucket. '" placeholder="Your Bucket Name" required/></td></tr>
                     <tr><th>Prefix</th><td><input type="text" id="config_aws_prefix" name="bitmovin_aws_prefix" size="30" value="' . $aws_prefix. '" placeholder="Folder name created for output" required/></td></tr>
                     <tr><th>Region</th><td>
-                        <select id="config_s3_region" name="bitmovin_aws_region" value="' . $aws_region. '">
-                            <option value="us-east-1">us-east-1</option>
-                            <option value="us-west-1">us-west-1</option>
-                            <option value="us-west-2">us-west-2</option>
-                            <option value="eu-west-1">eu-west-1</option>
-                            <option value="eu-central-1">eu-central-1</option>
-                            <option value="ap-southeast-1">ap-southeast-1</option>
-                            <option value="ap-southeast-2">ap-southeast-2</option>
-                            <option value="ap-northeast-1">ap-northeast-1</option>
-                            <option value="sa-east-1">sa-east-1</option>
-                            <option value="cn-north-1">cn-north-1</option>
-                            <option value="us-gov-west-1">us-gov-west-1</option>
+                        <select id="config_s3_region" name="bitmovin_aws_region">
+                            <option value="' . $aws_region. '">us-east-1</option>
+                            <option value="' . $aws_region. '">us-west-1</option>
+                            <option value="' . $aws_region. '">us-west-2</option>
+                            <option value="' . $aws_region. '">eu-west-1</option>
+                            <option value="' . $aws_region. '">eu-central-1</option>
+                            <option value="' . $aws_region. '">ap-southeast-1</option>
+                            <option value="' . $aws_region. '">ap-southeast-2</option>
+                            <option value="' . $aws_region. '">ap-northeast-1</option>
+                            <option value="' . $aws_region. '">sa-east-1</option>
+                            <option value="' . $aws_region. '">cn-north-1</option>
+                            <option value="' . $aws_region. '">us-gov-west-1</option>
                         </select>             
                     </td></tr>
                 </table>

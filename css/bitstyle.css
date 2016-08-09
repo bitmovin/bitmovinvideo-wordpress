@@ -40,20 +40,6 @@
     margin-top: 50px;
 }
 
-a.nav-tab-active {
-    color: red;
-}
-
-a.nav-tab-inactive {
-    color: black;
-    padding: 10px;
-    text-decoration: none;
-    border-top: 2px solid black;
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    border-radius: 20px 20px 2px 2px;
-}
-
 #response {
     color: red;
     font-size: 14pt;
