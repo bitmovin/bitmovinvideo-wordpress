@@ -2,6 +2,8 @@
  * Created by Bitmovin on 10.08.2016.
  */
 
+var audioConf_anz = 1;
+var videoConf_anz = 1;
 $j = jQuery.noConflict();
 
 function createEncodeProfile() {
@@ -89,6 +91,20 @@ function audio_bitrate()
         document.getElementById("abitrate").innerHTML = "max. 256 kbps allowed!";
         $j("#abitrate").css("background-color","red");
     }
+}
+
+function addAudioConfig() {
+
+    var wrapper = $j("#encoding-table");
+    $j(wrapper).append('<tr><th colspan="2"><h4>Audio Configuration</h4></th></tr>');
+    $j(wrapper).append('<tr><th>Audio Bitrate</th><td><input type="text" name="bla"/><a href="#" class="remove_field">Remove</a></td></tr>');
+    $j(wrapper).append('<tr><th>Audio Codec</th><td><select id="create-encoding-audio-codec" name="create-encoding-audio-codec"><option value="aac">aac</option></select></td></tr>');
+
+    audioConf_anz++;
+
+    /*$j(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+        e.preventDefault(); $j(this).parent('tr').remove();
+    });*/
 }
 
 function checkVideoBitrate(bitrate)
