@@ -2,6 +2,7 @@
  * Created by Bitmovin on 08.08.2016.
  */
 
+var outputProfiles;
 var encodingProfiles;
 var media_uploader = null;
 
@@ -12,15 +13,19 @@ $j(document).ready(function() {
         $j('#response').html("<p id='response'>No valid API Key found</p>");
     }
 
+    getEncodingProfiles();
+    initEncodingProfile();
+
     getOutputProfiles();
-    initOutputProfile();
+
 });
 
 function bitcodin() {
 
     var url = bitcodin_script.bitcodin_url;
     var videoSrc = document.getElementById("bitcodin_video_src").value;
-    var profileID = document.getElementById("bitcodin_profile_id").value;
+    var encodingProfileID = document.getElementById("bitcodin_profile_id").value;
+    var outputProfileID = document.getElementById("output_profile_id").value;
 
     $j.ajax({
         type: "POST",
@@ -29,7 +34,8 @@ function bitcodin() {
             apiKey: bitcodin_script.apiKey,
             method: "bitmovin_encoding_service",
             videoSrc:  videoSrc,
-            profileID: profileID
+            encodingProfileID: encodingProfileID,
+            outputProfileID: outputProfileID
         },
         beforeSend: function() {
             $j('#response').html("<img src='" + bitcodin_script.loader + "' /><p>Encoding in progress...</p>");
@@ -41,18 +47,29 @@ function bitcodin() {
                 $j('#response').html("<p>Encoding finished successfully</p>");
             }
             else {
-                $j('#response').html(content);
+                $j('#response').html("");
+                $j('#error-response').html(content);
             }
         },
         error: function(error) {
-            console.log(error);
+            $j('#error-response').html(error);
         }
     });
     /* no page refresh */
     return false;
 }
 
+function getEncodingProfiles() {
+
+    sendAPIRequest("get_bitcodin_profiles", "Encoding Profiles are loading...", encodingProfiles, "bitcodin_profiles");
+}
+
 function getOutputProfiles() {
+
+    sendAPIRequest("get_output_profiles", "Output Profiles are loading...", outputProfiles, "output_profiles");
+}
+
+function sendAPIRequest(method, message, profile, id) {
 
     var url = bitcodin_script.bitcodin_url;
     $j.ajax({
@@ -60,35 +77,43 @@ function getOutputProfiles() {
         url: url,
         data: {
             apiKey: bitcodin_script.apiKey,
-            method: "get_bitcodin_profiles"
+            method: method
         },
         beforeSend: function() {
-            $j('#response').html("<img src='" + bitcodin_script.small_loader + "' /><p>Encoding Profiles are loading...</p>");
+            $j('#response').html("<img src='" + bitcodin_script.small_loader + "'/><p>" + message + "</p>");
         },
         success: function (content) {
 
             var index = 0;
-            encodingProfiles = $j.parseJSON(content);
-            encodingProfiles = removeDuplicates(encodingProfiles, "name");
-            var select = document.getElementById("bicodin_profiles");
+            profile = $j.parseJSON(content);
+            profile = removeDuplicates(profile, "name");
+            var select = document.getElementById(id);
 
-            for (; index < encodingProfiles.length; index++) {
+            for (; index < profile.length; index++) {
 
                 var option = document.createElement('option');
-                option.text = encodingProfiles[index].name;
+                option.text = profile[index].name;
                 select.add(option, index);
+            }
+            if (id == 'bitcodin_profiles') {
+
+                encodingProfiles = profile;
+            }
+            else {
+
+                outputProfiles = profile;
             }
             $j('#response').html("");
         },
         error: function(error) {
-
+            $j('#error-response').html(error);
         }
     });
     /* no page refresh */
     return false;
 }
 
-function initOutputProfile() {
+function initEncodingProfile() {
 
     $j('#bitcodin_profile').val("Default");
     $j('#bitcodin_quality').val("Premium");
@@ -103,11 +128,11 @@ function initOutputProfile() {
     audio_bitrate();
 }
 
-function showOutputProfile() {
+function showEncodingProfile() {
 
     var object;
     var index = 0;
-    var output = document.getElementById("bicodin_profiles");
+    var output = document.getElementById("bitcodin_profiles");
     for (; index < encodingProfiles.length; index++) {
 
         object = encodingProfiles[index];
@@ -121,6 +146,7 @@ function showOutputProfile() {
             $j('#bitcodin_audio_bitrate').val(object.audioStreamConfigs[0].bitrate / 1000);
             $j('#bitcodin_video_codec').val(object.videoStreamConfigs[0].codec);
             $j('#bitcodin_audio_codec').val(object.audioStreamConfigs[0].codec);
+
             $j('#bitcodin_profile_id').val(object.encodingProfileId);
             video_bitrate();
             audio_bitrate();
@@ -128,7 +154,33 @@ function showOutputProfile() {
         }
         else if (output.options[output.selectedIndex].value == "default") {
 
-            initOutputProfile();
+            initEncodingProfile();
+            break;
+        }
+    }
+}
+
+function showOutputProfile() {
+
+    var object;
+    var index = 0;
+    var output = document.getElementById("output_profiles");
+    for (; index < outputProfiles.length; index++) {
+
+        object = outputProfiles[index];
+        if (object.name == output.options[output.selectedIndex].value) {
+
+            $j('#output-profile').val(object.name);
+            $j('#output-type').val(object.type);
+            $j('#output-host').val(object.host);
+            $j('#output-path').val(object.path);
+
+            $j('#output_profile_id').val(object.outputId);
+            break;
+        }
+        else if (output.options[output.selectedIndex].value == "default") {
+
+            //initEncodingProfile();
             break;
         }
     }
@@ -216,7 +268,7 @@ function open_media_encoding_video()
 
         /* get video url and insert into video src input */
         var attachment = media_uploader.state().get('selection').first().toJSON();
-        $j('#config_video_src').val(attachment.url);
+        $j('#bitcodin_video_src').val(attachment.url);
     });
 
     media_uploader.open();

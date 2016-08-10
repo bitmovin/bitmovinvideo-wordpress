@@ -24,22 +24,32 @@ require_once __DIR__.'/vendor/autoload.php';
 
 if (isset($_POST['method']) && $_POST['method'] != "")
 {
+    // CONFIGURATION
+    Bitcodin::setApiToken($_POST['apiKey']);
+
     $method = $_POST['method'];
     if ($method == "bitmovin_encoding_service") {
 
-        $apiKey = $_POST['apiKey'];
-        bitmovin_encoding_service($apiKey);
+        bitmovin_encoding_service();
     }
+
     else if ($method == "get_bitcodin_profiles") {
-        $apiKey = $_POST['apiKey'];
-        get_bitcodin_profiles($apiKey);
+
+        get_bitcodin_profiles();
+    }
+
+    else if ($method == "get_output_profiles") {
+
+        get_output_profiles();
+    }
+
+    else if ($method == 'create_encoding_profile') {
+
+        create_encoding_profile();
     }
 }
 
-function bitmovin_encoding_service($apiKey) {
-
-    // CONFIGURATION
-    Bitcodin::setApiToken($apiKey);
+function bitmovin_encoding_service() {
 
     $inputConfig = new HttpInputConfig();
     $inputConfig->url = $_POST['videoSrc'];
@@ -69,7 +79,7 @@ function bitmovin_encoding_service($apiKey) {
     // CREATE ENCODING PROFILE
     $encodingProfile = EncodingProfile::create($encodingProfileConfig);*/
 
-    $encodingProfile = EncodingProfile::get($_POST['profileID']);
+    $encodingProfile = EncodingProfile::get($_POST['encodingProfileID']);
 
     $jobConfig = new JobConfig();
     $jobConfig->encodingProfile = $encodingProfile;
@@ -85,6 +95,10 @@ function bitmovin_encoding_service($apiKey) {
         $job->update();
         sleep(1);
     } while($job->status != Job::STATUS_FINISHED);
+
+    // TRANSFER JOB OUTPUT
+    $output = Output::get($_POST['outputProfileID']);
+    $job->transfer($output);
 
     /*if ($_POST['output'] == "ftp")
     {
@@ -128,12 +142,49 @@ function bitmovin_encoding_service($apiKey) {
     echo json_encode($response);*/
 }
 
-function get_bitcodin_profiles($apiKey) {
+function get_bitcodin_profiles() {
 
-    Bitcodin::setApiToken($apiKey);
     $encodingProfiles = EncodingProfile::getListAll();
 
     /* convert array into object array */
     $response = json_decode (json_encode($encodingProfiles), FALSE);
     echo json_encode($response);
+}
+
+function get_output_profiles() {
+
+    $outputProfiles = Output::getListAll();
+
+    /* convert array into object array */
+    $response = json_decode (json_encode($outputProfiles), FALSE);
+    echo json_encode($response);
+}
+
+function create_encoding_profile() {
+
+    // CREATE VIDEO STREAM CONFIG
+    $videoStreamConfig = new VideoStreamConfig();
+    if (isset($_POST['video_height']) && $_POST['video_height'] != "")
+    {
+        $videoStreamConfig->height = (int)$_POST['video_height'];
+    }
+    if (isset($_POST['video_width']) && $_POST['video_width'] != "")
+    {
+        $videoStreamConfig->width = (int)$_POST['video_width'];
+    }
+    $videoStreamConfig->bitrate = (int)$_POST['video_bitrate'];
+    $videoStreamConfig->codec = (int)$_POST['video_codec'];
+
+    // CREATE AUDIO STREAM CONFIGS
+    $audioStreamConfig = new AudioStreamConfig();
+    $audioStreamConfig->bitrate = (int)$_POST['audio_bitrate'];
+    $audioStreamConfig->codec = (int)$_POST['audio_codec'];
+
+    $encodingProfileConfig = new EncodingProfileConfig();
+    $encodingProfileConfig->name = $_POST['profile'];
+    $encodingProfileConfig->videoStreamConfigs[] = $videoStreamConfig;
+    $encodingProfileConfig->audioStreamConfigs[] = $audioStreamConfig;
+
+    // CREATE ENCODING PROFILE
+    EncodingProfile::create($encodingProfileConfig);
 }

@@ -41,6 +41,10 @@
 }
 
 #response {
+    color: grey;
+}
+
+#error-response {
     color: red;
     font-size: 14pt;
 }
@@ -65,8 +69,9 @@
     border: 1px solid #31b0d5;
 }
 
-#bUpload {
-    width: 45%;
+#upload-progressive {
+    display: inline-block;
+    border: 1px solid #31b0d5;
 }
 #custom .intend1 {
     margin-left: 30px;

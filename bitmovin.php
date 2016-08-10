@@ -1052,7 +1052,7 @@ function bitmovin_player_plugin_encoding()
 function submenu_encoding_output_tabs( $current = 'encoding_profiles') {
 
     global $pagenow;
-    $tabs = array( 'encoding_profiles' => 'Encoding Profiles', 'output_profiles' => 'Output Profiles');
+    $tabs = array( 'encoding_configuration' => 'Encoding Configuration', 'create_encoding_profile' => 'Create Encoding Profile', 'create_output_profile' => 'Create Output Profile');
 
     echo '<h2 class="nav-tab-wrapper">';
     foreach( $tabs as $tab => $name ){
@@ -1068,15 +1068,19 @@ function submenu_encoding_output_tabs( $current = 'encoding_profiles') {
             $tab = $_GET['tab'];
         }
         else {
-            $tab = 'encoding_profiles';
+            $tab = 'encoding_configuration';
         }
         switch ($tab) {
-            case 'encoding_profiles':
+            case 'encoding_configuration':
                 bitmovin_plugin_display_encoding();
                 break;
 
-            case 'output_profiles':
-                bitmovin_plugin_display_output();
+            case 'create_encoding_profile':
+                bitmovin_plugin_display_create_encoding_profile();
+                break;
+
+            case 'create_output_profile':
+                bitmovin_plugin_display_create_output_profile();
                 break;
         }
     }
@@ -1085,31 +1089,39 @@ function submenu_encoding_output_tabs( $current = 'encoding_profiles') {
 function bitmovin_plugin_display_encoding()
 {
     $apiKey = get_option('bitmovin_api_key');
-    wp_register_script('bitcodin_script', plugins_url('js/bitcodin.js', __FILE__));
-    wp_enqueue_script('bitcodin_script');
-    wp_localize_script( 'bitcodin_script', 'bitcodin_script', array( 'apiKey' => $apiKey, 'bitcodin_url' => plugins_url( 'bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+
+    if (!wp_script_is('bitcodin_script', 'enqueued')) {
+
+        wp_register_script('bitcodin_script', plugins_url('js/bitcodin.js', __FILE__));
+        wp_enqueue_script('bitcodin_script');
+        wp_localize_script('bitcodin_script', 'bitcodin_script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+    }
 
     $html = '<div class="wrap">
-            <form id="bitcodinConf" method="post" name="options" action="options.php">
-                <h2>Bitmovin Encoding Configuration</h2>'. wp_nonce_field('update-options') .'
-                <table>
+                <h1>Bitmovin Encoding Configuration</h1>
+                <table class="wp-list-table widefat fixed striped">
                     <tr><th>Select Encoding Profile</th>
-                    <td><select id="bicodin_profiles" name="bicodin_profiles" onchange="showOutputProfile()">
+                    <td><select id="bitcodin_profiles" name="bitcodin_profiles" onchange="showEncodingProfile()">
                         <option value="default">default</option>
                     </select></td></tr>
-                    <tr><th></th><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>
-                    <tr><th>Video URL</th><td><input type="text" id="bitcodin_video_src" name="bitcodin_video_src" size="50" value="" placeholder="path/to/your/video"/></td></tr>
+                    <tr><th>Select Output Profile</th>
+                    <td><select id="output_profiles" name="output_profiles" onchange="showOutputProfile()">
+                        <option value="empty">(empty)</option>
+                    </select></td></tr> 
+                    <tr><th>Video URL</th><td><input type="text" id="bitcodin_video_src" name="bitcodin_video_src" size="50" value="" placeholder="path/to/your/video"/><input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="..."></td></tr>
                 </table>
+                
                 <br><br>
-                <table cellpadding="8">
-                    <tr><th colspan="2"><h2>Selected Encoding Configuration</h2></th></tr> 
-                    <tr><th>Profile</th><td><input type="text" id="bitcodin_profile" name="bitcodin_profile" size="50" value=""/></td></tr>
+                
+                <table class="wp-list-table widefat fixed striped">
+                    <tr><th colspan="2"><h4>Selected Encoding Configuration</h4></th></tr> 
+                    <tr><th>Profile</th><td><input type="text" id="bitcodin_profile" name="bitcodin_profile" size="50"/></td></tr>
                     <tr><th>Quality</th><td><select id="bitcodin_quality" name="bitcodin_quality">
                         <option value="Standard">Standard</option>
                         <option value="Professional">Professional</option>
                         <option value="Premium">Premium</option>
                     </select></td></tr>
-                    <tr><th>Resolution</th><td><input type="text" id="bitcodin_video_width" name="bitcodin_video_width" size="20" value=""/> X <input type="text" id="bitcodin_video_height" name="bitcodin_video_height" size="20" value=""/></td></tr>
+                    <tr><th>Resolution</th><td><input type="text" id="bitcodin_video_width" name="bitcodin_video_width" size="20"/> X <input type="text" id="bitcodin_video_height" name="bitcodin_video_height" size="20"/></td></tr>
                     <tr><th>Video Bitrate</th><td><input type="text" id="bitcodin_video_bitrate" name="bitcodin_video_bitrate" size="50" onkeyup="video_bitrate()"/><span id="vbitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Audio Bitrate</th><td><input type="text" id="bitcodin_audio_bitrate" name="bitcodin_audio_bitrate" size="50" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Video Codec</th><td><select id="bitcodin_video_codec" name="bitcodin_video_codec">
@@ -1120,22 +1132,89 @@ function bitmovin_plugin_display_encoding()
                         <option value="aac">aac</option>
                     </select></td></tr>
                     
-                    <tr><td><input type="hidden" id="bitcodin_profile_id" name="bitcodin_profile_id" value=""/></td></tr>
+                    <tr><td><input type="hidden" id="bitcodin_profile_id" name="bitcodin_profile_id"/></td></tr>
                 </table>
+                
+                <br><br>
+                
+                <table class="wp-list-table widefat fixed striped">
+                    <tr><th colspan="2"><h4>Selected Output Configuration</h4></th></tr>
+                    <tr><th>Type</th><td><select id="output-type" name="output-type">
+                        <option value="ftp">FTP</option>
+                        <option value="s3">S3</option> 
+                    </select></td></tr>
+                    <tr><th>Profile</th><td><input type="text" id="output-profile" name="output-profile" size="50"/></td></tr>
+                    <tr><th>Host</th><td><input type="text" id="output-host" name="output-host" size="50"/></td></tr>
+                    <tr><th>Path</th><td><input type="text" id="output-path" name="output-path" size="50"/></td></tr>
+                    
+                    <tr><td><input type="hidden" id="output_profile_id" name="output_profile_id"/></td></tr>
+                </table>
+                
                 <p class="submit">
-                    <input type="hidden" name="action" value="update" />
                     <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
-                    <input type="hidden" name="page_options" value="bitmovin_ftp_server,bitmovin_ftp_usr,bitmovin_ftp_pw" />
                     <input type="button" id="bEncode" class="button" value="Encode Selected Video" onclick="bitcodin()"/>
                 </p>
-            </form>
             </div>
-            <div id="response"></div>';
+            <div id="response"></div>
+            <div id="error-response"></div>';
     echo $html;
 }
 
-function bitmovin_plugin_display_output() {
+function bitmovin_plugin_display_create_encoding_profile() {
 
+    $apiKey = get_option('bitmovin_api_key');
+
+    if (!wp_script_is('encoding_profile_script', 'enqueued')) {
+
+        wp_register_script('encoding_profile_script', plugins_url('js/create_profiles.js', __FILE__));
+        wp_enqueue_script('encoding_profile_script');
+        wp_localize_script('encoding_profile_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+    }
+
+    $html = '<div class="wrap">
+                <h1>Create Encoding Profile</h1>
+                <form>
+                <table class="wp-list-table widefat fixed striped">
+                    <tr><th colspan="2"><h4>Selected Encoding Configuration</h4></th></tr> 
+                    <tr><th>Profile</th><td><input type="text" id="create-encoding-profile" name="create-encoding-profile" size="50" required/></td></tr>
+                    <tr><th>Resolution</th><td><input type="number" id="create-encoding-video-width" name="create-encoding-video-width" size="20" required/> X <input type="number" id="create-encoding-video-height" name="create-encoding-video-height" size="20" required/></td></tr>
+                    <tr><th>Video Bitrate</th><td><input type="number" id="create-encoding-video-bitrate" name="create-encoding-video-bitrate" size="50" onkeyup="video_bitrate()" required/><span id="vbitrate" class="bitrate">kbps</span></td></tr>
+                    <tr><th>Audio Bitrate</th><td><input type="number" id="create-encoding-audio-bitrate" name="create-encoding-audio-bitrate" size="50" onkeyup="audio_bitrate()" required/><span id="abitrate" class="bitrate">kbps</span></td></tr>
+                    <tr><th>Video Codec</th><td><select id="create-encoding-video-codec" name="create-encoding-video-codec">
+                        <option value="h264">h264</option>
+                        <option value="hevc">hevc</option>
+                    </select></td></tr>
+                    <tr><th>Audio Codec</th><td><select id="create-encoding-audio-codec" name="create-encoding-audio-codec">
+                        <option value="aac">aac</option>
+                    </select></td></tr>
+                </table>
+                <p class="submit">
+                    <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
+                    <input type="button" id="button-create-encoding-profile" class="button" value="Create Encoding Profile" onclick="createEncodeProfile()"/>
+                </p>
+                </form>
+            </div>
+            <div id="response"></div>
+            <div id="error-response"></div>';
+    echo $html;
+}
+
+function bitmovin_plugin_display_create_output_profile() {
+
+    $apiKey = get_option('bitmovin_api_key');
+
+    if (!wp_script_is('encoding_profile_script', 'enqueued')) {
+
+        wp_register_script('encoding_profile_script', plugins_url('js/create_profiles.js', __FILE__));
+        wp_enqueue_script('encoding_profile_script');
+        wp_localize_script('encoding_profile_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+    }
+
+    $html = '<div class="wrap">
+             </div>
+             <div id="response"></div>
+             <div id="error-response"></div>';
+    echo $html;
 }
 
 add_action('admin_menu', 'bitmovin_player_plugin_settings');
