@@ -1098,7 +1098,7 @@ function bitmovin_plugin_display_encoding()
     }
 
     $html = '<div class="wrap">
-                <h1>Bitmovin Encoding Configuration</h1>
+                <h1>Bitmovin Encoding Configuration</h1><br>
                 <table class="wp-list-table widefat fixed striped">
                     <tr><th>Select Encoding Profile</th>
                     <td><select id="bitcodin_profiles" name="bitcodin_profiles" onchange="showEncodingProfile()">
@@ -1166,39 +1166,43 @@ function bitmovin_plugin_display_create_encoding_profile() {
 
     if (!wp_script_is('encoding_profile_script', 'enqueued')) {
 
-        wp_register_script('encoding_profile_script', plugins_url('js/create_profiles.js', __FILE__));
+        wp_register_script('encoding_profile_script', plugins_url('js/crEncoding.js', __FILE__));
         wp_enqueue_script('encoding_profile_script');
         wp_localize_script('encoding_profile_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
     }
 
     $html = '<div class="wrap">
-                <h1>Create Encoding Profile</h1>
-                <form>
+                <h1>Create Encoding Profile</h1><br>
                 <table id="encoding-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Encoding Profile</h4></th></tr> 
                     <tr><th>Profile</th><td><input type="text" id="create-encoding-profile" name="create-encoding-profile" size="50" required/></td></tr>
+                </table>
+                <br><br>
+                <table id="video-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Video Configuration</h4></th></tr> 
                     <tr><th>Resolution</th><td><input type="number" id="create-encoding-video-width" name="create-encoding-video-width" size="20" required/> X <input type="number" id="create-encoding-video-height" name="create-encoding-video-height" size="20" required/></td></tr>
                     <tr><th>Video Bitrate</th><td><input type="number" id="create-encoding-video-bitrate" name="create-encoding-video-bitrate" size="50" onkeyup="video_bitrate()" required/><span id="vbitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Video Codec</th><td><select id="create-encoding-video-codec" name="create-encoding-video-codec">
-                        <option value="h264">h264</option>
-                        <option value="hevc">hevc</option>
+                        <option value="h264">H264</option>
+                        <option value="hevc">HEVC</option>
                     </select></td></tr>
+                </table>
+                <a class="add-config" onclick="addVideoConfig()">+ Add Video Configuration</a>
+                <br><br>
+                <table id="audio-table" class="wp-list-table widefat fixed striped">
                     <th colspan="2"><h4>Audio Configuration</h4></th></tr>
                     <tr><th>Audio Bitrate</th><td><input type="number" id="create-encoding-audio-bitrate" name="create-encoding-audio-bitrate" size="50" onkeyup="audio_bitrate()" required/><span id="abitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Audio Codec</th><td><select id="create-encoding-audio-codec" name="create-encoding-audio-codec">
-                        <option value="aac">aac</option>
+                        <option value="aac">AAC</option>
                     </select></td></tr>
-                </table>
-                
-                <input type="button" id="button-create-encoding-profile" class="button" value="+ Add Video Config" onclick="addVideoConfig()"/>
-                <input type="button" id="button-create-encoding-profile" class="button" value="+ Add Audio Config" onclick="addAudioConfig()"/>
+                </table> 
+                <a class="add-config" onclick="addAudioConfig()">+ Add Audio Configuration</a>
+                <br>
 
                 <p class="submit">
                     <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
                     <input type="button" id="button-create-encoding-profile" class="button" value="Create Encoding Profile" onclick="createEncodeProfile()"/>
                 </p>
-                </form>
             </div>
             <div id="response"></div>
             <div id="error-response"></div>';
@@ -1209,17 +1213,62 @@ function bitmovin_plugin_display_create_output_profile() {
 
     $apiKey = get_option('bitmovin_api_key');
 
-    if (!wp_script_is('encoding_profile_script', 'enqueued')) {
+    if (!wp_script_is('output_script', 'enqueued')) {
 
-        wp_register_script('encoding_profile_script', plugins_url('js/create_profiles.js', __FILE__));
-        wp_enqueue_script('encoding_profile_script');
-        wp_localize_script('encoding_profile_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+        wp_register_script('output_script', plugins_url('js/crOutput.js', __FILE__));
+        wp_enqueue_script('output_script');
+        wp_localize_script('output_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
     }
 
     $html = '<div class="wrap">
+                
+                <h2>Create Output Profile</h2><br>
+                <table class="wp-list-table widefat fixed striped">
+                    <th colspan="2"><h4>Create FTP Output Profile</h4></th></tr>
+                    <tr><th>Profile</th><td><input type="text" id="config_ftp_name" name="bitmovin_ftp_name" size="70" placeholder="your profile name"/></td></tr>
+                    <tr><th>FTP Host</th><td><input type="text" id="config_ftp_host" name="bitmovin_ftp_host" size="70" placeholder="ftp://path/to/upload/directory/myEncodedVideo"/></td></tr>
+                    <tr><th>FTP Username</th><td><input type="text" id="config_ftp_usr" name="bitmovin_ftp_usr" size="70" placeholder="FTP Username"/></td></tr>
+                    <tr><th>FTP Password</th><td><input type="password" id="config_ftp_pw" name="bitmovin_ftp_pw" size="70" placeholder="FTP Password"/></td></tr>
+                    <tr><th>Create Subdirectory</th><td><input type="checkbox" id="config_ftp_subdirectory" name="bitmovin_ftp_subdirectory"/></td></tr>
+                </table>
+                <p class="submit">
+                    <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
+                    <input type="button" id="button-create-ftp-profile" class="button" value="Create FTP Profile" onclick="createFTPOutput()"/>
+                </p>
+                <div id="response" class="ftp-response"></div>
+                <div id="error-response" class="ftp-error-response"></div><br>
+              
+                <table class="wp-list-table widefat fixed striped">
+                    <th colspan="2"><h4>Create AWS Output Profile</h4></th></tr>
+                    <tr><th>Profile</th><td><input type="text" id="config_aws_name" name="bitmovin_aws_name" size="70" placeholder="your profile name"/></td></tr>
+                    <tr><th>Access Key</th><td><input type="text" id="config_aws_access_key" name="bitmovin_aws_access_key" size="70" placeholder="Your AWS Access Key"/></td></tr>
+                    <tr><th>Secret Key</th><td><input type="password" id="config_aws_secret_key" name="bitmovin_aws_secret_key" size="70" placeholder="Your AWS Secret Key"/></td></tr>
+                    <tr><th>Bucket</th><td><input type="text" id="config_aws_bucket" name="bitmovin_aws_bucket" size="70" placeholder="Your Bucket Name"/></td></tr>
+                    <tr><th>Prefix</th><td><input type="text" id="config_aws_prefix" name="bitmovin_aws_prefix" size="70" placeholder="Folder name created for output"/></td></tr>
+                    <tr><th>Region</th><td>
+                        <select id="config_aws_region" name="bitmovin_aws_region">
+                            <option>us-east-1</option>
+                            <option>us-west-1</option>
+                            <option>us-west-2</option>
+                            <option>eu-west-1</option>
+                            <option>eu-central-1</option>
+                            <option>ap-southeast-1</option>
+                            <option>ap-southeast-2</option>
+                            <option>ap-northeast-1</option>
+                            <option>sa-east-1</option>
+                            <option>cn-north-1</option>
+                            <option>us-gov-west-1</option>
+                        </select>            
+                    </td></tr>
+                    <tr><th>Create Subdirectory</th><td><input type="checkbox" id="config_s3_subdirectory" name="bitmovin_s3_subdirectory"/></td></tr>
+                </table>
+                <p class="submit">
+                    <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
+                    <input type="button" id="button-create-s3-profile" class="button" value="Create AWS Profile" onclick="createS3Output()"/>
+                </p>
              </div>
-             <div id="response"></div>
-             <div id="error-response"></div>';
+             <div id="response" class="s3-response"></div>
+             <div id="error-response" class="s3-error-response"></div>';
     echo $html;
 }
 
@@ -1233,17 +1282,6 @@ function bitmovin_plugin_display_settings()
 {
     $apiKey = get_option('bitmovin_api_key');
     $playerKey = get_option('bitmovin_player_key');
-
-    $ftp_server = get_option('bitmovin_ftp_server');
-    $ftp_usr = get_option('bitmovin_ftp_usr');
-    $ftp_pw = get_option('bitmovin_ftp_pw');
-
-    $aws_name = get_option('bitmovin_aws_name');
-    $aws_access_key = get_option('bitmovin_aws_access_key');
-    $aws_secret_key = get_option('bitmovin_aws_secret_key');
-    $aws_bucket = get_option('bitmovin_aws_bucket');
-    $aws_prefix = get_option('bitmovin_aws_prefix');
-    $aws_region = get_option('bitmovin_aws_region');
 
     $image_url = plugins_url('images/info.png', __FILE__);
 
@@ -1266,51 +1304,6 @@ function bitmovin_plugin_display_settings()
                 <input type="hidden" name="page_options" value="bitmovin_player_key,bitmovin_api_key" />
                 <input type="button" class="button" value="Save API Key" onclick="checkApiKey()"/>
             </p>
-            </form>
-            
-            <form id="bitmovinFTPSettings" method="post" name="options" action="options.php">
-                <h2>Bitmovin FTP Output Configuration</h2>'. wp_nonce_field('update-options') .'
-                <table>
-                    <tr><th>FTP Server</th><td><input type="text" id="config_ftp_server" name="bitmovin_ftp_server" size="80" value="' . $ftp_server. '" placeholder="ftp://path/to/upload/directory/myEncodedVideo" required/></td></tr>
-                    <tr><th>FTP Username</th><td><input type="text" id="config_ftp_usr" name="bitmovin_ftp_usr" size="80" value="' . $ftp_usr. '" placeholder="FTP Username" required/></td></tr>
-                    <tr><th>FTP Password</th><td><input type="password" id="config_ftp_pw" name="bitmovin_ftp_pw" size="80" value="' . $ftp_pw. '" placeholder="FTP Password" required/></td></tr>
-                </table>
-                <p class="submit">
-                    <input type="hidden" name="action" value="update" />
-                    <input type="hidden" name="page_options" value="bitmovin_ftp_server,bitmovin_ftp_usr,bitmovin_ftp_pw" />
-                    <input type="submit" class="button" value="Save FTP Configuration"/>
-                </p>
-            </form>
-            
-            <form id="bitmovinAWSSettings" method="post" name="options" action="options.php">
-                <h2>Bitmovin AWS Output Configuration <br>(Amazon Web Services)</h2>'. wp_nonce_field('update-options') .'
-                <table>
-                    <tr><th>AWS Name</th><td><input type="text" id="config_aws_name" name="bitmovin_aws_name" size="30" value="' . $aws_name. '" placeholder="Your AWS Output Name" required/></td></tr>
-                    <tr><th>Access Key</th><td><input type="text" id="config_aws_access_key" name="bitmovin_aws_access_key"size="30" value="' . $aws_access_key. '" placeholder="Your AWS Access Key" required/></td></tr>
-                    <tr><th>Secret Key</th><td><input type="password" id="config_aws_secret_key" name="bitmovin_aws_secret_key" size="30" value="' . $aws_secret_key. '" placeholder="Your AWS Secret Key" required/></td></tr>
-                    <tr><th>Bucket</th><td><input type="text" id="config_aws_bucket" name="bitmovin_aws_bucket" size="30" value="' . $aws_bucket. '" placeholder="Your Bucket Name" required/></td></tr>
-                    <tr><th>Prefix</th><td><input type="text" id="config_aws_prefix" name="bitmovin_aws_prefix" size="30" value="' . $aws_prefix. '" placeholder="Folder name created for output" required/></td></tr>
-                    <tr><th>Region</th><td>
-                        <select id="config_s3_region" name="bitmovin_aws_region">
-                            <option value="' . $aws_region. '">us-east-1</option>
-                            <option value="' . $aws_region. '">us-west-1</option>
-                            <option value="' . $aws_region. '">us-west-2</option>
-                            <option value="' . $aws_region. '">eu-west-1</option>
-                            <option value="' . $aws_region. '">eu-central-1</option>
-                            <option value="' . $aws_region. '">ap-southeast-1</option>
-                            <option value="' . $aws_region. '">ap-southeast-2</option>
-                            <option value="' . $aws_region. '">ap-northeast-1</option>
-                            <option value="' . $aws_region. '">sa-east-1</option>
-                            <option value="' . $aws_region. '">cn-north-1</option>
-                            <option value="' . $aws_region. '">us-gov-west-1</option>
-                        </select>             
-                    </td></tr>
-                </table>
-                <p class="submit">
-                    <input type="hidden" name="action" value="update" />
-                    <input type="hidden" name="page_options" value="bitmovin_aws_name, bitmovin_aws_access_key, bitmovin_aws_secret_key, bitmovin_aws_bucket, bitmovin_aws_prefix, bitmovin_aws_region" />
-                    <input type="submit" class="button" value="Save AWS Configuration"/>
-                </p>
             </form>
         </div>';
     echo $html;

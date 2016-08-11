@@ -40,6 +40,13 @@
     margin-top: 50px;
 }
 
+.add-config {
+    color: #31b0d5;
+    font-size: 11pt;
+    margin-top: 5px;
+    display: inline-block;
+}
+
 #response {
     color: grey;
 }

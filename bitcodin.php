@@ -47,6 +47,16 @@ if (isset($_POST['method']) && $_POST['method'] != "")
 
         create_encoding_profile();
     }
+
+    else if ($method == 'create_ftp_output_profile') {
+
+        create_ftp_output_profile();
+    }
+
+    else if ($method == 'create_s3_output_profile') {
+
+        create_s3_output_profile();
+    }
 }
 
 function bitmovin_encoding_service() {
@@ -54,30 +64,6 @@ function bitmovin_encoding_service() {
     $inputConfig = new HttpInputConfig();
     $inputConfig->url = $_POST['videoSrc'];
     $input = Input::create($inputConfig);
-
-    // CREATE VIDEO STREAM CONFIG
-    /*$videoStreamConfig = new VideoStreamConfig();
-    if (isset($_POST['video_height']) && $_POST['video_height'] != "")
-    {
-        $videoStreamConfig->height = (int)$_POST['video_height'];
-    }
-    if (isset($_POST['video_width']) && $_POST['video_width'] != "")
-    {
-        $videoStreamConfig->width = (int)$_POST['video_width'];
-    }
-    $videoStreamConfig->bitrate = (int)$_POST['video_bitrate'];
-
-    // CREATE AUDIO STREAM CONFIGS
-    $audioStreamConfig = new AudioStreamConfig();
-    $audioStreamConfig->bitrate = (int)$_POST['audio_bitrate'];
-
-    $encodingProfileConfig = new EncodingProfileConfig();
-    $encodingProfileConfig->name = $_POST['profile'];
-    $encodingProfileConfig->videoStreamConfigs[] = $videoStreamConfig;
-    $encodingProfileConfig->audioStreamConfigs[] = $audioStreamConfig;
-
-    // CREATE ENCODING PROFILE
-    $encodingProfile = EncodingProfile::create($encodingProfileConfig);*/
 
     $encodingProfile = EncodingProfile::get($_POST['encodingProfileID']);
 
@@ -100,37 +86,7 @@ function bitmovin_encoding_service() {
     $output = Output::get($_POST['outputProfileID']);
     $job->transfer($output);
 
-    /*if ($_POST['output'] == "ftp")
-    {
-        $outputConfig = new FtpOutputConfig();
-        $outputConfig->name = "My Wordpress FTP Output";
-        $outputConfig->host = $_POST['ftp_server'];
-        $outputConfig->username = $_POST['ftp_usr'];
-        $outputConfig->password = $_POST['ftp_pw'];
-        $outputConfig->createSubDirectory = false;
-
-        $output = Output::create($outputConfig);
-
-        // TRANSFER JOB OUTPUT
-        $job->transfer($output);
-        //echo $output->host + $output->path;
-    }
-    else    {
-        $outputConfig = new S3OutputConfig();
-        $outputConfig->name         = $_POST['aws_name'];
-        $outputConfig->accessKey    = $_POST['access_key'];
-        $outputConfig->secretKey    = $_POST['secret_key'];
-        $outputConfig->bucket       = $_POST['bucket'];
-        $outputConfig->region       = $_POST['region'];
-        $outputConfig->prefix       = $_POST['prefix'];
-        $outputConfig->createSubDirectory = false;
-        $outputConfig->makePublic   = true;
-
-        $output = Output::create($outputConfig);
-
-        // TRANSFER JOB OUTPUT
-        $job->transfer($output);
-    }
+    /*
 
     // send mpd and m3u8 data
     $response = new stdClass();
@@ -162,29 +118,76 @@ function get_output_profiles() {
 
 function create_encoding_profile() {
 
-    // CREATE VIDEO STREAM CONFIG
-    $videoStreamConfig = new VideoStreamConfig();
-    if (isset($_POST['video_height']) && $_POST['video_height'] != "")
-    {
-        $videoStreamConfig->height = (int)$_POST['video_height'];
-    }
-    if (isset($_POST['video_width']) && $_POST['video_width'] != "")
-    {
-        $videoStreamConfig->width = (int)$_POST['video_width'];
-    }
-    $videoStreamConfig->bitrate = (int)$_POST['video_bitrate'];
-    $videoStreamConfig->codec = (int)$_POST['video_codec'];
-
-    // CREATE AUDIO STREAM CONFIGS
-    $audioStreamConfig = new AudioStreamConfig();
-    $audioStreamConfig->bitrate = (int)$_POST['audio_bitrate'];
-    $audioStreamConfig->codec = (int)$_POST['audio_codec'];
-
     $encodingProfileConfig = new EncodingProfileConfig();
     $encodingProfileConfig->name = $_POST['profile'];
-    $encodingProfileConfig->videoStreamConfigs[] = $videoStreamConfig;
-    $encodingProfileConfig->audioStreamConfigs[] = $audioStreamConfig;
+
+    $videoConfigs = json_decode($_POST['videoConfigs']);
+    $audioConfigs = json_decode($_POST['audioConfigs']);
+
+    // CREATE VIDEO STREAM CONFIG
+    foreach ($videoConfigs as $config) {
+
+        $videoStreamConfig = new VideoStreamConfig();
+        $videoStreamConfig->height = (int)$config->height;
+        $videoStreamConfig->width = (int)$config->width;
+        $videoStreamConfig->bitrate = (int)$config->bitrate;
+        $videoStreamConfig->codec = (string)$config->codec;
+
+        $encodingProfileConfig->videoStreamConfigs[] = $videoStreamConfig;
+    }
+
+    // CREATE AUDIO STREAM CONFIGS
+    foreach ($audioConfigs as $config) {
+
+        $audioStreamConfig = new AudioStreamConfig();
+        $audioStreamConfig->bitrate = (int)$config->bitrate;
+        $audioStreamConfig->codec = (string)$config->codec;
+
+        $encodingProfileConfig->audioStreamConfigs[] = $audioStreamConfig;
+    }
 
     // CREATE ENCODING PROFILE
     EncodingProfile::create($encodingProfileConfig);
+}
+
+function create_ftp_output_profile() {
+
+    $outputConfig = new FtpOutputConfig();
+    $outputConfig->name                 = $_POST['profile'];
+    $outputConfig->host                 = $_POST['host'];
+    $outputConfig->username             = $_POST['usr'];
+    $outputConfig->password             = $_POST['pw'];
+
+    if ($_POST['subdirectory'] == 'true') {
+
+        $outputConfig->createSubDirectory = true;
+    }
+    else {
+
+        $outputConfig->createSubDirectory = true;
+    }
+
+    Output::create($outputConfig);
+}
+
+function create_s3_output_profile() {
+
+    $outputConfig = new S3OutputConfig();
+    $outputConfig->name         = $_POST['profile'];
+    $outputConfig->accessKey    = $_POST['accessKey'];
+    $outputConfig->secretKey    = $_POST['secretKey'];
+    $outputConfig->bucket       = $_POST['bucket'];
+    $outputConfig->region       = $_POST['region'];
+    $outputConfig->prefix       = $_POST['prefix'];
+
+    if ($_POST['subdirectory'] == 'true') {
+
+        $outputConfig->createSubDirectory = true;
+    }
+    else {
+
+        $outputConfig->createSubDirectory = true;
+    }
+
+    Output::create($outputConfig);
 }
