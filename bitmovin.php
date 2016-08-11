@@ -1132,7 +1132,7 @@ function bitmovin_plugin_display_encoding()
                         <option value="aac">aac</option>
                     </select></td></tr>
                     
-                    <tr><td><input type="hidden" id="bitcodin_profile_id" name="bitcodin_profile_id"/></td></tr>
+                    <tr><th></th><td><input type="hidden" id="bitcodin_profile_id" name="bitcodin_profile_id"/></td></tr>
                 </table>
                 
                 <br><br>
@@ -1147,7 +1147,7 @@ function bitmovin_plugin_display_encoding()
                     <tr><th>Host</th><td><input type="text" id="output-host" name="output-host" size="50"/></td></tr>
                     <tr><th>Path</th><td><input type="text" id="output-path" name="output-path" size="50"/></td></tr>
                     
-                    <tr><td><input type="hidden" id="output_profile_id" name="output_profile_id"/></td></tr>
+                    <tr><th></th><td><input type="hidden" id="output_profile_id" name="output_profile_id"/></td></tr>
                 </table>
                 
                 <p class="submit">
