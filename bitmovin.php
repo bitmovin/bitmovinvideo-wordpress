@@ -1102,18 +1102,18 @@ function bitmovin_plugin_display_encoding()
                 <table class="wp-list-table widefat fixed striped">
                     <tr><th>Select Encoding Profile</th>
                     <td><select id="bitcodin_profiles" name="bitcodin_profiles" onchange="showEncodingProfile()">
-                        <option value="default">default</option>
+                        
                     </select></td></tr>
                     <tr><th>Select Output Profile</th>
                     <td><select id="output_profiles" name="output_profiles" onchange="showOutputProfile()">
-                        <option value="empty">(empty)</option>
+                        
                     </select></td></tr> 
                     <tr><th>Video URL</th><td><input type="text" id="bitcodin_video_src" name="bitcodin_video_src" size="50" value="" placeholder="path/to/your/video"/><input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="..."></td></tr>
                 </table>
                 
                 <br><br>
                 
-                <table class="wp-list-table widefat fixed striped">
+                <table id="selected-encoding-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Selected Encoding Configuration</h4></th></tr> 
                     <tr><th>Profile</th><td><input type="text" id="bitcodin_profile" name="bitcodin_profile" size="50"/></td></tr>
                     <tr><th>Quality</th><td><select id="bitcodin_quality" name="bitcodin_quality">
@@ -1137,7 +1137,7 @@ function bitmovin_plugin_display_encoding()
                 
                 <br><br>
                 
-                <table class="wp-list-table widefat fixed striped">
+                <table id="selected-output-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Selected Output Configuration</h4></th></tr>
                     <tr><th>Type</th><td><select id="output-type" name="output-type">
                         <option value="ftp">FTP</option>

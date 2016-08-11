@@ -12,16 +12,17 @@ $j(document).ready(function() {
     if (bitcodin_script.apiKey == "") {
         $j('#response').html("<p id='response'>No valid API Key found</p>");
     }
+    /* disable table content */
+    $j("#selected-encoding-table").find("input,button,textarea,select").attr("disabled","disabled");
+    $j("#selected-output-table").find("input,button,textarea,select").attr("disabled","disabled");
 
     getEncodingProfiles();
-    initEncodingProfile();
-
     getOutputProfiles();
-
 });
 
 function bitcodin() {
 
+    delete_response();
     var url = bitcodin_script.bitcodin_url;
     var videoSrc = document.getElementById("bitcodin_video_src").value;
     var encodingProfileID = document.getElementById("bitcodin_profile_id").value;
@@ -38,7 +39,7 @@ function bitcodin() {
             outputProfileID: outputProfileID
         },
         beforeSend: function() {
-            $j('#response').html("<img src='" + bitcodin_script.loader + "' /><p>Encoding in progress...</p>");
+            $j('#response').html("<img src='" + bitcodin_script.loader + "'/><p>Encoding in progress...</p>");
         },
         success: function (content) {
 
@@ -47,7 +48,7 @@ function bitcodin() {
                 $j('#response').html("<p>Encoding finished successfully</p>");
             }
             else {
-                $j('#response').html("");
+                delete_response();
                 $j('#error-response').html(content);
             }
         },
@@ -57,6 +58,12 @@ function bitcodin() {
     });
     /* no page refresh */
     return false;
+}
+
+function delete_response() {
+
+    $j('#response').html("");
+    $j('#error-response').html("");
 }
 
 function getEncodingProfiles() {
@@ -98,12 +105,15 @@ function sendAPIRequest(method, message, profile, id) {
             if (id == 'bitcodin_profiles') {
 
                 encodingProfiles = profile;
+                showEncodingProfile();
             }
             else {
 
                 outputProfiles = profile;
+                showOutputProfile();
             }
-            $j('#response').html("");
+
+            delete_response();
         },
         error: function(error) {
             $j('#error-response').html(error);
@@ -111,21 +121,6 @@ function sendAPIRequest(method, message, profile, id) {
     });
     /* no page refresh */
     return false;
-}
-
-function initEncodingProfile() {
-
-    $j('#bitcodin_profile').val("Default");
-    $j('#bitcodin_quality').val("Premium");
-    $j('#bitcodin_video_height').val("720");
-    $j('#bitcodin_video_width').val("1280");
-    $j('#bitcodin_video_bitrate').val("2400");
-    $j('#bitcodin_audio_bitrate').val("128");
-    $j('#bitcodin_video_codec').val("h264");
-    $j('#bitcodin_audio_codec').val("aac");
-    $j('#bitcodin_profile_id').val("86262");
-    video_bitrate();
-    audio_bitrate();
 }
 
 function showEncodingProfile() {
@@ -150,11 +145,6 @@ function showEncodingProfile() {
             $j('#bitcodin_profile_id').val(object.encodingProfileId);
             video_bitrate();
             audio_bitrate();
-            break;
-        }
-        else if (output.options[output.selectedIndex].value == "default") {
-
-            initEncodingProfile();
             break;
         }
     }

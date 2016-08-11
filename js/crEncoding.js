@@ -204,32 +204,46 @@ function checkVideoBitrate(bitrate)
 
 function addAudioConfig() {
 
-    var value = 'Audio Configuration' + audioConf_anz;
-    var idText = 'create-encoding-audio-bitrate' + audioConf_anz;
-    var idSelect = 'create-encoding-audio-codec' + audioConf_anz;
-    var idBitrate = 'abitrate' + audioConf_anz;
+    delete_response();
+    if (audioConf_anz < 10) {
 
-    var wrapper = $j("#audio-table");
-    $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
-    $j(wrapper).append('<tr><th>Audio Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>');
-    $j(wrapper).append('<tr><th>Audio Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="aac">AAC</option></select></td></tr>');
+        var value = 'Audio Configuration' + audioConf_anz;
+        var idText = 'create-encoding-audio-bitrate' + audioConf_anz;
+        var idSelect = 'create-encoding-audio-codec' + audioConf_anz;
+        var idBitrate = 'abitrate' + audioConf_anz;
 
-    audioConf_anz++;
+        var wrapper = $j("#audio-table");
+        $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
+        $j(wrapper).append('<tr><th>Audio Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>');
+        $j(wrapper).append('<tr><th>Audio Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="aac">AAC</option></select></td></tr>');
+
+        audioConf_anz++;
+    }
+    else {
+        $j('#error-response').html('<p>Max. audio configurations are limited to 10.</p>');
+    }
 }
 
 function addVideoConfig() {
 
-    var value = 'Video Configuration' + videoConf_anz;
-    var idText = 'create-encoding-video-bitrate' + videoConf_anz;
-    var idSelect = 'create-encoding-video-codec' + videoConf_anz;
-    var idWidth = 'create-encoding-video-width' + videoConf_anz;
-    var idHeight = 'create-encoding-video-height' + videoConf_anz;
+    delete_response();
+    if (videoConf_anz < 15) {
 
-    var wrapper = $j("#video-table");
-    $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
-    $j(wrapper).append('<tr><th>Resolution</th><td><input type="number" id="' + idWidth + '" name="' + idWidth + '" size="20" required/> X <input type="number" id="' + idHeight + '" name="' + idHeight + '" size="20" required/></td></tr>');
-    $j(wrapper).append('<tr><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>');
-    $j(wrapper).append('<tr><th>Video Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="h264">H264</option><option value="hevc">HEVC</option></select></td></tr>');
+        var value = 'Video Configuration' + videoConf_anz;
+        var idText = 'create-encoding-video-bitrate' + videoConf_anz;
+        var idSelect = 'create-encoding-video-codec' + videoConf_anz;
+        var idWidth = 'create-encoding-video-width' + videoConf_anz;
+        var idHeight = 'create-encoding-video-height' + videoConf_anz;
 
-    videoConf_anz++;
+        var wrapper = $j("#video-table");
+        $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
+        $j(wrapper).append('<tr><th>Resolution</th><td><input type="number" id="' + idWidth + '" name="' + idWidth + '" size="20" required/> X <input type="number" id="' + idHeight + '" name="' + idHeight + '" size="20" required/></td></tr>');
+        $j(wrapper).append('<tr><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>');
+        $j(wrapper).append('<tr><th>Video Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="h264">H264</option><option value="hevc">HEVC</option></select></td></tr>');
+
+        videoConf_anz++;
+    }
+    else {
+        $j('#error-response').html('<p>Max. video configurations are limited to 15.</p>');
+    }
 }
