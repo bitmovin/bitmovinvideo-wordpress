@@ -1,5 +1,6 @@
 var channels = [];
 var versions = [];
+media_uploader = null;
 
 $j = jQuery.noConflict();
 $j(document).ready(function() {
@@ -27,10 +28,11 @@ $j(document).ready(function() {
                     channels.push(data[index].category);
                 }
             }
-            createChannels();
-            getVersions();
-            audio_bitrate();
-            video_bitrate();
+
+            if (document.getElementById("config_player_channel") != null) {
+                createChannels();
+                getVersions();
+            }
         },
         error: function(error) {
             console.log(error.responseJSON.message);
@@ -52,6 +54,7 @@ function hasContent(configSection) {
     }
     return contentFound;
 }
+
 function checkApiKey() {
     var apiKey = $j("#apiKey").val();
     $j.ajax({
@@ -76,140 +79,7 @@ function addSchedule() {
     alert("TODO");
 }
 
-/* Encoding Button Click */
-$j(document).ready(function() {
-    $j("button#bEncode").click(function () {
-
-        var profile = document.getElementById('config_encoding_profile').value;
-        var video_width = document.getElementById('config_encoding_width').value;
-        var video_height = document.getElementById('config_encoding_height').value;
-        var video_bitrate = document.getElementById('config_encoding_video_bitrate').value * 1000;
-        var audio_bitrate = document.getElementById('config_encoding_audio_bitrate').value * 1000;
-
-        var video_src = document.getElementById('config_encoding_video_src').value;
-
-        /* Define variables for FTP output */
-        var ftp_usr;
-        var ftp_pw;
-        var ftp_server;
-
-        /* Define variables for S3 output */
-        var access_key;
-        var secret_key;
-        var bucket;
-        var prefix;
-        var aws_name;
-        var region;
-
-        /* Represents ftp or s3 */
-        var output;
-
-        if (document.getElementsByName("output")[0].checked)
-        {
-            output = "ftp";
-            ftp_server = document.getElementById('config_ftp_server').value;
-            ftp_usr = document.getElementById('config_ftp_usr').value;
-            ftp_pw = document.getElementById('config_ftp_pw').value;
-        }
-        else if (document.getElementsByName("output")[1].checked)
-        {
-            output = "s3";
-            aws_name = document.getElementById('config_s3_name').value;
-            access_key = document.getElementById('config_s3_access_key').value;
-            secret_key = document.getElementById('config_s3_secret_key').value;
-            bucket = document.getElementById('config_s3_bucket').value;
-            prefix = document.getElementById('config_s3_prefix').value;
-            region = document.getElementById('config_s3_region').value;
-        }
-        else
-        {
-            alert("Please select either FTP or S3 output");
-        }
-
-        if (profile != "" && (video_width != "" || video_height != "") && video_bitrate != "" && video_bitrate <= 20000000 && audio_bitrate != "" && audio_bitrate <= 256000 &&
-            video_src != "")
-        {
-            if ((output == "ftp" && ftp_server != "" && ftp_usr != "" && ftp_pw != "") || (output == "s3" && access_key != "" && secret_key != "" && bucket != "" && aws_name != "" && region != "" && prefix != ""))
-            {
-                var url = bitmovin_script.dest_encoding_script;
-                $j.ajax({
-                    type: "POST",
-                    url: url,
-                    data: {
-                        apiKey: bitmovin_script.apiKey,
-                        method: "bitmovin_encoding_service",
-                        output:         output,
-                        profile:        profile,
-                        video_width:    video_width,
-                        video_height:   video_height,
-                        video_bitrate:  video_bitrate,
-                        audio_bitrate:  audio_bitrate,
-                        video_src:      video_src,
-                        ftp_server:     ftp_server,
-                        ftp_usr:        ftp_usr,
-                        ftp_pw:         ftp_pw,
-                        access_key:     access_key,
-                        secret_key:     secret_key,
-                        bucket:         bucket,
-                        aws_name:       aws_name,
-                        prefix:         prefix,
-                        region:         region
-                    },
-                    beforeSend: function() {
-                        $j('#response').html("<p>Encoding...</p><img src='" + bitmovin_script.load_image + "' />");
-                    },
-                    success: function (content) {
-                        var error = content.toString().includes("error");
-                        if (!error)
-                        {
-                            var myObj = $j.parseJSON(content);
-                            var regEx = new RegExp('\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))','g')
-                            var mpd = myObj.mpd.match(regEx);
-                            var m3u8 = myObj.m3u8.match(regEx);
-
-                            var mpdOutput = myObj.host + "/" + myObj.path + mpd;
-                            var m3u8Output = myObj.host + "/" + myObj.path + m3u8;
-
-                            if (output == "ftp") {
-                                $j('#config_src_dash').val("http://" + mpdOutput);
-                                $j('#config_src_hls').val("http://" + m3u8Output);
-                            }
-                            if (output == "s3") {
-                                $j('#config_src_dash').val("https://" + mpdOutput);
-                                $j('#config_src_hls').val("https://" + m3u8Output);
-                            }
-                            $j('#response').html("<p>Encoding finished<br>Finally just click the <b>Update button</b> to implement the encoded video in the player.</p>");
-                        }
-                        else {
-                            console.log(content);
-                            $j('#response').html("<img src='" + bitmovin_script.error_image + "' width='30' height='30'/><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
-                        }
-                    },
-                    error: function(error) {
-                        $j('#response').html("<img src='" + bitmovin_script.error_image + "' /><p>Some error occured. <br>Press F12 and switch to Console to see full error message.</p>");
-                        //console.log(error.responseJSON.message);
-                    }
-                });
-                /* Kein Neuladen der Website */
-                return false;
-            }
-            else {
-                alert("You have to fill out the selected Output Configuration to create an correct output.");
-                return false;
-            }
-        }
-        else
-        {
-            alert("You have to fill out the Uploads/Encoding form to encode your video.");
-            return false;
-        }
-    });
-});
-
-
-
-function createChannels()
-{
+function createChannels() {
     var index = 0;
     var channel = document.getElementById("config_player_channel");
     for (; index < channels.length; index++)
@@ -221,10 +91,9 @@ function createChannels()
     $j("#config_player_channel").val(channels[0]);
 }
 
-function getVersions()
-{
-    removeAllOptions();
+function getVersions() {
 
+    removeAllOptions();
     var index;
     var cindex;
     var channel = document.getElementById("config_player_channel");
@@ -255,6 +124,29 @@ function removeAllOptions()
     }
 }
 
+function open_media_encoded_video()
+{
+    media_uploader = wp.media({
+        title:  "Select Video for Embedding",
+        frame:  "select",
+        button: {
+            text: "Select Video for Embedding"
+        },
+        library: { type: "image/png"},
+        multiple: false
+    });
+
+    media_uploader.on("select", function(){
+
+        /* get video url and insert into right video src input */
+        var attachment = media_uploader.state().get('selection').first().toJSON();
+        $j('#config_src_dash').val(attachment.description);
+        $j('#config_src_hls').val(attachment.caption);
+    });
+
+    media_uploader.open();
+}
+
 function open_media_progressive_video()
 {
     media_uploader = wp.media({
@@ -263,7 +155,7 @@ function open_media_progressive_video()
         button: {
             text: "Select Video for Embedding"
         },
-        library: { type: "video" },
+        library: { type: "video"},
         multiple: false
     });
 
@@ -272,11 +164,9 @@ function open_media_progressive_video()
         /* get video url and insert into right video src input */
         var attachment = media_uploader.state().get('selection').first().toJSON();
         $j('#config_src_prog').val(attachment.url);
-
         /* leave me here for getting additional video properties */
         //for ( var image_property in attachment ) {
-
-        // console.log(image_property + ': ' + image_data[image_property]);
+            //console.log(image_property + ': ' + attachment[image_property]);
         //}
     });
 

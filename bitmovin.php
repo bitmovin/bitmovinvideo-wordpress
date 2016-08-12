@@ -106,21 +106,6 @@ function bitmovin_video_meta_box()
     add_meta_box("bitmovin_player_configuration_vr", "VR", 'bitmovin_player_configuration_vr', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_style", "Style", 'bitmovin_player_configuration_style', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Custom", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_encoding", "Encoding", 'bitmovin_player_configuration_encoding', "bitmovin_player", "normal", "high");
-}
-
-function bitmovin_player_configuration_encoding()
-{
-    global $post;
-
-    $html = '<div class="configSection">';
-    $html .= '<div id="encoding">';
-    $html .= bitmovin_getEncodingTable($post->ID);
-    $html .= bitmovin_getOutputTable();
-    $html .= '</div>';
-    $html .= '</div>';
-
-    echo $html;
 }
 
 function bitmovin_player_configuration_video()
@@ -227,48 +212,6 @@ function bitmovin_player_preview()
     echo $html;
 }
 
-function bitmovin_getEncodingTable($id)
-{
-    $encoding_profile = get_post_meta($id, "_config_encoding_profile", true);
-    $video_width = get_post_meta($id, "_config_encoding_width", true);
-    $video_height = get_post_meta($id, "_config_encoding_height", true);
-    $video_bitrate = get_post_meta($id, "_config_encoding_video_bitrate", true);
-    $audio_bitrate = get_post_meta($id, "_config_encoding_audio_bitrate", true);
-
-    $encoding_video_src = get_post_meta($id, "_config_encoding_video_src", true);
-
-    $encodingTable = '<table class="wp-list-table widefat fixed striped">';
-    $encodingTable .= "<tr><td colspan='2'>Encoding Configuration</td></tr>";
-
-    $encodingTable .= "<tr><td colspan='2'>General</td></tr>";
-    $encodingTable .= getTableRowInput("Encoding Profile", "config_encoding_profile", $encoding_profile, "My first Wordpress Encoding Profile");
-    $encodingTable .= getTableRowInputNumber("Video Height", "config_encoding_height", $video_height, "e.g. 720");
-    $encodingTable .= getTableRowInputNumber("Video Width", "config_encoding_width", $video_width, "e.g. 1280");
-    $encodingTable .= getTableRowInputNumber("Video Bitrate", "config_encoding_video_bitrate", $video_bitrate, "e.g. 1024 kbps");
-    $encodingTable .= getTableRowInputNumber("Audio Bitrate", "config_encoding_audio_bitrate", $audio_bitrate, "e.g. 256 kbps");
-
-    $encodingTable .= "<tr><td colspan='2'>Video Source</td></tr>";
-    $encodingTable .= '<tr><th></th><td><input type="button" id="bUpload" class="button" onclick="open_media_encoding_video()" value="Select Video from Mediathek"></td></tr>';
-    $encodingTable .= getTableRowInput("Video URL", "config_encoding_video_src", $encoding_video_src, "http://localhost/wordpress/wp-content/uploads/video.mkv");
-
-    $encodingTable .= "<tr><td colspan='2'>Output</td></tr>";
-    $encodingTable .= "<tr><td>";
-    $encodingTable .= "<form>";
-    $encodingTable .= getTableRowRadio("FTP", "config_encoding_output_ftp", "ftp");
-    $encodingTable .= getTableRowRadio("AWS", "config_encoding_output_s3", "s3");
-    $encodingTable .= "</form>";
-    $encodingTable .= "</td></tr>";
-
-    //class="button button-primary button-large"
-    $encodingTable .= '<tr><td><button id="bEncode" class="button" name="bEncode">Encode Uploaded Video</button></td>';
-    $encodingTable .= '<td><div id="response"></div></td>';
-    $encodingTable .= '</tr>';
-
-    $encodingTable .= "</table>";
-
-    return $encodingTable;
-}
-
 function bitmovin_getOutputTable()
 {
     $ftp_server = get_option('bitmovin_ftp_server');
@@ -308,8 +251,7 @@ function bitmovin_getVideoTable($id)
 
     $videoTable .= getTableRowInput("Dash URL", "config_src_dash", $dash_url, "http://path/to/mpd/file.mpd");
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
-    $videoTable .= '<tr><th></th><td><button id="bEmbed" class="button" type="button" onclick="open_media_progressive_video()" data-editor="content">Select Progressive from Mediathek</button></td></tr>';
-    $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
+    $videoTable .= '<tr><th>Progressive URL</th><td><input type="text" id="config_src_prog" value="'. $prog_url .'" placeholder="http://path/to/mp4"/><button class="button" onclick="open_media_progressive_video()" >...</button></td></tr>';
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
 
     $videoTable .= "</table>";
@@ -488,15 +430,6 @@ function getTableRowPWInput($propertyDisplayName, $propertyName, $propertyValue,
 
 function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
-    if ($propertyName == "config_encoding_video_bitrate")
-    {
-        return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' step='0.0001' value='" . json_decode($propertyValue) . "' max='20000' onkeyup='video_bitrate()' placeholder='" . $placeHolder . "'/><p id='vbitrate' class='bitrate'>kbps</p></td></tr>";
-    }
-    if ($propertyName == "config_encoding_audio_bitrate")
-    {
-        return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' step='0.0001' value='" . json_decode($propertyValue) . "' max='256' onkeyup='audio_bitrate()' placeholder='" . $placeHolder . "'/><p id='abitrate' class='bitrate'>kbps</p></td></tr>";
-    }
-
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
 }
 
@@ -546,42 +479,6 @@ function bitmovin_player_save_configuration($post_id)
 
     // check permissions
     if ('bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
-
-        $encoding_profile = bitmovin_getParameter("config_encoding_profile");
-        $video_width = bitmovin_getParameter("config_encoding_width");
-        $video_height = bitmovin_getParameter("config_encoding_height");
-        $video_bitrate = bitmovin_getParameter("config_encoding_video_bitrate");
-        $audio_bitrate = bitmovin_getParameter("config_encoding_audio_bitrate");
-
-        $encoding_video_src = bitmovin_getParameter("config_encoding_video_src");
-
-        $ftp_server = bitmovin_getParameter("config_ftp_server");
-        $ftp_usr = bitmovin_getParameter("config_ftp_usr");
-        $ftp_pw = bitmovin_getParameter("config_ftp_pw");
-
-        $aws_name = bitmovin_getParameter("config_s3_name");
-        $bucket = bitmovin_getParameter("config_s3_bucket");
-        $access_key = bitmovin_getParameter("config_s3_access_key");
-        $secret_key = bitmovin_getParameter("config_s3_secret_key");
-        $region = bitmovin_getParameter("config_s3_region");
-
-        update_post_meta($post_id, "_config_encoding_profile", $encoding_profile);
-        update_post_meta($post_id, "_config_encoding_width", $video_width);
-        update_post_meta($post_id, "_config_encoding_height", $video_height);
-        update_post_meta($post_id, "_config_encoding_video_bitrate", $video_bitrate);
-        update_post_meta($post_id, "_config_encoding_audio_bitrate", $audio_bitrate);
-
-        update_post_meta($post_id, "_config_encoding_video_src", $encoding_video_src);
-
-        update_post_meta($post_id, "_config_ftp_server", $ftp_server);
-        update_post_meta($post_id, "_config_ftp_usr", $ftp_usr);
-        update_post_meta($post_id, "_config_ftp_pw", $ftp_pw);
-
-        update_post_meta($post_id, "_config_s3_name", $aws_name);
-        update_post_meta($post_id, "_config_s3_bucket", $bucket);
-        update_post_meta($post_id, "_config_s3_access_key", $access_key);
-        update_post_meta($post_id, "_config_s3_secret_key", $secret_key);
-        update_post_meta($post_id, "_config_s3_region", $region);
 
         $dash_url = bitmovin_getParameter("config_src_dash");
         $hls_url = bitmovin_getParameter("config_src_hls");
@@ -701,7 +598,7 @@ function bitmovin_generate_player($id)
         bm_getVersionConfig($id);
     }
 
-    $html  = '<input type="button" id="bUpload1" class="button" onclick="open_media_progressive_video()" value="Insert Video from Library">';
+    $html  = '<input type="button" id="upload-encoded-video" class="button" onclick="open_media_encoded_video()" value="Insert Video from Library">';
     $html .= "<div id='bitmovin-player'></div>\n";
     $html .= "<script type='text/javascript'>\n";
     $html .= "window.onload = function() {\n";

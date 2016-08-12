@@ -22,6 +22,12 @@ use bitcodin\S3OutputConfig;
 
 require_once __DIR__.'/vendor/autoload.php';
 
+$scriptPath = dirname(__FILE__);
+$path = realpath($scriptPath . '/./');
+$filepath = explode("wp-content",$path);
+
+require(''.$filepath[0].'/wp-load.php');
+
 if (isset($_POST['method']) && $_POST['method'] != "")
 {
     // CONFIGURATION
@@ -86,8 +92,6 @@ function bitmovin_encoding_service() {
     $output = Output::get($_POST['outputProfileID']);
     $job->transfer($output);
 
-    /*
-
     // send mpd and m3u8 data
     $response = new stdClass();
     $response->host =  $output->host;
@@ -95,7 +99,8 @@ function bitmovin_encoding_service() {
     $response->mpd  =  $job->manifestUrls->mpdUrl;
     $response->m3u8 =  $job->manifestUrls->m3u8Url;
 
-    echo json_encode($response);*/
+    addToLibrary($response);
+    //echo json_encode($response);
 }
 
 function get_bitcodin_profiles() {
@@ -190,4 +195,39 @@ function create_s3_output_profile() {
     }
 
     Output::create($outputConfig);
+}
+
+function addToLibrary($data) {
+
+    $mpd = "https://" . $data->host . "/" . $data->path;
+    $m3u8 = "https://" . $data->host . "/" . $data->path;
+    if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->mpd, $matches)) {
+
+        $mpd = $mpd . $matches[0];
+    }
+    if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->m3u8, $matches)) {
+
+        $m3u8 = $m3u8 . $matches[0];
+    }
+
+    $file = plugins_url('images/bitlogo.png', __FILE__);
+    $filename = basename($file);
+    $upload_file = wp_upload_bits($filename, null, file_get_contents($file));
+    if (!$upload_file['error']) {
+        $wp_filetype = wp_check_filetype($filename, null);
+        $attachment = array(
+            'post_mime_type' => $wp_filetype['type'],
+            'post_parent' => 1,
+            'post_title' => "Bitcoded" . $matches[0] . "/mpd",
+            'post_content' => (string)$mpd,
+            'post_excerpt' => (string)$m3u8,
+            'post_status' => 'inherit'
+        );
+        $attachment_id = wp_insert_attachment($attachment, $upload_file['file'], 1);
+        if (!is_wp_error($attachment_id)) {
+            require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+            $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload_file['file']);
+            wp_update_attachment_metadata($attachment_id, $attachment_data);
+        }
+    }
 }
