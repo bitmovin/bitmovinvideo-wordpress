@@ -271,10 +271,10 @@ function bitmovin_getVersionTable($id)
     $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
 
     $playerTable .= "<tr><td colspan='2'>Advanced</td></tr>";
-    $playerTable .= "<tr><td><p>To provide our users the right version of our player, we have four public player channels available.
+    $playerTable .= "<tr><td colspan='2'><p>To provide our users the right version of our player, we have four public player channels available.<br>
     In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
     More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
-    $playerTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
+    $playerTable .= '<tr><td colspan="2"><input type="text" id="config_version_link" value="'. $version_link .'" placeholder="https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js"/></td></tr>';
 
     $playerTable .= "</table>";
 
@@ -410,11 +410,6 @@ function bitmovin_getCustomTable($id)
 
 function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
-    if ($propertyName == "config_version_link")
-    {
-        return "<tr><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
-    }
-
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
 }
 
@@ -431,18 +426,6 @@ function getTableRowPWInput($propertyDisplayName, $propertyName, $propertyValue,
 function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
     return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
-}
-
-function getTableRowRadio($propertyDisplayName, $propertyName, $propertyValue)
-{
-    if ($propertyValue == "ftp")
-    {
-        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}' checked>{$propertyDisplayName}<br><br>";
-    }
-    else
-    {
-        return "<input type='radio' id='{$propertyName}' name='output' value='{$propertyValue}'>{$propertyDisplayName}<br><br>";
-    }
 }
 
 function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption, $options)
