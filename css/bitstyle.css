@@ -52,8 +52,14 @@
 }
 
 #error-response {
+    right: 0;
+    top: 35px;
     color: red;
+    padding: 5px;
+    position: fixed;
     font-size: 14pt;
+    border: 2px solid red;
+    visibility: hidden;
 }
 
 #ApiKeyError {

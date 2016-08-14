@@ -127,12 +127,12 @@ function removeAllOptions()
 function open_media_encoded_video()
 {
     media_uploader = wp.media({
-        title:  "Select Video for Embedding",
+        title:  "Select encoded Video for Embedding",
         frame:  "select",
         button: {
-            text: "Select Video for Embedding"
+            text: "Select Encoded Video"
         },
-        library: { type: "image/png"},
+        library: { type: "image/jpeg"},
         multiple: false
     });
 
@@ -142,6 +142,7 @@ function open_media_encoded_video()
         var attachment = media_uploader.state().get('selection').first().toJSON();
         $j('#config_src_dash').val(attachment.description);
         $j('#config_src_hls').val(attachment.caption);
+        $j('#config_src_poster').val(attachment.url);
     });
 
     media_uploader.open();

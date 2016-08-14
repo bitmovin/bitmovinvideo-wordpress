@@ -19,6 +19,8 @@ use bitcodin\ManifestTypes;
 use bitcodin\Output;
 use bitcodin\FtpOutputConfig;
 use bitcodin\S3OutputConfig;
+use bitcodin\Thumbnail;
+use bitcodin\ThumbnailConfig;
 
 require_once __DIR__.'/vendor/autoload.php';
 
@@ -82,11 +84,20 @@ function bitmovin_encoding_service() {
     // CREATE JOB
     $job = Job::create($jobConfig);
 
-    //WAIT TIL JOB IS FINISHED
-    do{
+    // CREATE THUMBNAIL
+    $thumbnailConfig = new ThumbnailConfig();
+    $thumbnailConfig->jobId = $job->jobId;
+    $thumbnailConfig->height = 320;
+    $thumbnailConfig->position = 1;
+    $thumbnailConfig->async = true;
+    $thumbnail = Thumbnail::create($thumbnailConfig);
+
+    // WAIT TIL JOB IS FINISHED
+    while($job->status != Job::STATUS_FINISHED) {
+
         $job->update();
         sleep(1);
-    } while($job->status != Job::STATUS_FINISHED);
+    }
 
     // TRANSFER JOB OUTPUT
     $output = Output::get($_POST['outputProfileID']);
@@ -99,7 +110,7 @@ function bitmovin_encoding_service() {
     $response->mpd  =  $job->manifestUrls->mpdUrl;
     $response->m3u8 =  $job->manifestUrls->m3u8Url;
 
-    addToLibrary($response);
+    addToLibrary($response, $thumbnail);
     //echo json_encode($response);
 }
 
@@ -197,7 +208,7 @@ function create_s3_output_profile() {
     Output::create($outputConfig);
 }
 
-function addToLibrary($data) {
+function addToLibrary($data, $thumbnail) {
 
     $mpd = "https://" . $data->host . "/" . $data->path;
     $m3u8 = "https://" . $data->host . "/" . $data->path;
@@ -210,7 +221,7 @@ function addToLibrary($data) {
         $m3u8 = $m3u8 . $matches[0];
     }
 
-    $file = plugins_url('images/bitlogo.png', __FILE__);
+    $file = $thumbnail->thumbnailUrl;   //plugins_url('images/bitlogo.png', __FILE__);
     $filename = basename($file);
     $upload_file = wp_upload_bits($filename, null, file_get_contents($file));
     if (!$upload_file['error']) {

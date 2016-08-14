@@ -28,42 +28,49 @@ function bitcodin() {
     var encodingProfileID = document.getElementById("bitcodin_profile_id").value;
     var outputProfileID = document.getElementById("output_profile_id").value;
 
-    $j.ajax({
-        type: "POST",
-        url: url,
-        data: {
-            apiKey: bitcodin_script.apiKey,
-            method: "bitmovin_encoding_service",
-            videoSrc:  videoSrc,
-            encodingProfileID: encodingProfileID,
-            outputProfileID: outputProfileID
-        },
-        beforeSend: function() {
-            $j('#response').html("<img src='" + bitcodin_script.loader + "'/><p>Encoding in progress...</p>");
-        },
-        success: function (content) {
+    if (videoSrc != "") {
+        $j.ajax({
+            type: "POST",
+            url: url,
+            data: {
+                apiKey: bitcodin_script.apiKey,
+                method: "bitmovin_encoding_service",
+                videoSrc: videoSrc,
+                encodingProfileID: encodingProfileID,
+                outputProfileID: outputProfileID
+            },
+            beforeSend: function () {
+                $j('#response').html("<img src='" + bitcodin_script.loader + "'/><p>Encoding in progress...</p>");
+            },
+            success: function (content) {
 
-            var error = content.toString().includes("error");
-            if (!error) {
-                $j('#response').html("<p>Encoding finished successfully</p>");
+                var error = content.toString().includes("error");
+                if (!error) {
+                    $j('#response').html("<p>Encoding finished successfully</p>");
+                }
+                else {
+                    delete_response();
+                    $j('#error-response').html(content);
+                }
+            },
+            error: function (error) {
+                $j('#error-response').html(error);
             }
-            else {
-                delete_response();
-                $j('#error-response').html(content);
-            }
-        },
-        error: function(error) {
-            $j('#error-response').html(error);
-        }
-    });
-    /* no page refresh */
-    return false;
+        });
+        /* no page refresh */
+        return false;
+    }
+    else {
+        $j("#error-response").css("visibility", "visible");
+        $j('#error-response').html("<p>Maybe forgot the video source?</p>");
+    }
 }
 
 function delete_response() {
 
     $j('#response').html("");
     $j('#error-response').html("");
+    $j("#error-response").css("visibility", "hidden");
 }
 
 function getEncodingProfiles() {
