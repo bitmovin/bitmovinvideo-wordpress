@@ -1158,24 +1158,36 @@ function bitmovin_player_plugin_settings()
 
 function bitmovin_plugin_display_settings()
 {
+    if (!wp_script_is('tooltip-script', 'enqueued')) {
+
+        wp_register_script('tooltip-script', 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
+        wp_enqueue_script('tooltip-script');
+    }
+
     $apiKey = get_option('bitmovin_api_key');
     $playerKey = get_option('bitmovin_player_key');
 
     $image_url = plugins_url('images/info.png', __FILE__);
 
     $html = '<div class="wrap">
-            <form id="bitmovinSettingsForm" method="post" name="options" action="options.php">
-
-            <h2>Bitmovin Wordpress Plugin Settings</h2>'. wp_nonce_field('update-options') .'
-            <table class="form-table">
-                <tr><td class="tooltip">Bitmovin Api Key
-                <img src="' . $image_url . '" alt="Info" height="15" width="15">
-                <span class="tooltiptext">Please insert Bitmovin API key here. <br> Do not confound it with your Player key.
-                <br> You can find your API key in the settings section of your Bitmovin Account <a href="https://app.bitmovin.com/settings">here</a>.</span></td>
+            <h2>Bitmovin Wordpress Plugin Settings</h2><br>
+            <form id="bitmovinSettingsForm" method="post" name="options" action="options.php">'. wp_nonce_field('update-options') .'
+            <table class="wp-list-table widefat fixed striped">
+                <tr><td>Bitmovin API Key
+                
+                <div class="tooltip">
+                    <img src="' . $image_url . '" alt="Info" height="15" width="15">
+                    <span class="tooltiptext">
+                        Please insert Bitmovin API key here. <br> Do not confound it with your Player key.
+                        <br> You can find your API key in the settings section of your Bitmovin Account
+                        <a class="api-link" href="https://app.bitmovin.com/settings">here</a>.
+                    </span>
+                </div>
+                
+                </td>
                 <td><input id="apiKey" type="text" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/></td>
                 </tr>
             </table>
-            <p id="messages"></p>
             <p class="submit">
                 <input type="hidden" name="action" value="update" />
                 <input id="playerKey" type="hidden" name="bitmovin_player_key" size="50" value="' . $playerKey. '"/>
@@ -1183,6 +1195,8 @@ function bitmovin_plugin_display_settings()
                 <input type="button" class="button" value="Save API Key" onclick="checkApiKey()"/>
             </p>
             </form>
+            <div id="response"></div>
+            <div id="error-response"></div>
         </div>';
     echo $html;
 }

@@ -4,6 +4,7 @@ media_uploader = null;
 
 $j = jQuery.noConflict();
 $j(document).ready(function() {
+    
     var configSections = ["bitmovin_player_configuration_drm", "bitmovin_player_configuration_ads", "bitmovin_player_configuration_vr", "bitmovin_player_configuration_style", "bitmovin_player_configuration_custom"];
     for(var i=0;i<configSections.length;i++) {
         if(!hasContent(configSections[i]))
@@ -56,6 +57,8 @@ function hasContent(configSection) {
 }
 
 function checkApiKey() {
+
+    delete_response();
     var apiKey = $j("#apiKey").val();
     $j.ajax({
         url: "https://app.bitmovin.com/api/settings/player/key",
@@ -64,15 +67,24 @@ function checkApiKey() {
             xhr.setRequestHeader('bitcodin-api-key', apiKey);
         },
         success: function(data) {
+
             $j("#playerKey").val(data.key);
             $j("#bitmovinSettingsForm").submit();
+            $j("#response").fadeIn("slow");
+            $j("#response").html("<p>Bitmovin Activation was successful.</p>");
         },
         error: function(error) {
-            $j("#playerKey").val(data.key);
-            $j("#bitmovinSettingsForm").submit();
-            $j("#messages").text(error.responseJSON.message);
+            $j("#error-response").fadeIn("slow");
+            $j("#error-response").html("<p>" + error.responseJSON.message + "</p>");
         }
     });
+}
+
+function delete_response() {
+    $j("#response").html("");
+    $j("#error-response").html("");
+    $j("#response").fadeOut("slow");
+    $j("#error-response").fadeOut("slow");
 }
 
 function addSchedule() {

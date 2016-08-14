@@ -52,6 +52,7 @@
     top: 35px;
     color: black;
     padding: 5px;
+    opacity: 0.7;
     position: fixed;
     font-size: 14pt;
     display: none;
@@ -63,6 +64,7 @@
 #error-response {
     right: 0;
     top: 35px;
+    opacity: 0.7;
     color: black;
     padding: 5px;
     position: fixed;
@@ -107,24 +109,32 @@
     text-align: center;
 }
 
-/* Tooltip text */
-.tooltiptext {
-    width: 530px;
-    padding: 10px;
-    margin-top: 20px;
-    color: whitesmoke;
-    margin-left: -40px;
-    visibility: hidden;
-    position: absolute;
-    background-color: grey;
-    border-radius: 10px 10px;
-    box-shadow: 5px 5px 5px black;
+.api-link {
+    color: #00ffff;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-    display: block;
-    position: absolute;
-    visibility: visible;
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
 
+.tooltip .tooltiptext {
+
+    top: 125%;
+    z-index: 1;
+    opacity: 0;
+    color: #fff;
+    width: 250px;
+    padding: 5px 0;
+    visibility: hidden;
+    text-align: center;
+    border-radius: 6px;
+    position: absolute;
+    background-color: #555;
+    transition: opacity 1s;
+}
+
+.tooltip:hover .tooltiptext {
+    opacity: 1;
+    visibility: visible;
 }
