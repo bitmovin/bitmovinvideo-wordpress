@@ -10,7 +10,8 @@ $j = jQuery.noConflict();
 $j(document).ready(function() {
 
     if (bitcodin_script.apiKey == "") {
-        $j('#response').html("<p id='response'>No valid API Key found</p>");
+        $j("#error-response").fadeIn("slow");
+        $j('#error-response').html("<p id='response'>No valid API Key found</p>");
     }
     /* disable table content */
     $j("#selected-encoding-table").find("input,button,textarea,select").attr("disabled","disabled");
@@ -40,20 +41,24 @@ function bitcodin() {
                 outputProfileID: outputProfileID
             },
             beforeSend: function () {
+                $j("#response").fadeIn("slow");
                 $j('#response').html("<img src='" + bitcodin_script.loader + "'/><p>Encoding in progress...</p>");
             },
             success: function (content) {
 
                 var error = content.toString().includes("error");
                 if (!error) {
+                    $j("#response").fadeIn("slow");
                     $j('#response').html("<p>Encoding finished successfully</p>");
                 }
                 else {
                     delete_response();
+                    $j("#error-response").fadeIn("slow");
                     $j('#error-response').html(content);
                 }
             },
             error: function (error) {
+                $j("#error-response").fadeIn("slow");
                 $j('#error-response').html(error);
             }
         });
@@ -61,16 +66,15 @@ function bitcodin() {
         return false;
     }
     else {
-        $j("#error-response").css("visibility", "visible");
+        $j("#error-response").fadeIn("slow");
         $j('#error-response').html("<p>Maybe forgot the video source?</p>");
     }
 }
 
 function delete_response() {
 
-    $j('#response').html("");
-    $j('#error-response').html("");
-    $j("#error-response").css("visibility", "hidden");
+    $j("#response").fadeOut("slow");
+    $j("#error-response").fadeOut("slow");
 }
 
 function getEncodingProfiles() {
@@ -94,9 +98,12 @@ function sendAPIRequest(method, message, profile, id) {
             method: method
         },
         beforeSend: function() {
+            $j("#response").fadeIn("slow");
             $j('#response').html("<img src='" + bitcodin_script.small_loader + "'/><p>" + message + "</p>");
         },
         success: function (content) {
+
+            delete_response();
 
             var index = 0;
             profile = $j.parseJSON(content);
@@ -119,10 +126,9 @@ function sendAPIRequest(method, message, profile, id) {
                 outputProfiles = profile;
                 showOutputProfile();
             }
-
-            delete_response();
         },
         error: function(error) {
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html(error);
         }
     });

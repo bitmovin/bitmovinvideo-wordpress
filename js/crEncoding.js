@@ -52,25 +52,30 @@ function createEncodeProfile() {
         }
         else if (video_bitrate > 20000000) {
 
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Max. video bitrate limited to 20 Mbps.</p>");
             return;
         }
         else if (video_bitrate < 32000) {
 
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Min. video bitrate limited to 32 kbps.</p>");
             return;
         }
         else if (video_width > 7680 || video_height > 4320) {
 
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Max. Resolution 7680 x 4320.</p>");
             return;
         }
         else if (video_width < 128 || video_height < 96) {
 
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Min. Resolution 128 x 96.</p>");
             return;
         }
         else {
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
             return;
         }
@@ -95,15 +100,18 @@ function createEncodeProfile() {
         }
         else if (audio_bitrate > 256000) {
 
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Maximum audio bitrate limited to 256 kbps.</p>");
             return;
         }
         else if (audio_bitrate < 8000) {
 
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Min. audio bitrate limited to 8 kbps.</p>");
             return;
         }
         else {
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
             return;
         }
@@ -121,23 +129,27 @@ function createEncodeProfile() {
             audioConfigs: JSON.stringify(audioConfigs)
         },
         beforeSend: function() {
+            $j("#response").fadeIn("slow");
             $j('#response').html("<img src='" + script.small_loader + "' /><p>Creating Encoding Profile...</p>");
         },
         success: function (content) {
-
+            delete_response();
             var error = content.toString().includes("error");
             if (!error) {
+                $j("#response").fadeIn("slow");
                 $j('#response').html("<p>Your Encoding Profile was created successfully</p>");
                 console.log(content);
             }
             else {
                 delete_response();
+                $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
                 console.log(content);
             }
         },
         error: function(error) {
             delete_response();
+            $j("#error-response").fadeIn("slow");
             $j('#error-response').html(error);
         }
     });
@@ -150,6 +162,8 @@ function delete_response() {
 
     $j('#response').html("");
     $j('#error-response').html("");
+    $j("#response").fadeOut("slow");
+    $j("#error-response").fadeOut("slow");
 }
 
 function video_bitrate()
@@ -220,6 +234,7 @@ function addAudioConfig() {
         audioConf_anz++;
     }
     else {
+        $j("#error-response").fadeIn("slow");
         $j('#error-response').html('<p>Max. audio configurations are limited to 10.</p>');
     }
 }
@@ -244,6 +259,7 @@ function addVideoConfig() {
         videoConf_anz++;
     }
     else {
+        $j("#error-response").fadeIn("slow");
         $j('#error-response').html('<p>Max. video configurations are limited to 15.</p>');
     }
 }

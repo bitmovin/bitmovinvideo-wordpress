@@ -48,18 +48,29 @@
 }
 
 #response {
-    color: grey;
+    right: 0;
+    top: 35px;
+    color: black;
+    padding: 5px;
+    position: fixed;
+    font-size: 14pt;
+    display: none;
+    border-radius: 5px;
+    border: 1px solid #3CB371;
+    background-color: #98FB98;
 }
 
 #error-response {
     right: 0;
     top: 35px;
-    color: red;
+    color: black;
     padding: 5px;
     position: fixed;
     font-size: 14pt;
-    border: 2px solid red;
-    visibility: hidden;
+    display: none;
+    border-radius: 5px;
+    border: 1px solid #8B0000;
+    background-color: #E9967A;
 }
 
 #ApiKeyError {

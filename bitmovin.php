@@ -1115,8 +1115,6 @@ function bitmovin_plugin_display_create_output_profile() {
                     <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
                     <input type="button" id="button-create-ftp-profile" class="button" value="Create FTP Profile" onclick="createFTPOutput()"/>
                 </p>
-                <div id="response" class="ftp-response"></div>
-                <div id="error-response" class="ftp-error-response"></div><br>
               
                 <table class="wp-list-table widefat fixed striped">
                     <th colspan="2"><h4>Create AWS Output Profile</h4></th></tr>
@@ -1147,8 +1145,8 @@ function bitmovin_plugin_display_create_output_profile() {
                     <input type="button" id="button-create-s3-profile" class="button" value="Create AWS Profile" onclick="createS3Output()"/>
                 </p>
              </div>
-             <div id="response" class="s3-response"></div>
-             <div id="error-response" class="s3-error-response"></div>';
+             <div id="response"></div>
+             <div id="error-response"></div>';
     echo $html;
 }
 

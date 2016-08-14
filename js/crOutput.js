@@ -31,32 +31,36 @@ function createFTPOutput() {
                 subdirectory:   subdirectory
             },
             beforeSend: function() {
-                $j('.ftp-response').html("<img src='" + script.small_loader + "' /><p>Creating FTP Output Profile...</p>");
+                $j("#response").fadeIn("slow");
+                $j('#response').html("<img src='" + script.small_loader + "' /><p>Creating FTP Output Profile...</p>");
             },
             success: function (content) {
 
                 var error = content.toString().includes("error");
                 if (!error) {
-                    $j('.ftp-response').html("<p>Your FTP Output Profile was created successfully</p>");
+                    $j("#response").fadeIn("slow");
+                    $j('#response').html("<p>Your FTP Output Profile was created successfully</p>");
                     console.log(content);
                 }
                 else {
                     delete_response();
-                    $j('.ftp-error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
+                    $j("#error-response").fadeIn("slow");
+                    $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
                     console.log(content);
                 }
             },
             error: function(error) {
                 delete_response();
-                $j('.ftp-error-response').html(error);
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html(error);
             }
         });
         // no page refresh
         return false;
     }
     else {
-
-        $j('.ftp-error-response').html("<p>Please consider to fill out the whole form.</p>");
+        $j("#error-response").fadeIn("slow");
+        $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
     }
 }
 
@@ -92,40 +96,44 @@ function createS3Output() {
                 subdirectory:   subdirectory
             },
             beforeSend: function() {
-                $j('.s3-response').html("<img src='" + script.small_loader + "' /><p>Creating S3 Output Profile...</p>");
+                $j("#response").fadeIn("slow");
+                $j('#response').html("<img src='" + script.small_loader + "' /><p>Creating S3 Output Profile...</p>");
             },
             success: function (content) {
 
                 var error = content.toString().includes("error");
                 if (!error) {
-                    $j('.s3-response').html("<p>Your S3 Output Profile was created successfully</p>");
+                    delete_response();
+                    $j("#response").fadeIn("slow");
+                    $j('#response').html("<p>Your S3 Output Profile was created successfully</p>");
                     console.log(content);
                 }
                 else {
                     delete_response();
-                    $j('.s3-error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
+                    $j("#error-response").fadeIn("slow");
+                    $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
                     console.log(content);
                 }
             },
             error: function(error) {
                 delete_response();
-                $j('.s3-error-response').html(error);
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html(error);
             }
         });
         // no page refresh
         return false;
     }
     else {
-
-        $j('.s3-error-response').html("<p>Please consider to fill out the whole form.</p>");
+        $j("#error-response").fadeIn("slow");
+        $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
     }
 }
 
 function delete_response() {
 
-    $j('.ftp-response').html("");
-    $j('.ftp-error-response').html("");
-
-    $j('.s3-response').html("");
-    $j('.s3-error-response').html("");
+    $j('#response').html("");
+    $j('#error-response').html("");
+    $j("#response").fadeOut("slow");
+    $j("#error-response").fadeOut("slow");
 }
