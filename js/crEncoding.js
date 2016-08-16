@@ -150,7 +150,7 @@ function createEncodeProfile() {
         error: function(error) {
             delete_response();
             $j("#error-response").fadeIn("slow");
-            $j('#error-response').html(error);
+            $j('#error-response').html('<p>' + error + '</p>');
         }
     });
     // no page refresh

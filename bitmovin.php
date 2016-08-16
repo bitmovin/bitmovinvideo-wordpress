@@ -41,6 +41,8 @@ function bitmovin_admin_assets()
 add_action('init', 'bitmovin_register');
 function bitmovin_register()
 {
+    upload();
+
     $labels = array(
         'name' => __('Videos', 'bitmovin_player'),
         'singular_name' => __('Videos', 'bitmovin_player'),
@@ -154,6 +156,7 @@ function bitmovin_player_configuration_ads()
     $html = '<div class="configSection">';
     $html .= '<div id="ads" class="configContent">';
     $html .= bitmovin_getAdsTable($post->ID);
+    $html .= '<a class="add-config" onclick="addSchedule()">+ Add another schedule</a>';
     $html .= '</div>';
     $html .= '</div>';
 
@@ -205,6 +208,7 @@ function bitmovin_player_preview()
     $html = '<div>';
     $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\']</strong> shortcode to your post.</strong>';
     $html .= '<div style="width: 600px; margin: auto">';
+    $html .= '<input type="button" id="upload-encoded-video" class="button" onclick="open_media_encoded_video()" value="Insert Video from Library">';
     $html .= bitmovin_generate_player(array("id"=>$post->ID));
     $html .= '</div>';
     $html .= '</div>';
@@ -271,7 +275,7 @@ function bitmovin_getVersionTable($id)
     $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
 
     $playerTable .= "<tr><td colspan='2'>Advanced</td></tr>";
-    $playerTable .= "<tr><td colspan='2'><p>To provide our users the right version of our player, we have four public player channels available.<br>
+    $playerTable .= "<tr><td><p>To provide our users the right version of our player, we have four public player channels available.
     In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
     More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
     $playerTable .= '<tr><td colspan="2"><input type="text" id="config_version_link" value="'. $version_link .'" placeholder="https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js"/></td></tr>';
@@ -336,17 +340,15 @@ function bitmovin_getAdsTable($id)
     $schedule4Offset = get_post_meta($id, "_config_advertising_schedule4_offset", true);
     $schedule4Tag = get_post_meta($id, "_config_advertising_schedule4_tag", true);
 
-    $adsTable = "<table class='wp-list-table widefat fixed striped'>";
+    $adsTable = "<table id='ads-table' class='wp-list-table widefat fixed striped'>";
     $adsTable .= "<tr><td colspan='2'>Ads Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Advertising_8211_VAST' target='_blank'>Documentation</a></td></tr>";
 
     $adsTable .= getTableRowInput("Client", "config_advertising_client", $client);
     $adsTable .= getTableRowInput("Ad message", "config_advertising_admessage", $admessage);
 
-    $adsTable .= "<tr><td colspan='2'>Schedule 1</td></tr>";
+    $adsTable .= "<tr><td colspan='2'><h4>Schedule 1</h4></td></tr>";
     $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $schedule1Offset);
     $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $schedule1Tag);
-
-    $adsTable .= '<tr><th></th><td><button id="AddSchedule" class="button" type="button" onclick="addSchedule()" data-editor="content">+ Add another schedule</button></td></tr>';
 
     $adsTable .= "</table>";
 
@@ -360,7 +362,8 @@ function bitmovin_getVrTable($id)
     $initialRotation = get_post_meta($id, "_config_src_vr_initialRotation", true);
     $initialRotateRate = get_post_meta($id, "_config_src_vr_initialRotateRate", true);
 
-    $vrTable = "<table class='wp-list-table widefat fixed striped'>";
+    $vrTable = "<table><tr><td>Turn On/Off</td><td><input type='checkbox' id='vr-check' checked='checked' onchange='vrCheck()'/></td></tr></table>";
+    $vrTable .= "<table id='vr-table' class='wp-list-table widefat fixed striped'>";
     $vrTable .= "<tr><td colspan='2'>Vr Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#VR_and_360_Video' target='_blank'>Documentation</a></td></tr>";
 
     $vrTable .= getTableRowSelect("Startup mode", "config_src_vr_startupMode", $startupMode, array("disabled", "2d", "stereo-2d", "3d", "stereo-3d", "no-vr"));
@@ -581,8 +584,7 @@ function bitmovin_generate_player($id)
         bm_getVersionConfig($id);
     }
 
-    $html  = '<input type="button" id="upload-encoded-video" class="button" onclick="open_media_encoded_video()" value="Insert Video from Library">';
-    $html .= "<div id='bitmovin-player'></div>\n";
+    $html = "<div id='bitmovin-player'></div>\n";
     $html .= "<script type='text/javascript'>\n";
     $html .= "window.onload = function() {\n";
     $html .= "var player = bitdash('bitmovin-player');\n";
@@ -1109,7 +1111,6 @@ function bitmovin_plugin_display_create_output_profile() {
                     <tr><th>FTP Host</th><td><input type="text" id="config_ftp_host" name="bitmovin_ftp_host" size="70" placeholder="ftp://path/to/upload/directory/myEncodedVideo"/></td></tr>
                     <tr><th>FTP Username</th><td><input type="text" id="config_ftp_usr" name="bitmovin_ftp_usr" size="70" placeholder="FTP Username"/></td></tr>
                     <tr><th>FTP Password</th><td><input type="password" id="config_ftp_pw" name="bitmovin_ftp_pw" size="70" placeholder="FTP Password"/></td></tr>
-                    <tr><th>Create Subdirectory</th><td><input type="checkbox" id="config_ftp_subdirectory" name="bitmovin_ftp_subdirectory"/></td></tr>
                 </table>
                 <p class="submit">
                     <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
@@ -1138,7 +1139,6 @@ function bitmovin_plugin_display_create_output_profile() {
                             <option>us-gov-west-1</option>
                         </select>            
                     </td></tr>
-                    <tr><th>Create Subdirectory</th><td><input type="checkbox" id="config_s3_subdirectory" name="bitmovin_s3_subdirectory"/></td></tr>
                 </table>
                 <p class="submit">
                     <input id="apiKey" type="hidden" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/>
@@ -1199,4 +1199,64 @@ function bitmovin_plugin_display_settings()
             <div id="error-response"></div>
         </div>';
     echo $html;
+}
+
+function upload() {
+
+    //echo "<script>alert('Bin hier');</script>";
+    $watermark = imagecreatefrompng(plugins_url('images/error.png', __FILE__));
+
+    if(!$watermark) {
+        echo "error bei watermark";
+    }
+    // getting dimensions of watermark image
+    $watermark_width = imagesx($watermark);
+    $watermark_height = imagesy($watermark);
+
+    // creting jpg from original image
+    $image_path = "https://s3-eu-west-1.amazonaws.com/bitcodin-ci/wp-videos/353699_b4883bd73ae88f156d17278e8f5b71e4/thumbnails/a40ec93f-d2ee-43b7-8f2e-753bc846a0b4.jpg";
+    $image = imagecreatefromjpeg($image_path);
+    //something went wrong
+    if (!$image) {
+        echo "error bei image erstellung";
+    }
+    // getting the dimensions of original image
+    $size = getimagesize($image_path);
+    // placing the watermark 5px from bottom and right
+    $dest_x = $size[0] - $watermark_width - 5;
+    $dest_y = $size[1] - $watermark_height - 5;
+    // blending the images together
+    imagealphablending($image, true);
+    imagealphablending($watermark, true);
+    // creating the new image
+    imagecopy($image, $watermark, $dest_x, $dest_y, 0, 0, $watermark_width, $watermark_height);
+    imagejpeg($image, wp_upload_dir()."bla.jpg");
+    // destroying and freeing memory
+    //$file = $image;
+    imagedestroy($image);
+    imagedestroy($watermark);
+
+    //$file = $thumbnail->thumbnailUrl;
+    //$filename = basename($image);
+    /*$upload_file = wp_upload_bits("bla", null, file_get_contents(wp_upload_dir()."bla"));
+    if (!$upload_file['error']) {
+        $wp_filetype = wp_check_filetype("bla", null);
+        $attachment = array(
+            'post_mime_type' => $wp_filetype['type'],
+            'post_parent' => 0,
+            'post_title' => "Bitcoded",
+            'post_content' => "",
+            'post_excerpt' => "",
+            'post_status' => 'inherit'
+        );
+        $attachment_id = wp_insert_attachment($attachment, $upload_file['file'], 0);
+        if (!is_wp_error($attachment_id)) {
+            require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+            $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload_file['file']);
+            wp_update_attachment_metadata($attachment_id, $attachment_data);
+        }
+    }
+    else {
+        echo "Error";
+    }*/
 }

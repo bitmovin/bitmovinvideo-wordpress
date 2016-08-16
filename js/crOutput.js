@@ -52,7 +52,7 @@ function createFTPOutput() {
             error: function(error) {
                 delete_response();
                 $j("#error-response").fadeIn("slow");
-                $j('#error-response').html(error);
+                $j('#error-response').html('<p>' + error + '</p>');
             }
         });
         // no page refresh
@@ -73,10 +73,6 @@ function createS3Output() {
     var bucket = document.getElementById('config_aws_bucket').value;
     var prefix = document.getElementById('config_aws_prefix').value;
     var region = document.getElementById('config_aws_region').value;
-    var subdirectory = "false";
-    if (document.getElementById('config_ftp_subdirectory').checked) {
-        subdirectory = "true";
-    }
 
     if (profile != "" && accessKey != "" && secretKey != "" && bucket != "" && prefix != "") {
 
@@ -93,7 +89,6 @@ function createS3Output() {
                 bucket:         bucket,
                 prefix:         prefix,
                 region:         region,
-                subdirectory:   subdirectory
             },
             beforeSend: function() {
                 $j("#response").fadeIn("slow");
@@ -118,7 +113,7 @@ function createS3Output() {
             error: function(error) {
                 delete_response();
                 $j("#error-response").fadeIn("slow");
-                $j('#error-response').html(error);
+                $j('#error-response').html('<p>' + error + '</p>');
             }
         });
         // no page refresh

@@ -105,13 +105,13 @@ function bitmovin_encoding_service() {
 
     // send mpd and m3u8 data
     $response = new stdClass();
-    $response->host =  $output->host;
-    $response->path =  $output->path;
-    $response->mpd  =  $job->manifestUrls->mpdUrl;
-    $response->m3u8 =  $job->manifestUrls->m3u8Url;
+    $response->host     = $output->host;
+    $response->path     = $output->path;
+    $response->folder   = $job->jobFolder;
+    $response->mpd      = $job->manifestUrls->mpdUrl;
+    $response->m3u8     = $job->manifestUrls->m3u8Url;
 
     addToLibrary($response, $thumbnail);
-    //echo json_encode($response);
 }
 
 function get_bitcodin_profiles() {
@@ -174,15 +174,6 @@ function create_ftp_output_profile() {
     $outputConfig->username             = $_POST['usr'];
     $outputConfig->password             = $_POST['pw'];
 
-    if ($_POST['subdirectory'] == 'true') {
-
-        $outputConfig->createSubDirectory = true;
-    }
-    else {
-
-        $outputConfig->createSubDirectory = true;
-    }
-
     Output::create($outputConfig);
 }
 
@@ -196,22 +187,13 @@ function create_s3_output_profile() {
     $outputConfig->region       = $_POST['region'];
     $outputConfig->prefix       = $_POST['prefix'];
 
-    if ($_POST['subdirectory'] == 'true') {
-
-        $outputConfig->createSubDirectory = true;
-    }
-    else {
-
-        $outputConfig->createSubDirectory = true;
-    }
-
     Output::create($outputConfig);
 }
 
 function addToLibrary($data, $thumbnail) {
 
-    $mpd = "https://" . $data->host . "/" . $data->path;
-    $m3u8 = "https://" . $data->host . "/" . $data->path;
+    $mpd = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
+    $m3u8 = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
     if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->mpd, $matches)) {
 
         $mpd = $mpd . $matches[0];
@@ -221,20 +203,48 @@ function addToLibrary($data, $thumbnail) {
         $m3u8 = $m3u8 . $matches[0];
     }
 
-    $file = $thumbnail->thumbnailUrl;   //plugins_url('images/bitlogo.png', __FILE__);
-    $filename = basename($file);
-    $upload_file = wp_upload_bits($filename, null, file_get_contents($file));
+    $watermark = imagecreatefrompng(plugins_url('images/error.png', __FILE__));
+
+    // getting dimensions of watermark image
+        $watermark_width = imagesx($watermark);
+        $watermark_height = imagesy($watermark);
+
+    // creting jpg from original image
+        $image_path = $thumbnail->thumbnailUrl;
+        $image = imagecreatefromjpeg($image_path);
+    //something went wrong
+        if ($image === false) {
+            echo "error bei image erstellung";
+        }
+    // getting the dimensions of original image
+        $size = getimagesize($image_path);
+    // placing the watermark 5px from bottom and right
+        $dest_x = $size[0] - $watermark_width - 5;
+        $dest_y = $size[1] - $watermark_height - 5;
+    // blending the images together
+        imagealphablending($image, true);
+        imagealphablending($watermark, true);
+    // creating the new image
+        imagecopy($image, $watermark, $dest_x, $dest_y, 0, 0, $watermark_width, $watermark_height);
+    // destroying and freeing memory
+    //$file = $image;
+        //imagedestroy($image);
+        imagedestroy($watermark);
+
+    $file = $thumbnail->thumbnailUrl;
+    $filename = basename($image);
+    $upload_file = wp_upload_bits($filename, null, file_get_contents($image));
     if (!$upload_file['error']) {
         $wp_filetype = wp_check_filetype($filename, null);
         $attachment = array(
             'post_mime_type' => $wp_filetype['type'],
-            'post_parent' => 1,
+            'post_parent' => 0,
             'post_title' => "Bitcoded" . $matches[0] . "/mpd",
             'post_content' => (string)$mpd,
             'post_excerpt' => (string)$m3u8,
             'post_status' => 'inherit'
         );
-        $attachment_id = wp_insert_attachment($attachment, $upload_file['file'], 1);
+        $attachment_id = wp_insert_attachment($attachment, $upload_file['file'], 0);
         if (!is_wp_error($attachment_id)) {
             require_once(ABSPATH . "wp-admin" . '/includes/image.php');
             $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload_file['file']);

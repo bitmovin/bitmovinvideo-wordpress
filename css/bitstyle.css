@@ -47,6 +47,10 @@
     display: inline-block;
 }
 
+.add-config:hover {
+    cursor: pointer;
+}
+
 #response {
     right: 0;
     top: 35px;
@@ -84,10 +88,6 @@
 #upload-encoded-video {
     width: 100%;
     margin-bottom: 15px;
-    border: 1px solid #31b0d5;
-}
-
-#AddSchedule {
     border: 1px solid #31b0d5;
 }
 

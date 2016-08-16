@@ -1,6 +1,7 @@
 var channels = [];
 var versions = [];
-media_uploader = null;
+var schedule_count = 1;
+var media_uploader = null;
 
 $j = jQuery.noConflict();
 $j(document).ready(function() {
@@ -33,6 +34,7 @@ $j(document).ready(function() {
             if (document.getElementById("config_player_channel") != null) {
                 createChannels();
                 getVersions();
+                vrCheck();
             }
         },
         error: function(error) {
@@ -88,7 +90,37 @@ function delete_response() {
 }
 
 function addSchedule() {
-    alert("TODO");
+
+    schedule_count++;
+
+    var wrapper = $j("#ads-table");
+    var value = "Schedule" + schedule_count;
+    var idTag = "config_advertising_schedule" + schedule_count + "_tag";
+    var idOffset = "config_advertising_schedule" + schedule_count + "_offset";
+
+    $j(wrapper).append('<tr><td colspan="2"><h4>' + value + '</h4></td></tr>');
+    $j(wrapper).append('<tr><th>Offset</th><td><input type="text" id="' + idOffset + '" name="' + idOffset + '"/></td></tr>');
+    $j(wrapper).append('<tr><th>Tag</th><td><input type="text" id="' + idTag + '" name="' + idTag + '"/></td></tr>');
+
+    //$j(function(){
+
+    //get_post_meta($id, "_config_advertising_schedule2_offset", true);
+    //get_post_meta($id, "_config_advertising_schedule2_tag", true);
+    //});
+}
+
+function vrCheck() {
+
+    var content = document.getElementById("vr-check").checked;
+    if (content) {
+
+        $j("#vr-table").find("input,button,textarea,select").removeAttr("disabled");
+    }
+    else {
+
+        $j("#vr-table").find("input,button,textarea,select").attr("disabled", "disabled");
+    }
+
 }
 
 function createChannels() {

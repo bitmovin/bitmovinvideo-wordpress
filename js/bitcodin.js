@@ -29,7 +29,7 @@ function bitcodin() {
     var encodingProfileID = document.getElementById("bitcodin_profile_id").value;
     var outputProfileID = document.getElementById("output_profile_id").value;
 
-    if (videoSrc != "") {
+    if (videoSrc != "" && encodingProfileID != "" && outputProfileID != "") {
         $j.ajax({
             type: "POST",
             url: url,
@@ -54,16 +54,24 @@ function bitcodin() {
                 else {
                     delete_response();
                     $j("#error-response").fadeIn("slow");
-                    $j('#error-response').html(content);
+                    $j('#error-response').html('<p>' + content + '</p>');
                 }
             },
             error: function (error) {
                 $j("#error-response").fadeIn("slow");
-                $j('#error-response').html(error);
+                $j('#error-response').html('<p>' + error + '</p>');
             }
         });
         /* no page refresh */
         return false;
+    }
+    else if (encodingProfileID == "") {
+        $j("#error-response").fadeIn("slow");
+        $j('#error-response').html("<p>You have to create an encoding profile first.</p>");
+    }
+    else if (outputProfileID == "") {
+        $j("#error-response").fadeIn("slow");
+        $j('#error-response').html("<p>You have to create an output profile first.</p>");
     }
     else {
         $j("#error-response").fadeIn("slow");
@@ -129,7 +137,7 @@ function sendAPIRequest(method, message, profile, id) {
         },
         error: function(error) {
             $j("#error-response").fadeIn("slow");
-            $j('#error-response').html(error);
+            $j('#error-response').html('<p>' + error + '</p>');
         }
     });
     /* no page refresh */
