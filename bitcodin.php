@@ -69,49 +69,54 @@ if (isset($_POST['method']) && $_POST['method'] != "")
 
 function bitmovin_encoding_service() {
 
-    $inputConfig = new HttpInputConfig();
-    $inputConfig->url = $_POST['videoSrc'];
-    $input = Input::create($inputConfig);
+    $videoSrc = $_POST['videoSrc'];
 
-    $encodingProfile = EncodingProfile::get($_POST['encodingProfileID']);
+    foreach ($videoSrc as $src) {
 
-    $jobConfig = new JobConfig();
-    $jobConfig->encodingProfile = $encodingProfile;
-    $jobConfig->input = $input;
-    $jobConfig->manifestTypes[] = ManifestTypes::M3U8;
-    $jobConfig->manifestTypes[] = ManifestTypes::MPD;
+        $inputConfig = new HttpInputConfig();
+        $inputConfig->url = $src;
+        $input = Input::create($inputConfig);
 
-    // CREATE JOB
-    $job = Job::create($jobConfig);
+        $encodingProfile = EncodingProfile::get($_POST['encodingProfileID']);
 
-    // CREATE THUMBNAIL
-    $thumbnailConfig = new ThumbnailConfig();
-    $thumbnailConfig->jobId = $job->jobId;
-    $thumbnailConfig->height = 320;
-    $thumbnailConfig->position = 1;
-    $thumbnailConfig->async = true;
-    $thumbnail = Thumbnail::create($thumbnailConfig);
+        $jobConfig = new JobConfig();
+        $jobConfig->encodingProfile = $encodingProfile;
+        $jobConfig->input = $input;
+        $jobConfig->manifestTypes[] = ManifestTypes::M3U8;
+        $jobConfig->manifestTypes[] = ManifestTypes::MPD;
 
-    // WAIT TIL JOB IS FINISHED
-    while($job->status != Job::STATUS_FINISHED) {
+        // CREATE JOB
+        $job = Job::create($jobConfig);
 
-        $job->update();
-        sleep(1);
+        // CREATE THUMBNAIL
+        $thumbnailConfig = new ThumbnailConfig();
+        $thumbnailConfig->jobId = $job->jobId;
+        $thumbnailConfig->height = 320;
+        $thumbnailConfig->position = 1;
+        $thumbnailConfig->async = true;
+        $thumbnail = Thumbnail::create($thumbnailConfig);
+
+        // WAIT TIL JOB IS FINISHED
+        while($job->status != Job::STATUS_FINISHED) {
+
+            $job->update();
+            sleep(1);
+        }
+
+        // TRANSFER JOB OUTPUT
+        $output = Output::get($_POST['outputProfileID']);
+        $job->transfer($output);
+
+        // send mpd and m3u8 data
+        $response = new stdClass();
+        $response->host     = $output->host;
+        $response->path     = $output->path;
+        $response->folder   = $job->jobFolder;
+        $response->mpd      = $job->manifestUrls->mpdUrl;
+        $response->m3u8     = $job->manifestUrls->m3u8Url;
+
+        addToLibrary($response, $thumbnail);
     }
-
-    // TRANSFER JOB OUTPUT
-    $output = Output::get($_POST['outputProfileID']);
-    $job->transfer($output);
-
-    // send mpd and m3u8 data
-    $response = new stdClass();
-    $response->host     = $output->host;
-    $response->path     = $output->path;
-    $response->folder   = $job->jobFolder;
-    $response->mpd      = $job->manifestUrls->mpdUrl;
-    $response->m3u8     = $job->manifestUrls->m3u8Url;
-
-    addToLibrary($response, $thumbnail);
 }
 
 function get_bitcodin_profiles() {

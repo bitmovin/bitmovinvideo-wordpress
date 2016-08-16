@@ -4,6 +4,7 @@
 
 var outputProfiles;
 var encodingProfiles;
+var videoUrl_anz = 1;
 var media_uploader = null;
 
 $j = jQuery.noConflict();
@@ -24,12 +25,28 @@ $j(document).ready(function() {
 function bitcodin() {
 
     delete_response();
+
+    var videoSrc = [];
+    
     var url = bitcodin_script.bitcodin_url;
-    var videoSrc = document.getElementById("bitcodin_video_src").value;
     var encodingProfileID = document.getElementById("bitcodin_profile_id").value;
     var outputProfileID = document.getElementById("output_profile_id").value;
 
-    if (videoSrc != "" && encodingProfileID != "" && outputProfileID != "") {
+    var index = 0;
+    var videoUrlID = "bitcodin_video_src";
+    for (; index < videoUrl_anz; index++) {
+
+        if (index > 0) {
+
+            videoUrlID = "bitcodin_video_src" + index;
+        }
+        if (document.getElementById(videoUrlID).value != "") {
+            
+            videoSrc.push(document.getElementById(videoUrlID).value);
+        }
+    }
+
+    if (videoSrc[0] != "" && encodingProfileID != "" && outputProfileID != "") {
         $j.ajax({
             type: "POST",
             url: url,
@@ -195,6 +212,17 @@ function showOutputProfile() {
             break;
         }
     }
+}
+
+function addVideoUrl() {
+
+    var value = 'Video URL ' + videoUrl_anz;
+    var id = 'bitcodin_video_src' + videoUrl_anz;
+
+    var wrapper = $j("#bitcodin-table");
+    $j(wrapper).append('<tr><th>' + value + '</th><td><input type="text" id="' + id + '" name="' + id + '" size="50" placeholder="path/to/your/video"/><input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="..."></td></tr>');
+
+    videoUrl_anz++;
 }
 
 function removeDuplicates(arr, prop) {

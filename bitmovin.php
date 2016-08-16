@@ -980,7 +980,7 @@ function bitmovin_plugin_display_encoding()
 
     $html = '<div class="wrap">
                 <h1>Bitmovin Encoding Configuration</h1><br>
-                <table class="wp-list-table widefat fixed striped">
+                <table id="bitcodin-table" class="wp-list-table widefat fixed striped">
                     <tr><th>Select Encoding Profile</th>
                     <td><select id="bitcodin_profiles" name="bitcodin_profiles" onchange="showEncodingProfile()">
                         
@@ -989,8 +989,9 @@ function bitmovin_plugin_display_encoding()
                     <td><select id="output_profiles" name="output_profiles" onchange="showOutputProfile()">
                         
                     </select></td></tr> 
-                    <tr><th>Video URL</th><td><input type="text" id="bitcodin_video_src" name="bitcodin_video_src" size="50" value="" placeholder="path/to/your/video"/><input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="..."></td></tr>
+                    <tr><th>Video URL</th><td><input type="text" id="bitcodin_video_src" name="bitcodin_video_src" size="50" placeholder="path/to/your/video"/><input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="..."></td></tr>
                 </table>
+                <a class="add-config" onclick="addVideoUrl()">+ Add another video source</a>
                 
                 <br><br>
                 
