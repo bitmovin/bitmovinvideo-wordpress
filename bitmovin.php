@@ -41,7 +41,6 @@ function bitmovin_admin_assets()
 add_action('init', 'bitmovin_register');
 function bitmovin_register()
 {
-    upload();
 
     $labels = array(
         'name' => __('Videos', 'bitmovin_player'),
@@ -1199,64 +1198,4 @@ function bitmovin_plugin_display_settings()
             <div id="error-response"></div>
         </div>';
     echo $html;
-}
-
-function upload() {
-
-    //echo "<script>alert('Bin hier');</script>";
-    $watermark = imagecreatefrompng(plugins_url('images/error.png', __FILE__));
-
-    if(!$watermark) {
-        echo "error bei watermark";
-    }
-    // getting dimensions of watermark image
-    $watermark_width = imagesx($watermark);
-    $watermark_height = imagesy($watermark);
-
-    // creting jpg from original image
-    $image_path = "https://s3-eu-west-1.amazonaws.com/bitcodin-ci/wp-videos/353699_b4883bd73ae88f156d17278e8f5b71e4/thumbnails/a40ec93f-d2ee-43b7-8f2e-753bc846a0b4.jpg";
-    $image = imagecreatefromjpeg($image_path);
-    //something went wrong
-    if (!$image) {
-        echo "error bei image erstellung";
-    }
-    // getting the dimensions of original image
-    $size = getimagesize($image_path);
-    // placing the watermark 5px from bottom and right
-    $dest_x = $size[0] - $watermark_width - 5;
-    $dest_y = $size[1] - $watermark_height - 5;
-    // blending the images together
-    imagealphablending($image, true);
-    imagealphablending($watermark, true);
-    // creating the new image
-    imagecopy($image, $watermark, $dest_x, $dest_y, 0, 0, $watermark_width, $watermark_height);
-    imagejpeg($image, wp_upload_dir()."bla.jpg");
-    // destroying and freeing memory
-    //$file = $image;
-    imagedestroy($image);
-    imagedestroy($watermark);
-
-    //$file = $thumbnail->thumbnailUrl;
-    //$filename = basename($image);
-    /*$upload_file = wp_upload_bits("bla", null, file_get_contents(wp_upload_dir()."bla"));
-    if (!$upload_file['error']) {
-        $wp_filetype = wp_check_filetype("bla", null);
-        $attachment = array(
-            'post_mime_type' => $wp_filetype['type'],
-            'post_parent' => 0,
-            'post_title' => "Bitcoded",
-            'post_content' => "",
-            'post_excerpt' => "",
-            'post_status' => 'inherit'
-        );
-        $attachment_id = wp_insert_attachment($attachment, $upload_file['file'], 0);
-        if (!is_wp_error($attachment_id)) {
-            require_once(ABSPATH . "wp-admin" . '/includes/image.php');
-            $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload_file['file']);
-            wp_update_attachment_metadata($attachment_id, $attachment_data);
-        }
-    }
-    else {
-        echo "Error";
-    }*/
 }

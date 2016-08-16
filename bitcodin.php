@@ -192,6 +192,8 @@ function create_s3_output_profile() {
 
 function addToLibrary($data, $thumbnail) {
 
+    // PARSING OUTPUT URLS FOR MPD AND M3U8 MANIFEST
+
     $mpd = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
     $m3u8 = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
     if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->mpd, $matches)) {
@@ -203,48 +205,54 @@ function addToLibrary($data, $thumbnail) {
         $m3u8 = $m3u8 . $matches[0];
     }
 
-    $watermark = imagecreatefrompng(plugins_url('images/error.png', __FILE__));
-
-    // getting dimensions of watermark image
-        $watermark_width = imagesx($watermark);
-        $watermark_height = imagesy($watermark);
-
-    // creting jpg from original image
-        $image_path = $thumbnail->thumbnailUrl;
-        $image = imagecreatefromjpeg($image_path);
-    //something went wrong
-        if ($image === false) {
-            echo "error bei image erstellung";
-        }
-    // getting the dimensions of original image
-        $size = getimagesize($image_path);
-    // placing the watermark 5px from bottom and right
-        $dest_x = $size[0] - $watermark_width - 5;
-        $dest_y = $size[1] - $watermark_height - 5;
-    // blending the images together
-        imagealphablending($image, true);
-        imagealphablending($watermark, true);
-    // creating the new image
-        imagecopy($image, $watermark, $dest_x, $dest_y, 0, 0, $watermark_width, $watermark_height);
-    // destroying and freeing memory
-    //$file = $image;
-        //imagedestroy($image);
-        imagedestroy($watermark);
+    // CREATING BITMOVIN WATERMARK
 
     $file = $thumbnail->thumbnailUrl;
-    $filename = basename($image);
-    $upload_file = wp_upload_bits($filename, null, file_get_contents($image));
+    $file_path = wp_upload_dir()['path'] . "/" . basename($file);
+
+    $watermark = imagecreatefrompng(plugins_url('images/watermark.png', __FILE__));
+    if (!$watermark) {
+        echo "error creating watermark";
+    }
+
+    $watermark_width = imagesx($watermark);
+    $watermark_height = imagesy($watermark);
+
+    $image_path = $file;
+    $image = imagecreatefromjpeg($image_path);
+    if (!$image) {
+        echo "error creating thumbnail";
+    }
+
+    $size = getimagesize($image_path);
+
+    $dest_x = 0;
+    $dest_y = $size[1] - $watermark_height;
+
+    imagealphablending($image, true);
+    imagealphablending($watermark, true);
+
+    imagecopy($image, $watermark, $dest_x, $dest_y, 0, 0, $watermark_width, $watermark_height);
+    imagejpeg($image, $file_path);
+
+    imagedestroy($image);
+    imagedestroy($watermark);
+
+    // UPLOAD TO MEDIA LIBRARY
+
+    $filename = basename($file_path);
+    $upload_file = wp_upload_bits($filename, null, file_get_contents($file_path));
     if (!$upload_file['error']) {
         $wp_filetype = wp_check_filetype($filename, null);
         $attachment = array(
             'post_mime_type' => $wp_filetype['type'],
-            'post_parent' => 0,
+            'post_parent' => null,
             'post_title' => "Bitcoded" . $matches[0] . "/mpd",
             'post_content' => (string)$mpd,
             'post_excerpt' => (string)$m3u8,
             'post_status' => 'inherit'
         );
-        $attachment_id = wp_insert_attachment($attachment, $upload_file['file'], 0);
+        $attachment_id = wp_insert_attachment($attachment, $upload_file['file'], null);
         if (!is_wp_error($attachment_id)) {
             require_once(ABSPATH . "wp-admin" . '/includes/image.php');
             $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload_file['file']);
