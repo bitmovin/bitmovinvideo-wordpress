@@ -327,6 +327,9 @@ function bitmovin_getAdsTable($id)
     $client = get_post_meta($id, "_config_advertising_client", true);
     $admessage = get_post_meta($id, "_config_advertising_admessage", true);
 
+    $scheduleOffset = get_post_meta($id, "_config_advertising_schedule1_offset", true);
+    $scheduleTag = get_post_meta($id, "_config_advertising_schedule1_tag", true);
+
     $schedule1Offset = get_post_meta($id, "_config_advertising_schedule1_offset", true);
     $schedule1Tag = get_post_meta($id, "_config_advertising_schedule1_tag", true);
 
@@ -346,8 +349,8 @@ function bitmovin_getAdsTable($id)
     $adsTable .= getTableRowInput("Ad message", "config_advertising_admessage", $admessage);
 
     $adsTable .= "<tr><td colspan='2'><h4>Schedule 1</h4></td></tr>";
-    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $schedule1Offset);
-    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $schedule1Tag);
+    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $scheduleOffset);
+    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $scheduleTag);
 
     $adsTable .= "</table>";
 
@@ -996,7 +999,7 @@ function bitmovin_plugin_display_encoding()
                 <br><br>
                 
                 <table id="selected-encoding-table" class="wp-list-table widefat fixed striped">
-                    <tr><th colspan="2"><h4>Selected Encoding Configuration</h4></th></tr> 
+                    <tr><th colspan="2"><h4>Encoding Overview</h4></th></tr> 
                     <tr><th>Profile</th><td><input type="text" id="bitcodin_profile" name="bitcodin_profile" size="50"/></td></tr>
                     <tr><th>Quality</th><td><select id="bitcodin_quality" name="bitcodin_quality">
                         <option value="Standard">Standard</option>
@@ -1020,7 +1023,7 @@ function bitmovin_plugin_display_encoding()
                 <br><br>
                 
                 <table id="selected-output-table" class="wp-list-table widefat fixed striped">
-                    <tr><th colspan="2"><h4>Selected Output Configuration</h4></th></tr>
+                    <tr><th colspan="2"><h4>Output Overview</h4></th></tr>
                     <tr><th>Type</th><td><select id="output-type" name="output-type">
                         <option value="ftp">FTP</option>
                         <option value="s3">S3</option> 
@@ -1062,7 +1065,7 @@ function bitmovin_plugin_display_create_encoding_profile() {
                 </table>
                 <br><br>
                 <table id="video-table" class="wp-list-table widefat fixed striped">
-                    <tr><th colspan="2"><h4>Video Configuration</h4></th></tr> 
+                    <tr><th colspan="2"><h4>Video Representation</h4></th></tr> 
                     <tr><th>Resolution</th><td><input type="number" id="create-encoding-video-width" name="create-encoding-video-width" size="20" required/> X <input type="number" id="create-encoding-video-height" name="create-encoding-video-height" size="20" required/></td></tr>
                     <tr><th>Video Bitrate</th><td><input type="number" id="create-encoding-video-bitrate" name="create-encoding-video-bitrate" size="50" onkeyup="video_bitrate()" required/><span id="vbitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Video Codec</th><td><select id="create-encoding-video-codec" name="create-encoding-video-codec">
@@ -1073,7 +1076,7 @@ function bitmovin_plugin_display_create_encoding_profile() {
                 <a class="add-config" onclick="addVideoConfig()">+ Add Video Configuration</a>
                 <br><br>
                 <table id="audio-table" class="wp-list-table widefat fixed striped">
-                    <th colspan="2"><h4>Audio Configuration</h4></th></tr>
+                    <th colspan="2"><h4>Audio Representation</h4></th></tr>
                     <tr><th>Audio Bitrate</th><td><input type="number" id="create-encoding-audio-bitrate" name="create-encoding-audio-bitrate" size="50" onkeyup="audio_bitrate()" required/><span id="abitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Audio Codec</th><td><select id="create-encoding-audio-codec" name="create-encoding-audio-codec">
                         <option value="aac">AAC</option>
