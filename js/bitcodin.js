@@ -59,7 +59,7 @@ function bitcodin() {
             },
             beforeSend: function () {
                 $j("#big-response").fadeIn("slow");
-                $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/><p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + videoUrl_anz + " video(s)</i></p>");
+                $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/><p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + videoUrl_anz + " video(s) - Feel free to do other stuff.</i></p>");
             },
             success: function (content) {
 
@@ -218,11 +218,21 @@ function showOutputProfile() {
 
 function addVideoUrl() {
 
+    var rowID = 'rowID' + videoUrl_anz;
     var value = 'Video URL ' + videoUrl_anz;
     var id = 'bitcodin_video_src' + videoUrl_anz;
+    var removeID = 'remove-video-src-tag' + videoUrl_anz;
 
     var wrapper = $j("#bitcodin-table");
-    $j(wrapper).append('<tr><th>' + value + '</th><td><input type="text" id="' + id + '" name="' + id + '" size="50" placeholder="path/to/your/video"/><input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="..."></td></tr>');
+    $j(wrapper).append('<tr id="' + rowID + '"><th>' + value + '</th><td><input type="text" id="' + id + '" name="' + id + '" size="50" placeholder="path/to/your/video"/>' +
+        '<input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="...">' +
+        '<a id="' + removeID + '" class="remove-tag">X</a>' +
+        '</td></tr>');
+
+    $j("#" + removeID).click(function(){
+        $j("#" + rowID).remove();
+        videoUrl_anz--;
+    });
 
     videoUrl_anz++;
 }
@@ -249,12 +259,12 @@ function video_bitrate()
     if (res == 1)
     {
         document.getElementById("vbitrate").innerHTML = video_bitrate + " kbps";
-        $j("#vbitrate").css("background-color","#31b0d5");
+        $j("#vbitrate").css("background-color","grey");
     }
     else if (res == 2)
     {
         document.getElementById("vbitrate").innerHTML = video_bitrate/1000 + " Mbps";
-        $j("#vbitrate").css("background-color","#31b0d5");
+        $j("#vbitrate").css("background-color","grey");
     }
     else {
         document.getElementById("vbitrate").innerHTML = "max. 20 Mbps allowed!";
@@ -268,7 +278,7 @@ function audio_bitrate()
     if (audio_bitrate <= 256)
     {
         document.getElementById("abitrate").innerHTML = audio_bitrate + " kbps";
-        $j("#abitrate").css("background-color","#31b0d5");
+        $j("#abitrate").css("background-color","grey");
     }
     else {
         document.getElementById("abitrate").innerHTML = "max. 256 kbps allowed!";
