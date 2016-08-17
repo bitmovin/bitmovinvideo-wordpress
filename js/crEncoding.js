@@ -179,12 +179,12 @@ function video_bitrate()
     if (res == 1)
     {
         document.getElementById("vbitrate").innerHTML = video_bitrate + " kbps";
-        $j("#vbitrate").css("background-color","#31b0d5");
+        $j("#vbitrate").css("background-color","grey");
     }
     else if (res == 2)
     {
         document.getElementById("vbitrate").innerHTML = video_bitrate/1000 + " Mbps";
-        $j("#vbitrate").css("background-color","#31b0d5");
+        $j("#vbitrate").css("background-color","grey");
     }
     else {
         document.getElementById("vbitrate").innerHTML = "max. 20 Mbps allowed!";
@@ -198,7 +198,7 @@ function audio_bitrate()
     if (audio_bitrate <= 256)
     {
         document.getElementById("abitrate").innerHTML = audio_bitrate + " kbps";
-        $j("#abitrate").css("background-color","#31b0d5");
+        $j("#abitrate").css("background-color","grey");
     }
     else {
         document.getElementById("abitrate").innerHTML = "max. 256 kbps allowed!";
@@ -232,10 +232,18 @@ function addAudioConfig() {
         var idSelect = 'create-encoding-audio-codec' + audioConf_anz;
         var idBitrate = 'abitrate' + audioConf_anz;
 
+        var removeID = 'remove-audio-tag' + audioConf_anz;
+        var rowClass = 'audio-row' + audioConf_anz;
+
         var wrapper = $j("#audio-table");
-        $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
-        $j(wrapper).append('<tr><th>Audio Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="' + idBitrate + '" class="bitrate">kbps</span></td></tr>');
-        $j(wrapper).append('<tr><th>Audio Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="aac">AAC</option></select></td></tr>');
+        $j(wrapper).append('<tr class="' + rowClass + '"><th colspan="2"><h4>' + value + '<a id="' + removeID + '" class="remove-tag">Remove</a></h4></th></tr>');
+        $j(wrapper).append('<tr class="' + rowClass + '"><th>Audio Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="' + idBitrate + '" class="bitrate">kbps</span></td></tr>');
+        $j(wrapper).append('<tr class="' + rowClass + '"><th>Audio Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="aac">AAC</option></select></td></tr>');
+
+        $j("#" + removeID).click(function(){
+            $j("." + rowClass).remove();
+            audioConf_anz--;
+        });
 
         audioConf_anz++;
     }
@@ -250,18 +258,26 @@ function addVideoConfig() {
     delete_response();
     if (videoConf_anz < 15) {
 
-        var value = 'Video Configuration' + videoConf_anz;
+        var value = 'Video Representation' + videoConf_anz;
         var idText = 'create-encoding-video-bitrate' + videoConf_anz;
         var idSelect = 'create-encoding-video-codec' + videoConf_anz;
         var idWidth = 'create-encoding-video-width' + videoConf_anz;
         var idHeight = 'create-encoding-video-height' + videoConf_anz;
-        var idBitrate = 'vbitrate' + audioConf_anz;
+        var idBitrate = 'vbitrate' + videoConf_anz;
+
+        var removeID = 'remove-video-tag' + videoConf_anz;
+        var rowClass = 'video-row' + videoConf_anz;
 
         var wrapper = $j("#video-table");
-        $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
-        $j(wrapper).append('<tr><th>Resolution</th><td><input type="number" id="' + idWidth + '" name="' + idWidth + '" size="20" required/> X <input type="number" id="' + idHeight + '" name="' + idHeight + '" size="20" required/></td></tr>');
-        $j(wrapper).append('<tr><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="' + idBitrate + '" class="bitrate">kbps</span></td></tr>');
-        $j(wrapper).append('<tr><th>Video Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="h264">H264</option><option value="hevc">HEVC</option></select></td></tr>');
+        $j(wrapper).append('<tr class="' + rowClass + '"><th colspan="2"><h4>' + value + '<a id="' + removeID + '" class="remove-tag">Remove</a></h4></th></tr>');
+        $j(wrapper).append('<tr class="' + rowClass + '"><th>Resolution</th><td><input type="number" id="' + idWidth + '" name="' + idWidth + '" size="20" required/> X <input type="number" id="' + idHeight + '" name="' + idHeight + '" size="20" required/></td></tr>');
+        $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="' + idBitrate + '" class="bitrate">kbps</span></td></tr>');
+        $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="h264">H264</option><option value="hevc">HEVC</option></select></td></tr>');
+
+        $j("#" + removeID).click(function(){
+            $j("." + rowClass).remove();
+            videoConf_anz--;
+        });
 
         videoConf_anz++;
     }
