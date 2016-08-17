@@ -12,14 +12,15 @@ $j(document).ready(function() {
 
     if (bitcodin_script.apiKey == "") {
         $j("#error-response").fadeIn("slow");
-        $j('#error-response').html("<p id='response'>No valid API Key found</p>");
+        $j('#error-response').html("<p>No valid API Key found</p>");
+    }
+    else {
+        getEncodingProfiles();
+        getOutputProfiles();
     }
     /* disable table content */
     $j("#selected-encoding-table").find("input,button,textarea,select").attr("disabled","disabled");
     $j("#selected-output-table").find("input,button,textarea,select").attr("disabled","disabled");
-
-    getEncodingProfiles();
-    getOutputProfiles();
 });
 
 function bitcodin() {
