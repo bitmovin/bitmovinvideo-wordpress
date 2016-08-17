@@ -91,16 +91,23 @@ function delete_response() {
 
 function addSchedule() {
 
-    schedule_count++;
-
     var wrapper = $j("#ads-table");
     var value = "Schedule" + schedule_count;
     var idTag = "config_advertising_schedule" + schedule_count + "_tag";
     var idOffset = "config_advertising_schedule" + schedule_count + "_offset";
 
-    $j(wrapper).append('<tr><td colspan="2"><h4>' + value + '</h4></td></tr>');
-    $j(wrapper).append('<tr><th>Offset</th><td><input type="text" id="' + idOffset + '" name="' + idOffset + '"/></td></tr>');
-    $j(wrapper).append('<tr><th>Tag</th><td><input type="text" id="' + idTag + '" name="' + idTag + '"/></td></tr>');
+    var removeID = "remove-ad" + schedule_count;
+    var rowClass = "ad-row" + schedule_count;
+
+    $j(wrapper).append('<tr class="' + rowClass + '"><td colspan="2"><h4>' + value + '<a id="' + removeID + '" class="remove-tag">Remove</a></h4></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Offset</th><td><input type="text" id="' + idOffset + '" name="' + idOffset + '"/></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Tag</th><td><input type="text" id="' + idTag + '" name="' + idTag + '"/></td></tr>');
+
+    $j("#" + removeID).click(function(){
+        $j("." + rowClass).remove();
+        schedule_count--;
+    });
+    schedule_count++;
 
     //$j(function(){
 
