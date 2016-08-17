@@ -1088,6 +1088,7 @@ function bitmovin_plugin_display_create_encoding_profile() {
                 </p>
             </div>
             <div id="response"></div>
+            <div id="big-response"></div>
             <div id="error-response"></div>';
     echo $html;
 }
@@ -1147,6 +1148,7 @@ function bitmovin_plugin_display_create_output_profile() {
                 </p>
              </div>
              <div id="response"></div>
+             <div id="big-response"></div>
              <div id="error-response"></div>';
     echo $html;
 }

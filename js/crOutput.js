@@ -10,10 +10,6 @@ function createFTPOutput() {
     var host = document.getElementById('config_ftp_host').value;
     var usr = document.getElementById('config_ftp_usr').value;
     var pw = document.getElementById('config_ftp_pw').value;
-    var subdirectory = "false";
-    if (document.getElementById('config_ftp_subdirectory').checked) {
-        subdirectory = "true";
-    }
 
     if (profile != "" && host != "" && usr != "" && pw != "") {
 
@@ -27,15 +23,15 @@ function createFTPOutput() {
                 profile:        profile,
                 host:           host,
                 usr:            usr,
-                pw:             pw,
-                subdirectory:   subdirectory
+                pw:             pw
             },
             beforeSend: function() {
-                $j("#response").fadeIn("slow");
-                $j('#response').html("<img src='" + script.loader + "' /><p>Creating FTP Output Profile...</p>");
+                $j("#big-response").fadeIn("slow");
+                $j('#big-response').html("<img src='" + script.loader + "' /><p id='big-response-text'>Creating FTP Output Profile...</p>");
             },
             success: function (content) {
 
+                delete_response();
                 var error = content.toString().includes("error");
                 if (!error) {
                     $j("#response").fadeIn("slow");
@@ -43,13 +39,14 @@ function createFTPOutput() {
                     console.log(content);
                 }
                 else {
-                    delete_response();
+
                     $j("#error-response").fadeIn("slow");
                     $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
                     console.log(content);
                 }
             },
             error: function(error) {
+
                 delete_response();
                 $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>' + error + '</p>');
@@ -91,26 +88,28 @@ function createS3Output() {
                 region:         region,
             },
             beforeSend: function() {
-                $j("#response").fadeIn("slow");
-                $j('#response').html("<img src='" + script.loader + "' /><p>Creating S3 Output Profile...</p>");
+                $j("#big-response").fadeIn("slow");
+                $j('#big-response').html("<img src='" + script.loader + "' /><p id='big-response-text'>Creating S3 Output Profile...</p>");
             },
             success: function (content) {
 
+                delete_response();
                 var error = content.toString().includes("error");
                 if (!error) {
-                    delete_response();
+
                     $j("#response").fadeIn("slow");
                     $j('#response').html("<p>Your S3 Output Profile was created successfully</p>");
                     console.log(content);
                 }
                 else {
-                    delete_response();
+
                     $j("#error-response").fadeIn("slow");
                     $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
                     console.log(content);
                 }
             },
             error: function(error) {
+
                 delete_response();
                 $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>' + error + '</p>');
@@ -131,4 +130,5 @@ function delete_response() {
     $j('#error-response').html("");
     $j("#response").fadeOut("slow");
     $j("#error-response").fadeOut("slow");
+    $j("#big-response").fadeOut("slow");
 }

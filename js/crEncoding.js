@@ -5,6 +5,10 @@
 var audioConf_anz = 1;
 var videoConf_anz = 1;
 $j = jQuery.noConflict();
+$j(document).ready(function() {
+    video_bitrate();
+    audio_bitrate();
+});
 
 function createEncodeProfile() {
 
@@ -123,14 +127,15 @@ function createEncodeProfile() {
         url: url,
         data: {
             apiKey: script.apiKey,
+            contentType: "application/json",
             method: "create_encoding_profile",
             profile:  profile,
             videoConfigs: JSON.stringify(videoConfigs),
             audioConfigs: JSON.stringify(audioConfigs)
         },
         beforeSend: function() {
-            $j("#response").fadeIn("slow");
-            $j('#response').html("<img src='" + script.loader + "' /><p>Creating Encoding Profile...</p>");
+            $j("#big-response").fadeIn("slow");
+            $j('#big-response').html("<img src='" + script.loader + "' /><p id='big-response-text'>Creating Encoding Profile...</p>");
         },
         success: function (content) {
             delete_response();
@@ -141,7 +146,7 @@ function createEncodeProfile() {
                 console.log(content);
             }
             else {
-                delete_response();
+
                 $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
                 console.log(content);
@@ -164,6 +169,7 @@ function delete_response() {
     $j('#error-response').html("");
     $j("#response").fadeOut("slow");
     $j("#error-response").fadeOut("slow");
+    $j("#big-response").fadeOut("slow");
 }
 
 function video_bitrate()
@@ -228,7 +234,7 @@ function addAudioConfig() {
 
         var wrapper = $j("#audio-table");
         $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
-        $j(wrapper).append('<tr><th>Audio Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>');
+        $j(wrapper).append('<tr><th>Audio Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="' + idBitrate + '" class="bitrate">kbps</span></td></tr>');
         $j(wrapper).append('<tr><th>Audio Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="aac">AAC</option></select></td></tr>');
 
         audioConf_anz++;
@@ -249,11 +255,12 @@ function addVideoConfig() {
         var idSelect = 'create-encoding-video-codec' + videoConf_anz;
         var idWidth = 'create-encoding-video-width' + videoConf_anz;
         var idHeight = 'create-encoding-video-height' + videoConf_anz;
+        var idBitrate = 'vbitrate' + audioConf_anz;
 
         var wrapper = $j("#video-table");
         $j(wrapper).append('<tr><th colspan="2"><h4>' + value + '</h4></th></tr>');
         $j(wrapper).append('<tr><th>Resolution</th><td><input type="number" id="' + idWidth + '" name="' + idWidth + '" size="20" required/> X <input type="number" id="' + idHeight + '" name="' + idHeight + '" size="20" required/></td></tr>');
-        $j(wrapper).append('<tr><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>');
+        $j(wrapper).append('<tr><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '" onkeyup="audio_bitrate()"/><span id="' + idBitrate + '" class="bitrate">kbps</span></td></tr>');
         $j(wrapper).append('<tr><th>Video Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="h264">H264</option><option value="hevc">HEVC</option></select></td></tr>');
 
         videoConf_anz++;

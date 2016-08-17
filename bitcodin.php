@@ -142,8 +142,8 @@ function create_encoding_profile() {
     $encodingProfileConfig = new EncodingProfileConfig();
     $encodingProfileConfig->name = $_POST['profile'];
 
-    $videoConfigs = json_decode($_POST['videoConfigs']);
-    $audioConfigs = json_decode($_POST['audioConfigs']);
+    $videoConfigs = json_decode(stripslashes($_POST['videoConfigs']));
+    $audioConfigs = json_decode(stripslashes($_POST['audioConfigs']));
 
     // CREATE VIDEO STREAM CONFIG
     foreach ($videoConfigs as $config) {
