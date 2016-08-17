@@ -130,7 +130,7 @@ function createEncodeProfile() {
         },
         beforeSend: function() {
             $j("#response").fadeIn("slow");
-            $j('#response').html("<img src='" + script.small_loader + "' /><p>Creating Encoding Profile...</p>");
+            $j('#response').html("<img src='" + script.loader + "' /><p>Creating Encoding Profile...</p>");
         },
         success: function (content) {
             delete_response();

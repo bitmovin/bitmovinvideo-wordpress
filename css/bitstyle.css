@@ -66,6 +66,32 @@
     background-color: #98FB98;
 }
 
+#big-response {
+    top: 35%;
+    left: 40%;
+    width:420px;
+    height:200px;
+    color: white;
+    display: none;
+    position: fixed;
+    padding-top: 70px;
+    text-align: center;
+    background-color: #5C5C5C;
+    box-shadow: 8px 8px 10px black;
+}
+
+#big-response-text {
+    font-size: 20pt;
+    font-weight: normal;
+    font-family: Arial, Consolas;
+}
+
+#small-response-text {
+    font-size: 11pt;
+    margin-top: -10px;
+    font-family: Arial, Consolas;
+}
+
 #error-response {
     right: 0;
     top: 35px;

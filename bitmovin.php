@@ -277,7 +277,7 @@ function bitmovin_getVersionTable($id)
     $playerTable .= "<tr><td><p>To provide our users the right version of our player, we have four public player channels available.
     In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
     More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
-    $playerTable .= '<tr><td colspan="2"><input type="text" id="config_version_link" value="'. $version_link .'" placeholder="https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js"/></td></tr>';
+    $playerTable .= '<tr><td><input type="text" id="config_version_link" value="'. $version_link .'" placeholder="https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js"/></td></tr>';
 
     $playerTable .= "</table>";
 
@@ -975,7 +975,7 @@ function bitmovin_plugin_display_encoding()
 
         wp_register_script('bitcodin_script', plugins_url('js/bitcodin.js', __FILE__));
         wp_enqueue_script('bitcodin_script');
-        wp_localize_script('bitcodin_script', 'bitcodin_script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+        wp_localize_script('bitcodin_script', 'bitcodin_script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
     }
 
     $html = '<div class="wrap">
@@ -1038,6 +1038,7 @@ function bitmovin_plugin_display_encoding()
                 </p>
             </div>
             <div id="response"></div>
+            <div id="big-response"></div>
             <div id="error-response"></div>';
     echo $html;
 }
@@ -1050,7 +1051,7 @@ function bitmovin_plugin_display_create_encoding_profile() {
 
         wp_register_script('encoding_profile_script', plugins_url('js/crEncoding.js', __FILE__));
         wp_enqueue_script('encoding_profile_script');
-        wp_localize_script('encoding_profile_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+        wp_localize_script('encoding_profile_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
     }
 
     $html = '<div class="wrap">
@@ -1099,7 +1100,7 @@ function bitmovin_plugin_display_create_output_profile() {
 
         wp_register_script('output_script', plugins_url('js/crOutput.js', __FILE__));
         wp_enqueue_script('output_script');
-        wp_localize_script('output_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'small_loader' => plugins_url('images/loader-small.gif', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
+        wp_localize_script('output_script', 'script', array('apiKey' => $apiKey, 'bitcodin_url' => plugins_url('bitcodin.php', __FILE__), 'loader' => plugins_url('images/loader.gif', __FILE__)));
     }
 
     $html = '<div class="wrap">

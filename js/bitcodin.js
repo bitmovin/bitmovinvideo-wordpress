@@ -46,7 +46,7 @@ function bitcodin() {
         }
     }
 
-    if (videoSrc[0] != "" && encodingProfileID != "" && outputProfileID != "") {
+    if (videoSrc[0] != undefined && encodingProfileID != "" && outputProfileID != "") {
         $j.ajax({
             type: "POST",
             url: url,
@@ -58,13 +58,14 @@ function bitcodin() {
                 outputProfileID: outputProfileID
             },
             beforeSend: function () {
-                $j("#response").fadeIn("slow");
-                $j('#response').html("<img src='" + bitcodin_script.loader + "'/><p>Encoding in progress...</p>");
+                $j("#big-response").fadeIn("slow");
+                $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/><p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + videoUrl_anz + " video(s)</i></p>");
             },
             success: function (content) {
 
                 var error = content.toString().includes("error");
                 if (!error) {
+                    delete_response();
                     $j("#response").fadeIn("slow");
                     $j('#response').html("<p>Encoding finished successfully</p>");
                 }
@@ -100,6 +101,7 @@ function delete_response() {
 
     $j("#response").fadeOut("slow");
     $j("#error-response").fadeOut("slow");
+    $j("#big-response").fadeOut("slow");
 }
 
 function getEncodingProfiles() {
@@ -123,8 +125,8 @@ function sendAPIRequest(method, message, profile, id) {
             method: method
         },
         beforeSend: function() {
-            $j("#response").fadeIn("slow");
-            $j('#response').html("<img src='" + bitcodin_script.small_loader + "'/><p>" + message + "</p>");
+            $j("#big-response").fadeIn("slow");
+            $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/><p id='big-response-text'>" + message + "</p>");
         },
         success: function (content) {
 
@@ -303,11 +305,15 @@ function open_media_encoding_video()
         multiple: false
     });
 
+    var srcid = "#bitcodin_video_src";
+    if (videoUrl_anz > 1) {
+        srcid = "#bitcodin_video_src" + (videoUrl_anz - 1);
+    }
     media_uploader.on("select", function(){
 
         /* get video url and insert into video src input */
         var attachment = media_uploader.state().get('selection').first().toJSON();
-        $j('#bitcodin_video_src').val(attachment.url);
+        $j(srcid).val(attachment.url);
     });
 
     media_uploader.open();

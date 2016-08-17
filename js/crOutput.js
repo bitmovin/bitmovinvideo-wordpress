@@ -32,7 +32,7 @@ function createFTPOutput() {
             },
             beforeSend: function() {
                 $j("#response").fadeIn("slow");
-                $j('#response').html("<img src='" + script.small_loader + "' /><p>Creating FTP Output Profile...</p>");
+                $j('#response').html("<img src='" + script.loader + "' /><p>Creating FTP Output Profile...</p>");
             },
             success: function (content) {
 
@@ -92,7 +92,7 @@ function createS3Output() {
             },
             beforeSend: function() {
                 $j("#response").fadeIn("slow");
-                $j('#response').html("<img src='" + script.small_loader + "' /><p>Creating S3 Output Profile...</p>");
+                $j('#response').html("<img src='" + script.loader + "' /><p>Creating S3 Output Profile...</p>");
             },
             success: function (content) {
 
