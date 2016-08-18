@@ -113,7 +113,7 @@ function get_bitcodin_profiles() {
     $encodingProfiles = EncodingProfile::getListAll();
 
     /* convert array into object array */
-    $response = json_decode (json_encode($encodingProfiles), FALSE);
+    $response = json_decode(json_encode($encodingProfiles), FALSE);
     echo json_encode($response);
 }
 
@@ -122,7 +122,7 @@ function get_output_profiles() {
     $outputProfiles = Output::getListAll();
 
     /* convert array into object array */
-    $response = json_decode (json_encode($outputProfiles), FALSE);
+    $response = json_decode(json_encode($outputProfiles), FALSE);
     echo json_encode($response);
 }
 
