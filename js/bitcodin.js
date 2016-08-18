@@ -19,18 +19,21 @@ $j(document).ready(function() {
         getOutputProfiles();
     }
     /* disable table content */
+    document.getElementById("check-overview").checked = false;
+    overview();
     $j("#selected-encoding-table").find("input,button,textarea,select").attr("disabled","disabled");
     $j("#selected-output-table").find("input,button,textarea,select").attr("disabled","disabled");
 });
 
-function hide() {
-    $j("#selected-encoding-table").fadeOut();
-    $j("#selected-output-table").fadeOut();
-}
-
-function show() {
-    $j("#selected-encoding-table").fadeIn();
-    $j("#selected-output-table").fadeIn();
+function overview() {
+    if (document.getElementById("check-overview").checked) {
+        $j("#selected-encoding-table").fadeIn();
+        $j("#selected-output-table").fadeIn();
+    }
+    else {
+        $j("#selected-encoding-table").hide();
+        $j("#selected-output-table").hide();
+    }
 }
 
 function bitcodin() {

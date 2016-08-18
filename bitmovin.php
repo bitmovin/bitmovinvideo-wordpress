@@ -155,7 +155,7 @@ function bitmovin_player_configuration_ads()
     $html = '<div class="configSection">';
     $html .= '<div id="ads" class="configContent">';
     $html .= bitmovin_getAdsTable($post->ID);
-    $html .= '<a class="add-config" onclick="addSchedule()">+ Add another schedule</a>';
+    $html .= '<a class="add-config" onclick="addSchedule(' . $post->ID . ')">+ Add another schedule</a>';
     $html .= '</div>';
     $html .= '</div>';
 
@@ -327,8 +327,8 @@ function bitmovin_getAdsTable($id)
     $client = get_post_meta($id, "_config_advertising_client", true);
     $admessage = get_post_meta($id, "_config_advertising_admessage", true);
 
-    $scheduleOffset = get_post_meta($id, "_config_advertising_schedule1_offset", true);
-    $scheduleTag = get_post_meta($id, "_config_advertising_schedule1_tag", true);
+    $scheduleOffset = get_post_meta($id, "_config_advertising_schedule_offset", true);
+    $scheduleTag = get_post_meta($id, "_config_advertising_schedule_tag", true);
 
     $schedule1Offset = get_post_meta($id, "_config_advertising_schedule1_offset", true);
     $schedule1Tag = get_post_meta($id, "_config_advertising_schedule1_tag", true);
@@ -996,9 +996,8 @@ function bitmovin_plugin_display_encoding()
                 </table>
                 <a class="add-config" onclick="addVideoUrl()">+ Add another video source</a>
                 
-                <br><br>
-                <a class="add-config" onclick="hide()">Hide</a>
-                <a class="add-config" onclick="show()">Show</a>
+                <br><br> 
+                <h4>Show/Hide Overview <input id="check-overview" type="checkbox" onchange="overview()"/></h4>
                 
                 <table id="selected-encoding-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Encoding Overview</h4></th></tr> 
