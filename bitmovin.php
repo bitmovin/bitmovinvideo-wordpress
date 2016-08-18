@@ -254,7 +254,8 @@ function bitmovin_getVideoTable($id)
 
     $videoTable .= getTableRowInput("Dash URL", "config_src_dash", $dash_url, "http://path/to/mpd/file.mpd");
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
-    $videoTable .= '<tr><th>Progressive URL</th><td><input type="text" id="config_src_prog" value="'. $prog_url .'" placeholder="http://path/to/mp4"/><input type="button" id="prog-button" class="button" onclick="open_media_progressive_video()" value="..." /></td></tr>';
+    $videoTable .= getTableRowInput("Progressive URL", "config_src_prog", $prog_url, "http://path/to/mp4");
+    $videoTable .= '<tr><th></th><td><input type="button" id="prog-button" class="button" onclick="open_media_progressive_video()" value="..." /></td></tr>';
     $videoTable .= getTableRowInput("Poster URL", "config_src_poster", $poster_url, "http://path/to/poster.jpg");
 
     $videoTable .= "</table>";
