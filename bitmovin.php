@@ -998,34 +998,44 @@ function bitmovin_plugin_display_encoding()
                 <a class="add-config" onclick="addVideoUrl()">+ Add another video source</a>
                 
                 <br><br> 
-                <h4>Show/Hide Overview <input id="check-overview" type="checkbox" onchange="overview()"/></h4>
+                <h4>Show Details <input id="check-overview" type="checkbox" onchange="overview()"/></h4>
                 
-                <table id="selected-encoding-table" class="wp-list-table widefat fixed striped">
-                    <tr><th colspan="2"><h4>Encoding Overview</h4></th></tr> 
-                    <tr><th>Profile</th><td><input type="text" id="bitcodin_profile" name="bitcodin_profile" size="50"/></td></tr>
-                    <tr><th>Quality</th><td><select id="bitcodin_quality" name="bitcodin_quality">
-                        <option value="Standard">Standard</option>
-                        <option value="Professional">Professional</option>
-                        <option value="Premium">Premium</option>
-                    </select></td></tr>
-                    <tr><th>Resolution</th><td><input type="text" id="bitcodin_video_width" name="bitcodin_video_width" size="20"/> X <input type="text" id="bitcodin_video_height" name="bitcodin_video_height" size="20"/></td></tr>
-                    <tr><th>Video Bitrate</th><td><input type="text" id="bitcodin_video_bitrate" name="bitcodin_video_bitrate" size="50" onkeyup="video_bitrate()"/><span id="vbitrate" class="bitrate">kbps</span></td></tr>
-                    <tr><th>Audio Bitrate</th><td><input type="text" id="bitcodin_audio_bitrate" name="bitcodin_audio_bitrate" size="50" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>
-                    <tr><th>Video Codec</th><td><select id="bitcodin_video_codec" name="bitcodin_video_codec">
-                        <option value="h264">h264</option>
-                        <option value="hevc">hevc</option>
-                    </select></td></tr>
-                    <tr><th>Audio Codec</th><td><select id="bitcodin_audio_codec" name="bitcodin_audio_codec">
-                        <option value="aac">aac</option>
-                    </select></td></tr>
+                <div id="selected-encoding-table">
+                    <table class="wp-list-table widefat fixed striped">
+                        <tr><th colspan="2"><h3>Encoding Overview</h3></th></tr> 
+                        <tr><th>Profile</th><td><input type="text" id="bitcodin_profile" name="bitcodin_profile" size="50"/></td></tr>
+                        <tr><th>Quality</th><td><select id="bitcodin_quality" name="bitcodin_quality">
+                            <option value="Standard">Standard</option>
+                            <option value="Professional">Professional</option>
+                            <option value="Premium">Premium</option>
+                        </select></td></tr>
+                    </table><br><br>
+                    
+                    <table id="encoding-profile-video-representation" class="wp-list-table widefat fixed striped">
+                        <tr><th colspan="2"><h4>Video Representation</h4></th></tr> 
+                        <tr><th>Resolution</th><td><input type="text" id="bitcodin_video_width" name="bitcodin_video_width" size="20"/> X <input type="text" id="bitcodin_video_height" name="bitcodin_video_height" size="20"/></td></tr>
+                        <tr><th>Video Bitrate</th><td><input type="text" id="bitcodin_video_bitrate" name="bitcodin_video_bitrate" size="50" onkeyup="video_bitrate()"/><span id="vbitrate" class="bitrate">kbps</span></td></tr>
+                        <tr><th>Video Codec</th><td><select id="bitcodin_video_codec" name="bitcodin_video_codec">
+                            <option value="h264">h264</option>
+                            <option value="hevc">hevc</option>
+                        </select></td></tr>
+                    </table><br><br>
+                    
+                    <table id="encoding-profile-audio-representation" class="wp-list-table widefat fixed striped">
+                        <tr><th colspan="2"><h4>Audio Representation</h4></th></tr>
+                        <tr><th>Audio Bitrate</th><td><input type="text" id="bitcodin_audio_bitrate" name="bitcodin_audio_bitrate" size="50" onkeyup="audio_bitrate()"/><span id="abitrate" class="bitrate">kbps</span></td></tr>
+                        <tr><th>Audio Codec</th><td><select id="bitcodin_audio_codec" name="bitcodin_audio_codec">
+                            <option value="aac">aac</option>
+                        </select></td></tr>
+                    </table>
                     
                     <tr><th></th><td><input type="hidden" id="bitcodin_profile_id" name="bitcodin_profile_id"/></td></tr>
-                </table>
+                </div>
                 
                 <br><br>
                 
                 <table id="selected-output-table" class="wp-list-table widefat fixed striped">
-                    <tr><th colspan="2"><h4>Output Overview</h4></th></tr>
+                    <tr><th colspan="2"><h3>Output Overview</h3></th></tr>
                     <tr><th>Type</th><td><select id="output-type" name="output-type">
                         <option value="ftp">FTP</option>
                         <option value="s3">S3</option> 
@@ -1206,5 +1216,6 @@ function bitmovin_plugin_display_settings()
             <div id="response"></div>
             <div id="error-response"></div>
         </div>';
+
     echo $html;
 }
