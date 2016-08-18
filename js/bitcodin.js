@@ -5,6 +5,7 @@
 var outputProfiles;
 var encodingProfiles;
 var videoUrl_anz = 1;
+var rowClasses = [];
 var media_uploader = null;
 
 $j = jQuery.noConflict();
@@ -142,7 +143,7 @@ function sendAPIRequest(method, message, profile, id) {
             $j("#big-response").fadeIn("slow");
             $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/><p id='big-response-text'>" + message + "</p>");
         },
-        success: function (content) {
+        success: function(content) {
 
             delete_response();
 
@@ -171,6 +172,7 @@ function sendAPIRequest(method, message, profile, id) {
         error: function(error) {
             $j("#error-response").fadeIn("slow");
             $j('#error-response').html('<p>' + error + '</p>');
+            console.log(error.responseJSON.message);
         }
     });
     /* no page refresh */
@@ -179,6 +181,9 @@ function sendAPIRequest(method, message, profile, id) {
 
 function showEncodingProfile() {
 
+    deleteDynamicRows();
+
+    var i = 0;
     var object;
     var index = 0;
     var output = document.getElementById("bitcodin_profiles");
@@ -189,18 +194,89 @@ function showEncodingProfile() {
 
             $j('#bitcodin_profile').val(object.name);
             $j('#bitcodin_quality').val(object.videoStreamConfigs[0].preset);
-            $j('#bitcodin_video_height').val(object.videoStreamConfigs[0].height);
-            $j('#bitcodin_video_width').val(object.videoStreamConfigs[0].width);
-            $j('#bitcodin_video_bitrate').val(object.videoStreamConfigs[0].bitrate / 1000);
-            $j('#bitcodin_audio_bitrate').val(object.audioStreamConfigs[0].bitrate / 1000);
-            $j('#bitcodin_video_codec').val(object.videoStreamConfigs[0].codec);
-            $j('#bitcodin_audio_codec').val(object.audioStreamConfigs[0].codec);
 
+            for (; i < object.videoStreamConfigs.length; i++) {
+
+                if (i == 0) {
+                    $j('#bitcodin_video_height').val(object.videoStreamConfigs[i].height);
+                    $j('#bitcodin_video_width').val(object.videoStreamConfigs[i].width);
+                    $j('#bitcodin_video_bitrate').val(object.videoStreamConfigs[i].bitrate / 1000);
+                    $j('#bitcodin_video_codec').val(object.videoStreamConfigs[i].codec);
+                    video_bitrate();
+                }
+                else {
+                    addVideoConfig(i);
+                    $j('#bitcodin_video_height' + i).val(object.videoStreamConfigs[i].height);
+                    $j('#bitcodin_video_width' + i).val(object.videoStreamConfigs[i].width);
+                    $j('#bitcodin_video_bitrate' + i).val(object.videoStreamConfigs[i].bitrate / 1000);
+                    $j('#bitcodin_video_codec' + i).val(object.videoStreamConfigs[i].codec);
+                }
+
+            }
+
+            i = 0;
+            for (; i < object.audioStreamConfigs.length; i++) {
+
+                if (i == 0) {
+                    $j('#bitcodin_audio_bitrate').val(object.audioStreamConfigs[0].bitrate / 1000);
+                    $j('#bitcodin_audio_codec').val(object.audioStreamConfigs[0].codec);
+                    audio_bitrate();
+                }
+                else {
+                    addAudioConfig(i);
+                    $j('#bitcodin_audio_bitrate' + i).val(object.audioStreamConfigs[i].bitrate / 1000);
+                    $j('#bitcodin_audio_codec' + i).val(object.audioStreamConfigs[i].codec);
+                }
+
+            }
             $j('#bitcodin_profile_id').val(object.encodingProfileId);
-            video_bitrate();
-            audio_bitrate();
             break;
         }
+    }
+}
+
+function addVideoConfig(key) {
+
+
+    var value = 'Video Representation' + key;
+    var idText = 'bitcodin_video_bitrate' + key;
+    var idSelect = 'bitcodin_video_codec' + key;
+    var idWidth = 'bitcodin_video_width' + key;
+    var idHeight = 'bitcodin_video_height' + key;
+
+    var rowClass = "bitcodin-video-row" + key;
+
+    var wrapper = $j("#encoding-profile-video-representation");
+    $j(wrapper).append('<tr class="' + rowClass + '"><th colspan="2"><h4>' + value + '</h4></th></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Resolution</th><td><input type="number" id="' + idWidth + '" name="' + idWidth + '" size="20"/> X <input type="number" id="' + idHeight + '" name="' + idHeight + '" size="20"/></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '"/></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="h264">h264</option><option value="hevc">hevc</option></select></td></tr>');
+
+    rowClasses.push(rowClass);
+    $j("." + rowClass).find("input,button,textarea,select").attr("disabled","disabled");
+}
+
+function addAudioConfig(key) {
+
+    var value = 'Audio Representation' + key;
+    var idText = 'bitcodin_audio_bitrate' + key;
+    var idSelect = 'bitcodin_audio_codec' + key;
+
+    var rowClass = "bitcodin-audio-row" + key;
+
+    var wrapper = $j("#encoding-profile-audio-representation");
+    $j(wrapper).append('<tr class="' + rowClass + '"><th colspan="2"><h4>' + value + '</h4></th></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Aideo Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '"/></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Aideo Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="aac">aac</option></select></td></tr>');
+
+    rowClasses.push(rowClass);
+    $j("." + rowClass).find("input,button,textarea,select").attr("disabled","disabled");
+}
+
+function deleteDynamicRows() {
+    var index = 0;
+    for (; index < rowClasses.length; index++) {
+        $j("." + rowClasses[index]).remove();
     }
 }
 
