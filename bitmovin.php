@@ -348,7 +348,7 @@ function bitmovin_getAdsTable($id)
     $adsTable .= getTableRowInput("Client", "config_advertising_client", $client);
     $adsTable .= getTableRowInput("Ad message", "config_advertising_admessage", $admessage);
 
-    $adsTable .= "<tr><td colspan='2'><h4>Schedule 1</h4></td></tr>";
+    $adsTable .= "<tr><td colspan='2'>Schedule</td></tr>";
     $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $scheduleOffset);
     $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $scheduleTag);
 
@@ -997,6 +997,8 @@ function bitmovin_plugin_display_encoding()
                 <a class="add-config" onclick="addVideoUrl()">+ Add another video source</a>
                 
                 <br><br>
+                <a class="add-config" onclick="hide()">Hide</a>
+                <a class="add-config" onclick="show()">Show</a>
                 
                 <table id="selected-encoding-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Encoding Overview</h4></th></tr> 
