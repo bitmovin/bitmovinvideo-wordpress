@@ -23,6 +23,16 @@ $j(document).ready(function() {
     $j("#selected-output-table").find("input,button,textarea,select").attr("disabled","disabled");
 });
 
+function hide() {
+    $j("#selected-encoding-table").fadeOut();
+    $j("#selected-output-table").fadeOut();
+}
+
+function show() {
+    $j("#selected-encoding-table").fadeIn();
+    $j("#selected-output-table").fadeIn();
+}
+
 function bitcodin() {
 
     delete_response();
