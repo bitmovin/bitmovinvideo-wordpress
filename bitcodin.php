@@ -30,8 +30,7 @@ $filepath = explode("wp-content",$path);
 
 require(''.$filepath[0].'/wp-load.php');
 
-if (isset($_POST['method']) && $_POST['method'] != "")
-{
+if (isset($_POST['method']) && $_POST['method'] != "") {
     // CONFIGURATION
     Bitcodin::setApiToken($_POST['apiKey']);
 
@@ -39,29 +38,19 @@ if (isset($_POST['method']) && $_POST['method'] != "")
     if ($method == "bitmovin_encoding_service") {
 
         bitmovin_encoding_service();
-    }
-
-    else if ($method == "get_bitcodin_profiles") {
+    } else if ($method == "get_bitcodin_profiles") {
 
         get_bitcodin_profiles();
-    }
-
-    else if ($method == "get_output_profiles") {
+    } else if ($method == "get_output_profiles") {
 
         get_output_profiles();
-    }
-
-    else if ($method == 'create_encoding_profile') {
+    } else if ($method == 'create_encoding_profile') {
 
         create_encoding_profile();
-    }
-
-    else if ($method == 'create_ftp_output_profile') {
+    } else if ($method == 'create_ftp_output_profile') {
 
         create_ftp_output_profile();
-    }
-
-    else if ($method == 'create_s3_output_profile') {
+    } else if ($method == 'create_s3_output_profile') {
 
         create_s3_output_profile();
     }

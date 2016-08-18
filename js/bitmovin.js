@@ -91,7 +91,7 @@ function delete_response() {
     $j("#error-response").fadeOut("slow");
 }
 
-function addSchedule() {
+function addSchedule(postID) {
 
     var wrapper = $j("#ads-table");
     var value = "Schedule" + schedule_count;
@@ -110,6 +110,23 @@ function addSchedule() {
         schedule_count--;
     });
     schedule_count++;
+
+    /*$j.ajax({
+        type: "POST",
+        url: bitmovin_script.dest_encoding-script,
+        data: {
+            postID:     postID,
+            offsetID:   idOffset,
+            tagID:      idTag,
+            method:     "addSchedule"
+        },
+        success: function(data) {
+            alert('Directory created');
+        },
+        error: function(error) {
+            conosloe.log(error.responseJSON.message);
+        }
+    });*/
 
     //$j(function(){
 
