@@ -76,6 +76,8 @@ function checkApiKey() {
             $j("#response").html("<p>Bitmovin Activation was successful.</p>");
         },
         error: function(error) {
+            $j("#apiKey").val("");
+            $j("#bitmovinSettingsForm").submit();
             $j("#error-response").fadeIn("slow");
             $j("#error-response").html("<p>" + error.responseJSON.message + "</p>");
         }
@@ -103,7 +105,7 @@ function addSchedule() {
     $j(wrapper).append('<tr class="' + rowClass + '"><th>Offset</th><td><input type="text" id="' + idOffset + '" name="' + idOffset + '"/></td></tr>');
     $j(wrapper).append('<tr class="' + rowClass + '"><th>Tag</th><td><input type="text" id="' + idTag + '" name="' + idTag + '"/></td></tr>');
 
-    $j("#" + removeID).click(function(){
+    $j("#" + removeID).click(function() {
         $j("." + rowClass).remove();
         schedule_count--;
     });

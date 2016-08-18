@@ -10,7 +10,7 @@ var media_uploader = null;
 $j = jQuery.noConflict();
 $j(document).ready(function() {
 
-    if (bitcodin_script.apiKey == "") {
+    if (bitcodin_script.apiKey === "") {
         $j("#error-response").fadeIn("slow");
         $j('#error-response').html("<p>No valid API Key found</p>");
     }
