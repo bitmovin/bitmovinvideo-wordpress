@@ -117,7 +117,6 @@ function bitcodin() {
 }
 
 function delete_response() {
-
     $j("#response").fadeOut("slow");
     $j("#error-response").fadeOut("slow");
     $j("#big-response").fadeOut("slow");
@@ -125,16 +124,17 @@ function delete_response() {
 
 function getEncodingProfiles() {
 
-    sendAPIRequest("get_bitcodin_profiles", "Encoding Profiles are loading...", encodingProfiles, "bitcodin_profiles");
+    sendAPIRequest("get_bitcodin_profiles", "Profiles are loading...", encodingProfiles, "bitcodin_profiles");
 }
 
 function getOutputProfiles() {
 
-    sendAPIRequest("get_output_profiles", "Output Profiles are loading...", outputProfiles, "output_profiles");
+    sendAPIRequest("get_output_profiles", "Profiles are loading...", outputProfiles, "output_profiles");
 }
 
 function sendAPIRequest(method, message, profile, id) {
 
+    delete_response();
     var url = bitcodin_script.bitcodin_url;
     $j.ajax({
         type: "POST",
@@ -151,32 +151,40 @@ function sendAPIRequest(method, message, profile, id) {
 
             delete_response();
 
-            var index = 0;
-            profile = $j.parseJSON(content);
-            profile = removeDuplicates(profile, "name");
-            var select = document.getElementById(id);
+            var error = content.toString().includes("error");
+            if (!error) {
+                var index = 0;
+                profile = $j.parseJSON(content);
+                profile = removeDuplicates(profile, "name");
+                var select = document.getElementById(id);
 
-            for (; index < profile.length; index++) {
+                for (; index < profile.length; index++) {
 
-                var option = document.createElement('option');
-                option.text = profile[index].name;
-                select.add(option, index);
-            }
-            if (id == 'bitcodin_profiles') {
+                    var option = document.createElement('option');
+                    option.text = profile[index].name;
+                    select.add(option, index);
+                }
+                if (id == 'bitcodin_profiles') {
 
-                encodingProfiles = profile;
-                showEncodingProfile();
+                    encodingProfiles = profile;
+                    showEncodingProfile();
+                }
+                else {
+
+                    outputProfiles = profile;
+                    showOutputProfile();
+                }
             }
             else {
-
-                outputProfiles = profile;
-                showOutputProfile();
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
+                console.log(content);
             }
         },
         error: function(error) {
             $j("#error-response").fadeIn("slow");
             $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
-            console.log(error.responseJSON.message);
+            console.log(error.responseText);
         }
     });
     /* no page refresh */

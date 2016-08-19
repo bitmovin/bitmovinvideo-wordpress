@@ -151,7 +151,6 @@ function createEncodeProfile() {
             if (!error) {
                 $j("#response").fadeIn("slow");
                 $j('#response').html("<p>Your Encoding Profile was created successfully</p>");
-                console.log(content);
             }
             else {
 
@@ -163,7 +162,8 @@ function createEncodeProfile() {
         error: function(error) {
             delete_response();
             $j("#error-response").fadeIn("slow");
-            $j('#error-response').html('<p>' + error + '</p>');
+            $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
+            console.log(error.responseText);
         }
     });
     // no page refresh
@@ -174,8 +174,6 @@ function createEncodeProfile() {
 /* delete all responses */
 function delete_response() {
 
-    $j('#response').html("");
-    $j('#error-response').html("");
     $j("#response").fadeOut("slow");
     $j("#error-response").fadeOut("slow");
     $j("#big-response").fadeOut("slow");
