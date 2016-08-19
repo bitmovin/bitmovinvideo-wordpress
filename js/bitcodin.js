@@ -26,6 +26,7 @@ $j(document).ready(function() {
     $j("#selected-output-table").find("input,button,textarea,select").attr("disabled","disabled");
 });
 
+/* function to schow or hide details */
 function overview() {
     if (document.getElementById("check-overview").checked) {
         $j("#selected-encoding-table").fadeIn();
@@ -55,7 +56,8 @@ function bitcodin() {
 
             videoUrlID = "bitcodin_video_src" + index;
         }
-        if (document.getElementById(videoUrlID).value != "") {
+        /* Skip if dynamic video url source was deleted */
+        if (document.getElementById(videoUrlID) != null && document.getElementById(videoUrlID).value != "") {
             
             videoSrc.push(document.getElementById(videoUrlID).value);
         }
@@ -87,12 +89,14 @@ function bitcodin() {
                 else {
                     delete_response();
                     $j("#error-response").fadeIn("slow");
-                    $j('#error-response').html('<p>' + content + '</p>');
+                    $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
+                    console.log(content);
                 }
             },
             error: function (error) {
                 $j("#error-response").fadeIn("slow");
-                $j('#error-response').html('<p>' + error + '</p>');
+                $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
+                console.log(error.responseJSON.message);
             }
         });
         /* no page refresh */
@@ -171,7 +175,7 @@ function sendAPIRequest(method, message, profile, id) {
         },
         error: function(error) {
             $j("#error-response").fadeIn("slow");
-            $j('#error-response').html('<p>' + error + '</p>');
+            $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
             console.log(error.responseJSON.message);
         }
     });
@@ -209,6 +213,7 @@ function showEncodingProfile() {
                     $j('#bitcodin_video_height' + i).val(object.videoStreamConfigs[i].height);
                     $j('#bitcodin_video_width' + i).val(object.videoStreamConfigs[i].width);
                     $j('#bitcodin_video_bitrate' + i).val(object.videoStreamConfigs[i].bitrate / 1000);
+                    $j('#bitcodin_video_bitrate' + i).trigger('change');
                     $j('#bitcodin_video_codec' + i).val(object.videoStreamConfigs[i].codec);
                 }
 
@@ -225,6 +230,7 @@ function showEncodingProfile() {
                 else {
                     addAudioConfig(i);
                     $j('#bitcodin_audio_bitrate' + i).val(object.audioStreamConfigs[i].bitrate / 1000);
+                    $j('#bitcodin_audio_bitrate' + i).trigger('change');
                     $j('#bitcodin_audio_codec' + i).val(object.audioStreamConfigs[i].codec);
                 }
 
@@ -237,10 +243,10 @@ function showEncodingProfile() {
 
 function addVideoConfig(key) {
 
-
+    var idSpan = 'vbitrate' + key;
     var value = 'Video Representation' + key;
-    var idText = 'bitcodin_video_bitrate' + key;
-    var idSelect = 'bitcodin_video_codec' + key;
+    var idBitrate = 'bitcodin_video_bitrate' + key;
+    var idCodec = 'bitcodin_video_codec' + key;
     var idWidth = 'bitcodin_video_width' + key;
     var idHeight = 'bitcodin_video_height' + key;
 
@@ -249,8 +255,21 @@ function addVideoConfig(key) {
     var wrapper = $j("#encoding-profile-video-representation");
     $j(wrapper).append('<tr class="' + rowClass + '"><th colspan="2"><h4>' + value + '</h4></th></tr>');
     $j(wrapper).append('<tr class="' + rowClass + '"><th>Resolution</th><td><input type="number" id="' + idWidth + '" name="' + idWidth + '" size="20"/> X <input type="number" id="' + idHeight + '" name="' + idHeight + '" size="20"/></td></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '"/></td></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="h264">h264</option><option value="hevc">hevc</option></select></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Bitrate</th><td><input type="text" id="' + idBitrate + '" name="' + idBitrate + '"/><span id="' + idSpan + '" class="bitrate">kbps</span></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Video Codec</th><td><select id="' + idCodec + '" name="' + idCodec + '"><option value="h264">h264</option><option value="hevc">hevc</option></select></td></tr>');
+
+    $j("#" + idBitrate).on('change', function() {
+
+        var video_bitrate = document.getElementById(idBitrate).value;
+        var res = checkVideoBitrate(video_bitrate);
+        if (res == 1)
+        {
+            document.getElementById(idSpan).innerHTML = video_bitrate + " kbps";
+        }
+        else {
+            document.getElementById(idSpan).innerHTML = video_bitrate/1000 + " Mbps";
+        }
+    });
 
     rowClasses.push(rowClass);
     $j("." + rowClass).find("input,button,textarea,select").attr("disabled","disabled");
@@ -258,16 +277,23 @@ function addVideoConfig(key) {
 
 function addAudioConfig(key) {
 
+    var idSpan = 'abitrate' + key;
     var value = 'Audio Representation' + key;
-    var idText = 'bitcodin_audio_bitrate' + key;
-    var idSelect = 'bitcodin_audio_codec' + key;
+    var idCodec = 'bitcodin_audio_codec' + key;
+    var idBitrate = 'bitcodin_audio_bitrate' + key;
 
     var rowClass = "bitcodin-audio-row" + key;
 
     var wrapper = $j("#encoding-profile-audio-representation");
     $j(wrapper).append('<tr class="' + rowClass + '"><th colspan="2"><h4>' + value + '</h4></th></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Aideo Bitrate</th><td><input type="text" id="' + idText + '" name="' + idText + '"/></td></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Aideo Codec</th><td><select id="' + idSelect + '" name="' + idSelect + '"><option value="aac">aac</option></select></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Aideo Bitrate</th><td><input type="text" id="' + idBitrate + '" name="' + idBitrate + '"/><span id="' + idSpan + '" class="bitrate">kbps</span></td></tr>');
+    $j(wrapper).append('<tr class="' + rowClass + '"><th>Aideo Codec</th><td><select id="' + idCodec + '" name="' + idCodec + '"><option value="aac">aac</option></select></td></tr>');
+
+    $j("#" + idBitrate).on('change', function() {
+
+        var audio_bitrate = document.getElementById(idBitrate).value;
+        document.getElementById(idSpan).innerHTML = audio_bitrate + " kbps";
+    });
 
     rowClasses.push(rowClass);
     $j("." + rowClass).find("input,button,textarea,select").attr("disabled","disabled");
@@ -298,11 +324,6 @@ function showOutputProfile() {
             $j('#output_profile_id').val(object.outputId);
             break;
         }
-        else if (output.options[output.selectedIndex].value == "default") {
-
-            //initEncodingProfile();
-            break;
-        }
     }
 }
 
@@ -312,21 +333,42 @@ function addVideoUrl() {
     var value = 'Video URL ' + videoUrl_anz;
     var id = 'bitcodin_video_src' + videoUrl_anz;
     var removeID = 'remove-video-src-tag' + videoUrl_anz;
+    var buttonID = 'upload-progressive' + videoUrl_anz;
 
     var wrapper = $j("#bitcodin-table");
     $j(wrapper).append('<tr id="' + rowID + '"><th>' + value + '</th><td><input type="text" id="' + id + '" name="' + id + '" size="50" placeholder="path/to/your/video"/>' +
-        '<input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="...">' +
+        '<input type="button" id="' + buttonID + '" class="button" value="...">' +
         '<a id="' + removeID + '" class="remove-tag">X</a>' +
         '</td></tr>');
 
+    $j("#" + buttonID).click(function(){
+        media_uploader = wp.media({
+            title:  "Select Video for Encoding",
+            frame:  "select",
+            button: {
+                text: "Select Video for Encoding"
+            },
+            library: { type: "video"},
+            multiple: false
+        });
+        media_uploader.on("select", function(){
+
+            /* get video url and insert into video src input */
+            var attachment = media_uploader.state().get('selection').first().toJSON();
+            $j("#" + id).val(attachment.url);
+        });
+
+        media_uploader.open();
+    });
+
     $j("#" + removeID).click(function(){
         $j("#" + rowID).remove();
-        videoUrl_anz--;
     });
 
     videoUrl_anz++;
 }
 
+/* function to skip redundant encoding and output profiles */
 function removeDuplicates(arr, prop) {
     var new_arr = [];
     var lookup  = {};
@@ -404,16 +446,11 @@ function open_media_encoding_video()
         library: { type: "video"},
         multiple: false
     });
-
-    var srcid = "#bitcodin_video_src";
-    if (videoUrl_anz > 1) {
-        srcid = "#bitcodin_video_src" + (videoUrl_anz - 1);
-    }
     media_uploader.on("select", function(){
 
         /* get video url and insert into video src input */
         var attachment = media_uploader.state().get('selection').first().toJSON();
-        $j(srcid).val(attachment.url);
+        $j("#bitcodin_video_src").val(attachment.url);
     });
 
     media_uploader.open();
