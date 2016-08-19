@@ -2,6 +2,7 @@
  * Created by Bitmovin on 08.08.2016.
  */
 
+var video_anz = 1;
 var outputProfiles;
 var encodingProfiles;
 var videoUrl_anz = 1;
@@ -78,7 +79,7 @@ function bitcodin() {
             beforeSend: function () {
                 $j("#big-response").fadeIn("slow");
                 $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/>" +
-                    "<p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + videoUrl_anz + " video(s) - Feel free to do other stuff.</i></p>");
+                    "<p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + video_anz + " video(s) - Feel free to do other stuff.</i></p>");
             },
             success: function (content) {
 
@@ -376,8 +377,10 @@ function addVideoUrl() {
 
     $j("#" + removeID).click(function(){
         $j("#" + rowID).remove();
+        video_anz--;
     });
 
+    video_anz++;
     videoUrl_anz++;
 }
 
