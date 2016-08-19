@@ -70,6 +70,7 @@
     opacity: 0.7;
     position: fixed;
     font-size: 14pt;
+    font-weight: bold;
     display: none;
     border-radius: 5px;
     border: 1px solid #3CB371;
@@ -110,6 +111,7 @@
     padding: 5px;
     position: fixed;
     font-size: 14pt;
+    font-weight: bold;
     display: none;
     border-radius: 5px;
     border: 1px solid #8B0000;
