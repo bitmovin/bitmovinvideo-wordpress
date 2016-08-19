@@ -70,7 +70,6 @@
     opacity: 0.7;
     position: fixed;
     font-size: 14pt;
-    font-weight: bold;
     display: none;
     border-radius: 5px;
     border: 1px solid #3CB371;
@@ -81,11 +80,11 @@
     top: 35%;
     left: 40%;
     width:420px;
-    height:200px;
+    height:auto;
     color: white;
     display: none;
     position: fixed;
-    padding-top: 70px;
+    padding-top: 30px;
     text-align: center;
     background-color: #5C5C5C;
     box-shadow: 8px 8px 10px black;
@@ -111,7 +110,6 @@
     padding: 5px;
     position: fixed;
     font-size: 14pt;
-    font-weight: bold;
     display: none;
     border-radius: 5px;
     border: 1px solid #8B0000;
