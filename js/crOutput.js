@@ -49,6 +49,7 @@ function createFTPOutput() {
                 delete_response();
                 $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
+                console.log(error.statusText);
                 console.log(error.responseText);
             }
         });
@@ -112,6 +113,7 @@ function createS3Output() {
                 delete_response();
                 $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>Some Error occured<br>Press F12 and switch to Console to see full error message.</p>');
+                console.log(error.statusText);
                 console.log(error.responseText);
             }
         });

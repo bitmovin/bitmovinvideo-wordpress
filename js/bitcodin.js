@@ -64,6 +64,7 @@ function bitcodin() {
     }
 
     if (videoSrc[0] != undefined && encodingProfileID != "" && outputProfileID != "") {
+
         $j.ajax({
             type: "POST",
             url: url,
@@ -76,27 +77,30 @@ function bitcodin() {
             },
             beforeSend: function () {
                 $j("#big-response").fadeIn("slow");
-                $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/><p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + videoUrl_anz + " video(s) - Feel free to do other stuff.</i></p>");
+                $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/>" +
+                    "<p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + videoUrl_anz + " video(s) - Feel free to do other stuff.</i></p>");
             },
             success: function (content) {
 
+                delete_response();
                 var error = content.toString().includes("error");
                 if (!error) {
-                    delete_response();
+
                     $j("#response").fadeIn("slow");
                     $j('#response').html("<p>Encoding finished successfully</p>");
                 }
                 else {
-                    delete_response();
                     $j("#error-response").fadeIn("slow");
                     $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
                     console.log(content);
                 }
             },
             error: function (error) {
+                delete_response();
                 $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
-                console.log(error.responseJSON.message);
+                console.log(error.statusText);
+                console.log(error.responseText);
             }
         });
         /* no page refresh */
@@ -184,6 +188,7 @@ function sendAPIRequest(method, message, profile, id) {
         error: function(error) {
             $j("#error-response").fadeIn("slow");
             $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
+            console.log(error.statusText);
             console.log(error.responseText);
         }
     });
