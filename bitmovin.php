@@ -1085,7 +1085,7 @@ function bitmovin_plugin_display_create_encoding_profile() {
                         <option value="hevc">HEVC</option>
                     </select></td></tr>
                 </table>
-                <a class="add-config" onclick="addVideoConfig()">+ Add Video Configuration</a>
+                <a class="add-config" onclick="addVideoConfig()">+ Add Video Representation</a>
                 <br><br>
                 <table id="audio-table" class="wp-list-table widefat fixed striped">
                     <th colspan="2"><h4>Audio Representation</h4></th></tr>
@@ -1094,7 +1094,7 @@ function bitmovin_plugin_display_create_encoding_profile() {
                         <option value="aac">AAC</option>
                     </select></td></tr>
                 </table> 
-                <a class="add-config" onclick="addAudioConfig()">+ Add Audio Configuration</a>
+                <a class="add-config" onclick="addAudioConfig()">+ Add Audio Representation</a>
                 <br>
 
                 <p class="submit">
