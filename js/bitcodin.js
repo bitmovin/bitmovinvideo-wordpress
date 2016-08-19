@@ -79,11 +79,12 @@ function bitcodin() {
             beforeSend: function () {
                 $j("#big-response").fadeIn("slow");
                 $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/>" +
-                    "<p id='big-response-text'>Bitcodin in progress...</p><p id='small-response-text'><i>Encoding " + video_anz + " video(s) - Feel free to do other stuff.</i></p>");
+                    "<p id='big-response-text'>Bitcodin in progress...<br><span id='small-response-text'><i>Encoding " + video_anz + " video(s) - Feel free to do other stuff.</i></span></p>");
             },
             success: function (content) {
 
                 delete_response();
+
                 var error = content.toString().includes("error");
                 if (!error) {
 
@@ -101,7 +102,6 @@ function bitcodin() {
                 $j("#error-response").fadeIn("slow");
                 $j('#error-response').html('<p>Some error occured. <br> Press F12 and switch to console to see full error message.</p>');
                 console.log(error.statusText);
-                console.log(error.responseText);
             }
         });
         /* no page refresh */
