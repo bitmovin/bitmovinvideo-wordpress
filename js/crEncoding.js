@@ -43,45 +43,49 @@ function createEncodeProfile() {
             idHeight = "create-encoding-video-height" + index;
             idBitrate = "create-encoding-video-bitrate" + index;
         }
-        video_codec = document.getElementById(idCodec).value;
-        video_width = document.getElementById(idWidth).value;
-        video_height = document.getElementById(idHeight).value;
-        video_bitrate = document.getElementById(idBitrate).value * 1000;
+        /* Skip if dynamic video config was deleted */
+        if (document.getElementById(idCodec) != null) {
 
-        if (profile != "" && video_width != "" && video_width <= 7680 && video_width >= 128 &&
-            video_height != "" && video_height <= 4320 && video_height >= 96 &&
-            video_bitrate != "" && video_bitrate <= 20000000 && video_bitrate >= 32000 && video_codec != "") {
+            video_codec = document.getElementById(idCodec).value;
+            video_width = document.getElementById(idWidth).value;
+            video_height = document.getElementById(idHeight).value;
+            video_bitrate = document.getElementById(idBitrate).value * 1000;
 
-            videoConfigs.push({width: video_width, height: video_height, bitrate: video_bitrate, codec: video_codec});
-        }
-        else if (video_bitrate > 20000000) {
+            if (profile != "" && video_width != "" && video_width <= 7680 && video_width >= 128 &&
+                video_height != "" && video_height <= 4320 && video_height >= 96 &&
+                video_bitrate != "" && video_bitrate <= 20000000 && video_bitrate >= 32000 && video_codec != "") {
 
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Max. video bitrate limited to 20 Mbps.</p>");
-            return;
-        }
-        else if (video_bitrate < 32000) {
+                videoConfigs.push({width: video_width, height: video_height, bitrate: video_bitrate, codec: video_codec});
+            }
+            else if (video_bitrate > 20000000) {
 
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Min. video bitrate limited to 32 kbps.</p>");
-            return;
-        }
-        else if (video_width > 7680 || video_height > 4320) {
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Max. video bitrate limited to 20 Mbps.</p>");
+                return;
+            }
+            else if (video_bitrate < 32000) {
 
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Max. Resolution 7680 x 4320.</p>");
-            return;
-        }
-        else if (video_width < 128 || video_height < 96) {
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Min. video bitrate limited to 32 kbps.</p>");
+                return;
+            }
+            else if (video_width > 7680 || video_height > 4320) {
 
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Min. Resolution 128 x 96.</p>");
-            return;
-        }
-        else {
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
-            return;
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Max. Resolution 7680 x 4320.</p>");
+                return;
+            }
+            else if (video_width < 128 || video_height < 96) {
+
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Min. Resolution 128 x 96.</p>");
+                return;
+            }
+            else {
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
+                return;
+            }
         }
     }
 
@@ -95,29 +99,33 @@ function createEncodeProfile() {
             idCodec = "create-encoding-audio-codec" + index;
             idBitrate = "create-encoding-audio-bitrate" + index;
         }
-        audio_codec = document.getElementById(idCodec).value;
-        audio_bitrate = document.getElementById(idBitrate).value * 1000;
+        /* Skip if dynamic audio config was deleted */
+        if (document.getElementById(idCodec) != null) {
 
-        if (audio_bitrate != "" && audio_bitrate <= 256000 && audio_bitrate >= 8000 && audio_codec != "") {
+            audio_codec = document.getElementById(idCodec).value;
+            audio_bitrate = document.getElementById(idBitrate).value * 1000;
 
-            audioConfigs.push({bitrate: audio_bitrate, codec: audio_codec});
-        }
-        else if (audio_bitrate > 256000) {
+            if (audio_bitrate != "" && audio_bitrate <= 256000 && audio_bitrate >= 8000 && audio_codec != "") {
 
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Maximum audio bitrate limited to 256 kbps.</p>");
-            return;
-        }
-        else if (audio_bitrate < 8000) {
+                audioConfigs.push({bitrate: audio_bitrate, codec: audio_codec});
+            }
+            else if (audio_bitrate > 256000) {
 
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Min. audio bitrate limited to 8 kbps.</p>");
-            return;
-        }
-        else {
-            $j("#error-response").fadeIn("slow");
-            $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
-            return;
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Maximum audio bitrate limited to 256 kbps.</p>");
+                return;
+            }
+            else if (audio_bitrate < 8000) {
+
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Min. audio bitrate limited to 8 kbps.</p>");
+                return;
+            }
+            else {
+                $j("#error-response").fadeIn("slow");
+                $j('#error-response').html("<p>Please consider to fill out the whole form.</p>");
+                return;
+            }
         }
     }
 
@@ -242,7 +250,6 @@ function addAudioConfig() {
 
         $j("#" + removeID).click(function(){
             $j("." + rowClass).remove();
-            audioConf_anz--;
         });
 
         audioConf_anz++;
@@ -276,7 +283,6 @@ function addVideoConfig() {
 
         $j("#" + removeID).click(function(){
             $j("." + rowClass).remove();
-            videoConf_anz--;
         });
 
         videoConf_anz++;
