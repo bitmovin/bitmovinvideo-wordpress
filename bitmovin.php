@@ -1073,13 +1073,13 @@ function bitmovin_plugin_display_create_encoding_profile() {
                 <h1>Create Encoding Profile</h1><br>
                 <table id="encoding-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Encoding Profile</h4></th></tr> 
-                    <tr><th>Profile</th><td><input type="text" id="create-encoding-profile" name="create-encoding-profile" size="50" required/></td></tr>
+                    <tr><th>Profile</th><td><input type="text" id="create-encoding-profile" name="create-encoding-profile" size="50"/></td></tr>
                 </table>
                 <br><br>
                 <table id="video-table" class="wp-list-table widefat fixed striped">
                     <tr><th colspan="2"><h4>Video Representation</h4></th></tr> 
-                    <tr><th>Resolution</th><td><input type="number" id="create-encoding-video-width" name="create-encoding-video-width" size="20" required/> X <input type="number" id="create-encoding-video-height" name="create-encoding-video-height" size="20" required/></td></tr>
-                    <tr><th>Video Bitrate</th><td><input type="number" id="create-encoding-video-bitrate" name="create-encoding-video-bitrate" size="50" onkeyup="video_bitrate()" required/><span id="v-bitrate" class="bitrate">kbps</span></td></tr>
+                    <tr><th>Resolution</th><td><input type="number" id="create-encoding-video-width" name="create-encoding-video-width" size="20"/> X <input type="number" id="create-encoding-video-height" name="create-encoding-video-height" size="20"/></td></tr>
+                    <tr><th>Video Bitrate</th><td><input type="number" id="create-encoding-video-bitrate" name="create-encoding-video-bitrate" size="50" onkeyup="video_bitrate()"/><span id="v-bitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Video Codec</th><td><select id="create-encoding-video-codec" name="create-encoding-video-codec">
                         <option value="h264">H264</option>
                         <option value="hevc">HEVC</option>
@@ -1089,7 +1089,7 @@ function bitmovin_plugin_display_create_encoding_profile() {
                 <br><br>
                 <table id="audio-table" class="wp-list-table widefat fixed striped">
                     <th colspan="2"><h4>Audio Representation</h4></th></tr>
-                    <tr><th>Audio Bitrate</th><td><input type="number" id="create-encoding-audio-bitrate" name="create-encoding-audio-bitrate" size="50" onkeyup="audio_bitrate()" required/><span id="a-bitrate" class="bitrate">kbps</span></td></tr>
+                    <tr><th>Audio Bitrate</th><td><input type="number" id="create-encoding-audio-bitrate" name="create-encoding-audio-bitrate" size="50" onkeyup="audio_bitrate()"/><span id="a-bitrate" class="bitrate">kbps</span></td></tr>
                     <tr><th>Audio Codec</th><td><select id="create-encoding-audio-codec" name="create-encoding-audio-codec">
                         <option value="aac">AAC</option>
                     </select></td></tr>
