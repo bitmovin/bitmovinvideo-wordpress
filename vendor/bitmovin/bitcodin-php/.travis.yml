@@ -1,0 +1,24 @@
+language: php
+notifications:
+  email:
+  - bitcodin-php@bitmovin.net
+
+branches:
+  only:
+    - master
+
+before_install:
+- openssl aes-256-cbc -K $encrypted_54c581280fe2_key -iv $encrypted_54c581280fe2_iv -in ./test/config.json.enc -out ./test/config.json -d
+
+install:
+- composer update
+- composer require satooshi/php-coveralls:~0.6@stable
+
+before_script:
+  - mkdir -p build/logs
+
+script:
+  - phpunit --verbose 
+
+after_success:
+  - travis_wait 30 php vendor/bin/coveralls -v
