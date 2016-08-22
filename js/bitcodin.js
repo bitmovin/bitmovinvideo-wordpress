@@ -2,7 +2,7 @@
  * Created by Bitmovin on 08.08.2016.
  */
 
-var video_anz = 1;
+var video_anz = 0;
 var outputProfiles;
 var encodingProfiles;
 var videoUrl_anz = 1;
@@ -59,12 +59,13 @@ function bitcodin() {
         }
         /* Skip if dynamic video url source was deleted */
         if (document.getElementById(videoUrlID) != null && document.getElementById(videoUrlID).value != "") {
-            
+
+            video_anz++;
             videoSrc.push(document.getElementById(videoUrlID).value);
         }
     }
 
-    if (videoSrc[0] != undefined && encodingProfileID != "" && outputProfileID != "") {
+    if (video_anz != 0 && encodingProfileID != "" && outputProfileID != "") {
 
         $j.ajax({
             type: "POST",
@@ -377,10 +378,7 @@ function addVideoUrl() {
 
     $j("#" + removeID).click(function(){
         $j("#" + rowID).remove();
-        video_anz--;
     });
-
-    video_anz++;
     videoUrl_anz++;
 }
 
