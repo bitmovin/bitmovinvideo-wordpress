@@ -207,7 +207,7 @@ function bitmovin_player_preview()
     $html = '<div>';
     $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\']</strong> shortcode to your post.</strong>';
     $html .= '<div style="width: auto; max-width: 600px; margin: auto">';
-    $html .= '<input type="button" id="upload-encoded-video" class="button" onclick="open_media_encoded_video()" value="Insert Video from Library">';
+    $html .= '<input type="button" id="upload-encoded-video" class="button" onclick="open_media_encoded_video()" value="Insert Bitcoded Video from Library">';
     $html .= bitmovin_generate_player(array("id"=>$post->ID));
     $html .= '</div>';
     $html .= '</div>';
