@@ -84,8 +84,8 @@ function bitcodin() {
             },
             success: function (content) {
 
+                video_anz = 0;
                 delete_response();
-
                 var error = content.toString().includes("error");
                 if (!error) {
 
