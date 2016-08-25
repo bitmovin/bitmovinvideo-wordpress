@@ -1,3 +1,4 @@
+var schedule_array = [];
 var channels = [];
 var versions = [];
 var schedule_count = 1;
@@ -111,28 +112,22 @@ function addSchedule(postID) {
     });
     schedule_count++;
 
-    /*$j.ajax({
+    schedule_array.push({postID: postID, offset: idOffset, tag: idTag});
+    // Add schedule parameters via add_option to wordpress database
+    $j.ajax({
         type: "POST",
-        url: bitmovin_script.dest_encoding-script,
+        url: bitmovin_script.dest_encoding_script,
         data: {
-            postID:     postID,
-            offsetID:   idOffset,
-            tagID:      idTag,
-            method:     "addSchedule"
+            method:     "addSchedule",
+            content:    JSON.stringify(schedule_array)
         },
         success: function(data) {
-            alert('Directory created');
+            alert(data);
         },
         error: function(error) {
-            conosloe.log(error.responseJSON.message);
+            conosloe.log(error.statusText);
         }
-    });*/
-
-    //$j(function(){
-
-    //get_post_meta($id, "_config_advertising_schedule2_offset", true);
-    //get_post_meta($id, "_config_advertising_schedule2_tag", true);
-    //});
+    });
 }
 
 function vrCheck() {
