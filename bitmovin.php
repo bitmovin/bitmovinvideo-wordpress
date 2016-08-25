@@ -8,6 +8,7 @@
   Author URI: http://bitmovin.com
   License: GPLv2 or later
 */
+//delete_option("scheduleOption");
 
 register_activation_hook(__FILE__, 'bitmovin_plugin_activation');
 function bitmovin_plugin_activation()
@@ -215,33 +216,6 @@ function bitmovin_player_preview()
     echo $html;
 }
 
-function bitmovin_getOutputTable()
-{
-    $ftp_server = get_option('bitmovin_ftp_server');
-    $ftp_usr = get_option('bitmovin_ftp_usr');
-    $ftp_pw = get_option('bitmovin_ftp_pw');
-
-    $aws_name = get_option('bitmovin_aws_name');
-    $aws_access_key = get_option('bitmovin_aws_access_key');
-    $aws_secret_key = get_option('bitmovin_aws_secret_key');
-    $aws_bucket = get_option('bitmovin_aws_bucket');
-    $aws_prefix = get_option('bitmovin_aws_prefix');
-    $aws_region = get_option('bitmovin_aws_region');
-
-    $outputTable  = getInputHidden("config_ftp_server", $ftp_server);
-    $outputTable .= getInputHidden("config_ftp_usr", $ftp_usr);
-    $outputTable .= getInputHidden("config_ftp_pw", $ftp_pw);
-
-    $outputTable .= getInputHidden("config_s3_name", $aws_name);
-    $outputTable .= getInputHidden("config_s3_access_key", $aws_access_key);
-    $outputTable .= getInputHidden("config_s3_secret_key", $aws_secret_key);
-    $outputTable .= getInputHidden("config_s3_bucket", $aws_bucket);
-    $outputTable .= getInputHidden("config_s3_prefix", $aws_prefix);
-    $outputTable .= getInputHidden("config_s3_region", $aws_region);
-
-    return $outputTable;
-}
-
 function bitmovin_getVideoTable($id)
 {
     $dash_url = get_post_meta($id, "_config_src_dash", true);
@@ -331,7 +305,7 @@ function bitmovin_getAdsTable($id)
     $scheduleOffset = get_post_meta($id, "_config_advertising_schedule_offset", true);
     $scheduleTag = get_post_meta($id, "_config_advertising_schedule_tag", true);
 
-    $schedule1Offset = get_post_meta($id, "_config_advertising_schedule1_offset", true);
+    /*$schedule1Offset = get_post_meta($id, "_config_advertising_schedule1_offset", true);
     $schedule1Tag = get_post_meta($id, "_config_advertising_schedule1_tag", true);
 
     $schedule2Offset = get_post_meta($id, "_config_advertising_schedule2_offset", true);
@@ -341,7 +315,7 @@ function bitmovin_getAdsTable($id)
     $schedule3Tag = get_post_meta($id, "_config_advertising_schedule3_tag", true);
 
     $schedule4Offset = get_post_meta($id, "_config_advertising_schedule4_offset", true);
-    $schedule4Tag = get_post_meta($id, "_config_advertising_schedule4_tag", true);
+    $schedule4Tag = get_post_meta($id, "_config_advertising_schedule4_tag", true);*/
 
     $adsTable = "<table id='ads-table' class='wp-list-table widefat fixed striped'>";
     $adsTable .= "<tr><td colspan='2'>Ads Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Advertising_8211_VAST' target='_blank'>Documentation</a></td></tr>";
@@ -350,12 +324,39 @@ function bitmovin_getAdsTable($id)
     $adsTable .= getTableRowInput("Ad message", "config_advertising_admessage", $admessage);
 
     $adsTable .= "<tr><td colspan='2'>Schedule</td></tr>";
-    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $scheduleOffset);
-    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $scheduleTag);
+    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule_offset", $scheduleOffset);
+    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule_tag", $scheduleTag);
+
+    $adsTable .= getSchedules($id);
 
     $adsTable .= "</table>";
 
     return $adsTable;
+}
+
+function getSchedules($id) {
+
+    $table = "";
+    $count = 1;
+    $schedule = get_option('scheduleOption');
+    foreach ($schedule as $item) {
+
+        if ($id == $item->postID) {
+
+            $post_tag = "_" . $item->tag;
+            $post_offset = "_" . $item->offset;
+
+            $schedule1Offset = get_post_meta($id, $post_offset, true);
+            $schedule1Tag = get_post_meta($id, $post_tag, true);
+
+            $table .= "<tr><td colspan='2'>Schedule$count</td></tr>";
+            $table .= getTableRowInput("Offset", $item->offsetID, $schedule1Offset);
+            $table .= getTableRowInput("Tag", $item->tagID, $schedule1Tag);
+            $count++;
+        }
+    }
+
+    return $table;
 }
 
 function bitmovin_getVrTable($id)
@@ -511,25 +512,34 @@ function bitmovin_player_save_configuration($post_id)
 
         $client = bitmovin_getParameter("config_advertising_client");
         $admessage = bitmovin_getParameter("config_advertising_admessage");
+
+        $scheduleOffset = bitmovin_getParameter("config_advertising_schedule_offset");
+        $scheduleTag = bitmovin_getParameter("config_advertising_schedule_tag");
+
         $schedule1Offset = bitmovin_getParameter("config_advertising_schedule1_offset");
         $schedule1Tag = bitmovin_getParameter("config_advertising_schedule1_tag");
-        $schedule2Offset = bitmovin_getParameter("config_advertising_schedule2_offset");
-        $schedule2Tag = bitmovin_getParameter("config_advertising_schedule2_tag");
+
+        /*
         $schedule3Offset = bitmovin_getParameter("config_advertising_schedule3_offset");
         $schedule3Tag = bitmovin_getParameter("config_advertising_schedule3_tag");
         $schedule4Offset = bitmovin_getParameter("config_advertising_schedule4_offset");
-        $schedule4Tag = bitmovin_getParameter("config_advertising_schedule4_tag");
+        $schedule4Tag = bitmovin_getParameter("config_advertising_schedule4_tag");*/
 
         update_post_meta($post_id, "_config_advertising_client", $client);
         update_post_meta($post_id, "_config_advertising_admessage", $admessage);
+
+        update_post_meta($post_id, "_config_advertising_schedule_offset", $scheduleOffset);
+        update_post_meta($post_id, "_config_advertising_schedule_tag", $scheduleTag);
+
         update_post_meta($post_id, "_config_advertising_schedule1_offset", $schedule1Offset);
         update_post_meta($post_id, "_config_advertising_schedule1_tag", $schedule1Tag);
-        update_post_meta($post_id, "_config_advertising_schedule2_offset", $schedule2Offset);
-        update_post_meta($post_id, "_config_advertising_schedule2_tag", $schedule2Tag);
+
+        /*
+
         update_post_meta($post_id, "_config_advertising_schedule3_offset", $schedule3Offset);
         update_post_meta($post_id, "_config_advertising_schedule3_tag", $schedule3Tag);
         update_post_meta($post_id, "_config_advertising_schedule4_offset", $schedule4Offset);
-        update_post_meta($post_id, "_config_advertising_schedule4_tag", $schedule4Tag);
+        update_post_meta($post_id, "_config_advertising_schedule4_tag", $schedule4Tag);*/
 
 
         $startupMode = bitmovin_getParameter("config_src_vr_startupMode");
@@ -793,16 +803,20 @@ function bm_getAdsConfig($id)
     }
 
     $admessage = json_decode(get_post_meta($id, "_config_advertising_admessage", true));
-    $schedule1Offset = json_decode(get_post_meta($id, "_config_advertising_schedule1_offset", true));
-    $schedule1Tag = json_decode(get_post_meta($id, "_config_advertising_schedule1_tag", true));
-    $schedule2Offset = json_decode(get_post_meta($id, "_config_advertising_schedule2_offset", true));
-    $schedule2Tag = json_decode(get_post_meta($id, "_config_advertising_schedule2_tag", true));
+
+    $schedule1Offset = json_decode(get_post_meta($id, "_config_advertising_schedule_offset", true));
+    $schedule1Tag = json_decode(get_post_meta($id, "_config_advertising_schedule_tag", true));
+
+    $schedule2Offset = json_decode(get_post_meta($id, "_config_advertising_schedule1_offset", true));
+    $schedule2Tag = json_decode(get_post_meta($id, "_config_advertising_schedule1_tag", true));
+
     $schedule3Offset = json_decode(get_post_meta($id, "_config_advertising_schedule3_offset", true));
     $schedule3Tag = json_decode(get_post_meta($id, "_config_advertising_schedule3_tag", true));
     $schedule4Offset = json_decode(get_post_meta($id, "_config_advertising_schedule4_offset", true));
     $schedule4Tag = json_decode(get_post_meta($id, "_config_advertising_schedule4_tag", true));
 
     if (!((($schedule1Offset != "") && ($schedule1Tag != "")) || (($schedule2Offset) && ($schedule2Tag != "")) || (($schedule3Offset != "") && ($schedule3Tag != "")) || (($schedule4Offset != "") && ($schedule4Tag != "")))) {
+        echo '<script>alert("Something wrong");</script>';
         return "";
     }
 
@@ -816,7 +830,6 @@ function bm_getAdsConfig($id)
 
     $ads .= "schedule : {";
     $hasElementBefore = false;
-
     if (($schedule1Offset != "") && ($schedule1Tag != "")) {
         $ads .= "'schedule1' : {";
         $ads .= "offset: '" . $schedule1Offset . "',";
