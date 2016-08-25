@@ -991,7 +991,7 @@ function bitmovin_plugin_display_encoding()
                     </select></td></tr>
                     <tr><th>Select Output Profile</th>
                     <td><select id="output_profiles" name="output_profiles" onchange="showOutputProfile()">
-                        
+                        <option value="default">default</option>
                     </select></td></tr> 
                     <tr><th>Video URL</th><td><input type="text" id="bitcodin_video_src" name="bitcodin_video_src" size="50" placeholder="path/to/your/video"/><input type="button" id="upload-progressive" class="button" onclick="open_media_encoding_video()" value="..."></td></tr>
                 </table>
@@ -1038,7 +1038,8 @@ function bitmovin_plugin_display_encoding()
                     <tr><th colspan="2"><h3>Output Overview</h3></th></tr>
                     <tr><th>Type</th><td><select id="output-type" name="output-type">
                         <option value="ftp">FTP</option>
-                        <option value="s3">S3</option> 
+                        <option value="s3">S3</option>
+                         <option value="bitmovin-cloud-storage">Bitmovin Cloud Storage</option>
                     </select></td></tr>
                     <tr><th>Profile</th><td><input type="text" id="output-profile" name="output-profile" size="50"/></td></tr>
                     <tr><th>Host</th><td><input type="text" id="output-host" name="output-host" size="50"/></td></tr>
