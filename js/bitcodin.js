@@ -339,6 +339,13 @@ function showOutputProfile() {
             $j('#output_profile_id').val(object.outputId);
             break;
         }
+        else if (output.options[output.selectedIndex].value == 'default') {
+            $j('#output-type').val("bitmovin-cloud-storage");
+            $j('#output-profile').val("");
+            $j('#output-host').val("");
+            $j('#output-path').val("");
+            $j('#output_profile_id').val("default");
+        }
     }
 }
 
