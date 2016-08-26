@@ -114,7 +114,7 @@ function addSchedule(postID) {
 
     schedule_array.push({postID: postID, offset: idOffset, tag: idTag});
     // Add schedule parameters via add_option to wordpress database
-    $j.ajax({
+    /*$j.ajax({
         type: "POST",
         url: bitmovin_script.dest_encoding_script,
         data: {
@@ -127,7 +127,7 @@ function addSchedule(postID) {
         error: function(error) {
             conosloe.log(error.statusText);
         }
-    });
+    });*/
 }
 
 function vrCheck() {
