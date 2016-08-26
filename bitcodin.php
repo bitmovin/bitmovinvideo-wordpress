@@ -69,7 +69,6 @@ function addSchedule() {
     }
 
     update_option("scheduleOption", $schedule, '', true);
-    echo gettype($schedule);
 }
 
 function bitmovin_encoding_service() {
