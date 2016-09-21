@@ -102,7 +102,7 @@ function bitmovin_video_meta_box()
     add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal", "high");
 
     add_meta_box("bitmovin_player_configuration_video", "Video", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_player", "Version", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_version", "Version", 'bitmovin_player_configuration_version', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_drm", "DRM", 'bitmovin_player_configuration_drm', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_ads", "Ads", 'bitmovin_player_configuration_ads', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_vr", "VR", 'bitmovin_player_configuration_vr', "bitmovin_player", "normal", "high");
@@ -123,7 +123,7 @@ function bitmovin_player_configuration_video()
     echo $html;
 }
 
-function bitmovin_player_configuration_player()
+function bitmovin_player_configuration_version()
 {
     global $post;
 
@@ -243,20 +243,20 @@ function bitmovin_getVersionTable($id)
     $player_version = get_post_meta($id, "_config_player_version", true);
     $version_link = get_post_meta($id, "_config_version_link", true);
 
-    $playerTable = '<table class="wp-list-table widefat fixed striped">';
-    $playerTable .= "<tr><td colspan='2'>Player Version Configuration</td></tr>";
-    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(""));
-    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
+    $versionTable = '<table class="wp-list-table widefat fixed striped">';
+    $versionTable .= "<tr><td colspan='2'>Player Version Configuration</td></tr>";
+    $versionTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(""));
+    $versionTable .= getTableRowSelect("Version", "config_player_version", $player_version, array(""));
 
-    $playerTable .= "<tr><td colspan='2'>Advanced</td></tr>";
-    $playerTable .= "<tr><td><p>To provide our users the right version of our player, we have four public player channels available.
-    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
-    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
-    $playerTable .= '<tr><td><input type="text" id="config_version_link" value="'. $version_link .'" placeholder="https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js"/></td></tr>';
+    $versionTable .= "<tr><td colspan='2'>Advanced</td></tr>";
+    $versionTable .= "<tr><td><p>To provide our users the right version of our player, we have four public player channels available.
+      In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
+      More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</p></td></tr>";
+    $versionTable .= '<tr><td><input type="text" id="config_version_link" value="'. $version_link .'" placeholder="https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js"/></td></tr>';
 
-    $playerTable .= "</table>";
+    $versionTable .= "</table>";
 
-    return $playerTable;
+    return $versionTable;
 }
 
 function bitmovin_getDrmTable($id)
@@ -472,6 +472,7 @@ function bitmovin_player_save_configuration($post_id)
     // check permissions
     if ('bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
 
+        // VIDEO TABLE
         $dash_url = bitmovin_getParameter("config_src_dash");
         $hls_url = bitmovin_getParameter("config_src_hls");
         $prog_url = bitmovin_getParameter("config_src_prog");
@@ -482,6 +483,8 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_src_prog", $prog_url);
         update_post_meta($post_id, "_config_src_poster", $poster_url);
 
+
+        // VERSION TABLE
         $player_channel = bitmovin_getParameter("config_player_channel");
         $player_version = bitmovin_getParameter("config_player_version");
 
@@ -492,6 +495,8 @@ function bitmovin_player_save_configuration($post_id)
 
         update_post_meta($post_id, "_config_version_link", $version_link);
 
+
+        // DRM TABLE
         $widevine_la_url = bitmovin_getParameter("config_src_drm_widevine_la_url");
         $playready_la_url = bitmovin_getParameter("config_src_drm_playready_la_url");
         $playready_customData = bitmovin_getParameter("config_src_drm_playready_customData");
@@ -608,7 +613,24 @@ function bitmovin_generate_player($id)
     $html = "<div id='bitmovin-player'></div>\n";
     $html .= "<script type='text/javascript'>\n";
     $html .= "window.onload = function() {\n";
-    $html .= "var player = bitdash('bitmovin-player');\n";
+
+
+    /**
+     *
+     * check if player version is a 6.x release
+     * if so change the init call
+     *
+     */
+    $player_version = get_post_meta($id, "_config_player_version", true);
+    if (strpos($player_version, '6')) {
+
+      $html .= "var player = bitmovin.player('bitmovin-player');\n";
+    }
+    else {
+
+      $html .= "var player = bitdash('bitmovin-player');\n";
+    }
+
     $html .= "var conf = {\n";
     $html .= "key: '" . $playerKey ."',\n";
     $html .= "source: {\n";
@@ -711,6 +733,15 @@ function bm_getVersionConfig($id)
     else if ($player_version == 'Latest Version 4')
     {
         $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/4/bitdash.min.js";
+    }
+    else if (strpos(json_encode($player_version), "6"))
+    {
+      if ($player_version == "Latest Version 6")  {
+        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/6/bitmovinplayer.min.js";
+      }
+      else {
+        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/{$player_version}/bitmovinplayer.min.js";
+      }
     }
     else {
         $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/{$player_version}/bitdash.min.js";
