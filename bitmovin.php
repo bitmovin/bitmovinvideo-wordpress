@@ -155,7 +155,6 @@ function bitmovin_player_configuration_ads()
     $html = '<div class="configSection">';
     $html .= '<div id="ads" class="configContent">';
     $html .= bitmovin_getAdsTable($post->ID);
-    $html .= '<a class="add-config" onclick="addSchedule(' . $post->ID . ')">+ Add another schedule</a>';
     $html .= '</div>';
     $html .= '</div>';
 
@@ -328,8 +327,6 @@ function bitmovin_getAdsTable($id)
     $client = get_post_meta($id, "_config_advertising_client", true);
     $admessage = get_post_meta($id, "_config_advertising_admessage", true);
 
-    $scheduleOffset = get_post_meta($id, "_config_advertising_schedule_offset", true);
-    $scheduleTag = get_post_meta($id, "_config_advertising_schedule_tag", true);
 
     $schedule1Offset = get_post_meta($id, "_config_advertising_schedule1_offset", true);
     $schedule1Tag = get_post_meta($id, "_config_advertising_schedule1_tag", true);
@@ -349,9 +346,22 @@ function bitmovin_getAdsTable($id)
     $adsTable .= getTableRowInput("Client", "config_advertising_client", $client);
     $adsTable .= getTableRowInput("Ad message", "config_advertising_admessage", $admessage);
 
-    $adsTable .= "<tr><td colspan='2'>Schedule</td></tr>";
-    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $scheduleOffset);
-    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $scheduleTag);
+
+    $adsTable .= "<tr><td colspan='2'>Schedule 1</td></tr>";
+    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $schedule1Offset);
+    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $schedule1Tag);
+
+    $adsTable .= "<tr><td colspan='2'>Schedule 2</td></tr>";
+    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule2_offset", $schedule2Offset);
+    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule2_tag", $schedule2Tag);
+
+    $adsTable .= "<tr><td colspan='2'>Schedule 3</td></tr>";
+    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule3_offset", $schedule3Offset);
+    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule3_tag", $schedule3Tag);
+
+    $adsTable .= "<tr><td colspan='2'>Schedule 4</td></tr>";
+    $adsTable .= getTableRowInput("Offset", "config_advertising_schedule4_offset", $schedule4Offset);
+    $adsTable .= getTableRowInput("Tag", "config_advertising_schedule4_tag", $schedule4Tag);
 
     $adsTable .= "</table>";
 

@@ -91,50 +91,6 @@ function delete_response() {
     $j("#error-response").fadeOut("slow");
 }
 
-function addSchedule(postID) {
-
-    var wrapper = $j("#ads-table");
-    var value = "Schedule" + schedule_count;
-    var idTag = "config_advertising_schedule" + schedule_count + "_tag";
-    var idOffset = "config_advertising_schedule" + schedule_count + "_offset";
-
-    var removeID = "remove-ad" + schedule_count;
-    var rowClass = "ad-row" + schedule_count;
-
-    $j(wrapper).append('<tr class="' + rowClass + '"><td colspan="2">' + value + '<a id="' + removeID + '" class="remove-tag">Remove</a></td></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Offset</th><td><input type="text" id="' + idOffset + '" name="' + idOffset + '"/></td></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Tag</th><td><input type="text" id="' + idTag + '" name="' + idTag + '"/></td></tr>');
-
-    $j("#" + removeID).click(function() {
-        $j("." + rowClass).remove();
-        schedule_count--;
-    });
-    schedule_count++;
-
-    /*$j.ajax({
-        type: "POST",
-        url: bitmovin_script.dest_encoding-script,
-        data: {
-            postID:     postID,
-            offsetID:   idOffset,
-            tagID:      idTag,
-            method:     "addSchedule"
-        },
-        success: function(data) {
-            alert('Directory created');
-        },
-        error: function(error) {
-            conosloe.log(error.responseJSON.message);
-        }
-    });*/
-
-    //$j(function(){
-
-    //get_post_meta($id, "_config_advertising_schedule2_offset", true);
-    //get_post_meta($id, "_config_advertising_schedule2_tag", true);
-    //});
-}
-
 function vrCheck() {
 
     var content = document.getElementById("vr-check").checked;
