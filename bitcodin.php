@@ -53,22 +53,7 @@ if (isset($_POST['method']) && $_POST['method'] != "") {
     } else if ($method == 'create_s3_output_profile') {
 
         create_s3_output_profile();
-    } else if ($method == "addSchedule") {
-        addSchedule();
     }
-}
-
-function addSchedule() {
-
-    $before = get_option("scheduleOption");
-    if (gettype($before) == 'array') {
-        $schedule = array_merge($before, json_decode(stripslashes($_POST['content'])));
-    }
-    else {
-        $schedule = json_decode(stripslashes($_POST['content']));
-    }
-
-    update_option("scheduleOption", $schedule, '', true);
 }
 
 function bitmovin_encoding_service() {

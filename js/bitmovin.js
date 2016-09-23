@@ -92,44 +92,6 @@ function delete_response() {
     $j("#error-response").fadeOut("slow");
 }
 
-function addSchedule(postID) {
-
-    var wrapper = $j("#ads-table");
-    var value = "Schedule" + schedule_count;
-    var idTag = "config_advertising_schedule" + schedule_count + "_tag";
-    var idOffset = "config_advertising_schedule" + schedule_count + "_offset";
-
-    var removeID = "remove-ad" + schedule_count;
-    var rowClass = "ad-row" + schedule_count;
-
-    $j(wrapper).append('<tr class="' + rowClass + '"><td colspan="2">' + value + '<a id="' + removeID + '" class="remove-tag">Remove</a></td></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Offset</th><td><input type="text" id="' + idOffset + '" name="' + idOffset + '"/></td></tr>');
-    $j(wrapper).append('<tr class="' + rowClass + '"><th>Tag</th><td><input type="text" id="' + idTag + '" name="' + idTag + '"/></td></tr>');
-
-    $j("#" + removeID).click(function() {
-        $j("." + rowClass).remove();
-        schedule_count--;
-    });
-    schedule_count++;
-
-    schedule_array.push({postID: postID, offset: idOffset, tag: idTag});
-    // Add schedule parameters via add_option to wordpress database
-    /*$j.ajax({
-        type: "POST",
-        url: bitmovin_script.dest_encoding_script,
-        data: {
-            method:     "addSchedule",
-            content:    JSON.stringify(schedule_array)
-        },
-        success: function(data) {
-            alert(data);
-        },
-        error: function(error) {
-            conosloe.log(error.statusText);
-        }
-    });*/
-}
-
 function vrCheck() {
 
     var content = document.getElementById("vr-check").checked;
