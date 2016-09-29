@@ -6,6 +6,8 @@
  * Time: 09:19
  */
 
+ini_set('max_execution_time', 30000);
+
 use bitcodin\Bitcodin;
 use bitcodin\VideoStreamConfig;
 use bitcodin\AudioStreamConfig;

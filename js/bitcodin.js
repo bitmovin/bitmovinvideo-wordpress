@@ -80,7 +80,7 @@ function bitcodin() {
             beforeSend: function () {
                 $j("#big-response").fadeIn("slow");
                 $j('#big-response').html("<img src='" + bitcodin_script.loader + "'/>" +
-                    "<p id='big-response-text'>Bitcodin in progress...<br><span id='small-response-text'><i>Encoding " + video_anz + " video(s) - Feel free to do other stuff.</i></span></p>");
+                    "<p id='big-response-text'>Bitcodin in progress...<br><span id='small-response-text'><i>Encoding " + video_anz + " video(s) - <b>Please stand by until the encoding is finished</b>.</i></span></p>");
             },
             success: function (content) {
 
