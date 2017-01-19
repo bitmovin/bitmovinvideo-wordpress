@@ -1,39 +1,49 @@
 .configSection {
     margin-bottom: 20px;
 }
+
 .toggleHeader {
     text-align: center;
 }
+
 .configSection input:not([type='radio']), select {
     width: 100%;
 }
+
 .toggleHeader > input[type='button'] {
     width: 150px;
 }
+
 .configSection table {
     margin-top: 10px;
 }
+
 .configSection table tr:first-child {
     text-align: center;
 }
-.configSection table td[colspan='2'] {
+
+.configSection table td.heading {
     font-size: 1.2em;
     font-weight: bold;
 }
-.configSection table td[colspan='2'] a{
+
+.configSection table td[colspan='2'] a {
     font-size: 0.8em;
     position: absolute;
     right: 18px;
 }
+
 #custom .intend1 {
     margin-left: 30px;
 }
+
 #custom textarea {
     font-weight: normal;
-    font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif;
     height: 100px;
     width: 100%;
 }
+
 #custom .hint {
     font-size: 1em;
     text-align: center;
