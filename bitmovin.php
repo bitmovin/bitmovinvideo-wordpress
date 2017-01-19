@@ -227,7 +227,7 @@ function getVideoTable($id)
     $poster_url = get_post_meta($id, "_config_src_poster", true);
 
     $videoTable = '<table class="wp-list-table widefat fixed striped">';
-    $videoTable .= "<tr><td colspan='2'>Video Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Source' target='_blank'>Documentation</a></td></tr>";
+    $videoTable .= "<tr><td class='heading' colspan='2'>Video Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Source' target='_blank'>Documentation</a></td></tr>";
 
     $videoTable .= getTableRowInput("Dash URL", "config_src_dash", $dash_url, "http://path/to/mpd/file.mpd");
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
@@ -239,18 +239,77 @@ function getVideoTable($id)
     return $videoTable;
 }
 
+function getSupportedPlayerVersions() {
+    $versions = array(
+        "stable" => array(
+            "Latest Version 7", "Latest Version 6", "Latest Version 5", "Latest Version 4",
+            "7.0","7.0.1",
+            "6.0","6.0.1","6.0.2","6.0.3","6.0.4","6.0.5",
+            "6.1","6.1.1","6.1.2","6.1.3","6.1.4","6.1.5","6.1.6","6.1.7","6.1.8",
+            "5.0","5.0.1","5.0.2","5.1",
+            "5.2.0","5.2.1","5.2.2","5.2.3","5.2.4","5.2.5","5.2.6","5.2.7","5.2.8","5.2.9","5.2.10","5.2.13","5.2.14","5.2.15","5.2.16","5.2.17","5.2.18","5.2.19",
+            "4.0","4.0.1","4.0.2","4.0.3",
+            "4.1","4.1.1","4.1.2",
+            "4.2","4.2.1",
+            "4.3","4.3.1",
+            "4.4","4.4.1"
+        ),
+        "staging" => array(
+            "Latest Version 7", "Latest Version 6", "Latest Version 5",
+            "7.0", "7.0.0-rc1", "7.0.0-rc2", "7.0.0-rc3", "7.0.0-rc4", "7.0.0-rc5", "7.0.0-rc6",
+            "6.1", "6.1.0-rc1", "6.1.0-rc2", "6.1.0-rc3", "6.1.0-rc4", "6.1.0-rc5", "6.1.0-rc6","6.1.0-rc7",
+            "5.2", "5.2.0-rc1", "5.2.0-rc2",
+            "5.1", "5.1.0-rc1"
+        ),
+        "beta" => array(
+            "Latest Version 7", "Latest Version 6", "Latest Version 5",
+            "7.0", "7.0.0-b1","7.0.0-b2",
+            "6.1", "6.1.0-b1","6.1.0-b2","6.1.0-b3","6.1.0-b4","6.1.0-b5","6.1.0-b6","6.1.0-b7","6.1.0-b8","6.1.0-b9","6.1.0-b10","6.1.0-b11","6.1.0-b12","6.1.0-b13","6.1.0-b14","6.1.0-b15","6.1.0-b16",
+            "5.2", "5.2.0-b1","5.2.0-b2","5.2.0-b3","5.2.0-b4","5.2.0-b5","5.2.0-b6","5.2.0-b7","5.2.0-b8","5.2.0-b9",
+            "5.1", "5.1.0-b1","5.1.0-b9","5.1.0-b10"
+        )
+    );
+
+    $versions = array(
+        "7" => "Latest Version 7",
+        "6" => "Latest Version 6",
+        "5" => "Latest Version 5"
+    );
+
+    return $versions;
+}
+
 function getPlayerTable($id)
 {
     $player_channel = get_post_meta($id, "_config_player_channel", true);
     $player_version = get_post_meta($id, "_config_player_version", true);
 
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
-    $playerTable .= "<tr><td colspan='2'>Player Channels/Versions</td></tr>";
-    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array("Stable", "Beta", "Staging"));
-    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array("Latest Version 5", "Latest Version 4", "5.0", "4.4", "4.3", "4.2", "4.1", "4.0"));
+    $playerTable .= "<tr><td class='heading' colspan='2'>Player Channels/Versions</td></tr>";
+    $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(
+        "stable" => "Stable",
+        "staging" => "Staging",
+        "beta" => "Beta"
+    ));
+    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, getSupportedPlayerVersions());
     $playerTable .= "</table>";
 
     return $playerTable;
+}
+
+
+function getAdvancedTable($id)
+{
+    $version_link = get_post_meta($id, "_config_version_link", true);
+
+    $advancedTable = "<table class='wp-list-table widefat fixed striped'>";
+    $advancedTable .= "<tr><td class='heading' colspan='2'>Custom Player Version</td></tr><tr><td colspan='2'>To provide our users the right version of our player, we have four public player channels available.
+    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
+    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</td></tr>";
+    $advancedTable .= "<tr><td colspan='2'>".getInputField("config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/CHANNEL/VERSION/bitmovinplayer.js")."</td></tr>";
+    $advancedTable .= "</table>";
+
+    return $advancedTable;
 }
 
 function getDrmTable($id)
@@ -266,24 +325,24 @@ function getDrmTable($id)
     $fairplay_certificateURL = get_post_meta($id, "_config_src_drm_fairplay_certificateURL", true);
 
     $drmTable = "<table class='wp-list-table widefat fixed striped'>";
-    $drmTable .= "<tr><td colspan='2'>DRM Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#DRM' target='_blank'>Documentation</a></td></tr>";
+    $drmTable .= "<tr><td class='heading' colspan='2'>DRM Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#DRM' target='_blank'>Documentation</a></td></tr>";
 
-    $drmTable .= "<tr><td colspan='2'>Widevine</td></tr>";
+    $drmTable .= "<tr><td class='heading' colspan='2'>Widevine</td></tr>";
     $drmTable .= getTableRowInput("LA_URL", "config_src_drm_widevine_la_url", $widevine_la_url, "https://mywidevine.licenseserver.com/");
 
-    $drmTable .= "<tr><td colspan='2'>Playready</td></tr>";
+    $drmTable .= "<tr><td class='heading' colspan='2'>Playready</td></tr>";
     $drmTable .= getTableRowInput("LA_URL", "config_src_drm_playready_la_url", $playready_la_url, "https://myplayready.licenseserver.com/");
     $drmTable .= getTableRowInput("customData", "config_src_drm_playready_customData", $playready_customData);
 
-    $drmTable .= "<tr><td colspan='2'>Access</td></tr>";
+    $drmTable .= "<tr><td class='heading' colspan='2'>Access</td></tr>";
     $drmTable .= getTableRowInput("LA_URL", "config_src_drm_access_la_url", $access_la_url, "https://myaccess.licenseserver.com/");
     $drmTable .= getTableRowInput("authToken", "config_src_drm_access_authToken", $access_authToken, "YOUR-BASE64-ENCODED-AUTH-TOKEN");
 
-    $drmTable .= "<tr><td colspan='2'>Primetime</td></tr>";
+    $drmTable .= "<tr><td class='heading' colspan='2'>Primetime</td></tr>";
     $drmTable .= getTableRowInput("LA_URL", "config_src_drm_primetime_la_url", $primetime_la_url, "https://myprimetime.licenseserver.com/");
     $drmTable .= getTableRowInput("indivURL", "config_src_drm_primetime_indivURL", $primetime_indivURL);
 
-    $drmTable .= "<tr><td colspan='2'>Fairplay</td></tr>";
+    $drmTable .= "<tr><td class='heading' colspan='2'>Fairplay</td></tr>";
     $drmTable .= getTableRowInput("LA_URL", "config_src_drm_fairplay_la_url", $fairplay_la_url, "https://fairplay.licenseserver.com/");
     $drmTable .= getTableRowInput("certificateUrl", "config_src_drm_fairplay_certificateURL", $fairplay_certificateURL, "https://fairplay.licenseserver.com/certificate-url");
 
@@ -309,21 +368,21 @@ function getAdsTable($id)
     $schedule4Tag = get_post_meta($id, "_config_advertising_schedule4_tag", true);
 
     $adsTable = "<table class='wp-list-table widefat fixed striped'>";
-    $adsTable .= "<tr><td colspan='2'>Ads Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Advertising_8211_VAST' target='_blank'>Documentation</a></td></tr>";
+    $adsTable .= "<tr><td class='heading' colspan='2'>Ads Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Advertising_8211_VAST' target='_blank'>Documentation</a></td></tr>";
 
     $adsTable .= getTableRowInput("Client", "config_advertising_client", $client);
     $adsTable .= getTableRowInput("Ad message", "config_advertising_admessage", $admessage);
 
-    $adsTable .= "<tr><td colspan='2'>Schedule 1</td></tr>";
+    $adsTable .= "<tr><td class='heading' colspan='2'>Schedule 1</td></tr>";
     $adsTable .= getTableRowInput("Offset", "config_advertising_schedule1_offset", $schedule1Offset);
     $adsTable .= getTableRowInput("Tag", "config_advertising_schedule1_tag", $schedule1Tag);
-    $adsTable .= "<tr><td colspan='2'>Schedule 2</td></tr>";
+    $adsTable .= "<tr><td class='heading' colspan='2'>Schedule 2</td></tr>";
     $adsTable .= getTableRowInput("Offset", "config_advertising_schedule2_offset", $schedule2Offset);
     $adsTable .= getTableRowInput("Tag", "config_advertising_schedule2_tag", $schedule2Tag);
-    $adsTable .= "<tr><td colspan='2'>Schedule 3</td></tr>";
+    $adsTable .= "<tr><td class='heading' colspan='2'>Schedule 3</td></tr>";
     $adsTable .= getTableRowInput("Offset", "config_advertising_schedule3_offset", $schedule3Offset);
     $adsTable .= getTableRowInput("Tag", "config_advertising_schedule3_tag", $schedule3Tag);
-    $adsTable .= "<tr><td colspan='2'>Schedule 4</td></tr>";
+    $adsTable .= "<tr><td class='heading' colspan='2'>Schedule 4</td></tr>";
     $adsTable .= getTableRowInput("Offset", "config_advertising_schedule4_offset", $schedule4Offset);
     $adsTable .= getTableRowInput("Tag", "config_advertising_schedule4_tag", $schedule4Tag);
 
@@ -340,7 +399,7 @@ function getVrTable($id)
     $initialRotateRate = get_post_meta($id, "_config_src_vr_initialRotateRate", true);
 
     $vrTable = "<table class='wp-list-table widefat fixed striped'>";
-    $vrTable .= "<tr><td colspan='2'>Vr Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#VR_and_360_Video' target='_blank'>Documentation</a></td></tr>";
+    $vrTable .= "<tr><td class='heading' colspan='2'>VR/360° Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#VR_and_360_Video' target='_blank'>Documentation</a></td></tr>";
 
     $vrTable .= getTableRowSelect("Startup mode", "config_src_vr_startupMode", $startupMode, array("disabled", "2d", "stereo-2d", "3d", "stereo-3d", "no-vr"));
     $vrTable .= getTableRowInputNumber("Start position", "config_src_vr_startPosition", $startPosition, 180);
@@ -359,7 +418,7 @@ function getStyleTable($id)
     $aspectRatio = get_post_meta($id, "_config_style_aspectRatio", true);
 
     $styleTable = "<table class='wp-list-table widefat fixed striped'>";
-    $styleTable .= "<tr><td colspan='2'>Style Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Style' target='_blank'>Documentation</a></td></tr>";
+    $styleTable .= "<tr><td class='heading' colspan='2'>Style Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Style' target='_blank'>Documentation</a></td></tr>";
 
     $styleTable .= getTableRowInput("Width", "config_style_width", $width, "100%");
     $styleTable .= getTableRowInput("Height", "config_style_height", $height, "100%");
@@ -376,7 +435,7 @@ function getCustomTable($id)
     $customSource = json_decode(get_post_meta($id, "_config_custom_source", true));
 
     $customTable = "<table class='wp-list-table widefat fixed striped'>";
-    $customTable .= "<tr><td colspan='2'>Custom Configuration</td></tr>";
+    $customTable .= "<tr><td class='heading' colspan='2'>Custom Configuration</td></tr>";
 
     $customTable .= "<tr><td>Appended to configuration</td><td><pre>var conf = {<br><div class='intend1'>...<br>...<br><textarea id='config_custom' name='config_custom_conf'>" . $customConf . "</textarea></div>};</pre></td></tr>";
     $customTable .= "<tr><td>Appended to configuration -> source</td><td><pre>var conf = {<br><div class='intend1'>source: {<div class='intend1'>...<br>...<br><textarea id='config_custom_source' name='config_custom_source'>" . $customSource . "</textarea></div>},<br>...<br>...</div>};</pre></td></tr>";
@@ -387,45 +446,32 @@ function getCustomTable($id)
     return $customTable;
 }
 
-function getAdvancedTable($id)
-{
-    $version_link = get_post_meta($id, "_config_version_link", true);
-
-    $advancedTable = "<table class='wp-list-table widefat fixed striped'>";
-    $advancedTable = "<tr><td><p></p>To provide our users the right version of our player, we have four public player channels available.
-    In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
-    More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</td></tr>";
-    $advancedTable .= getTableRowInput("", "config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/channel/version/bitdash.min.js");
-    $advancedTable .= "</table>";
-
-    return $advancedTable;
+function getInputField($propertyName, $propertyValue, $placeHolder) {
+    return "<input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/>";
 }
 
 function getTableRowInput($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
-    return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/></td></tr>";
+    return "<tr><th>" . $propertyDisplayName . "</th><td>" . getInputField($propertyName, $propertyValue, $placeHolder) . "</td></tr>";
 }
 
 function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyValue, $placeHolder = "")
 {
-    return "<tr><th>" . $propertyDisplayName . "</th><td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
+    return "<tr>
+        <th>" . $propertyDisplayName . "</th>
+        <td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
 }
 
 function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption, $options)
 {
     $selectedOption = json_decode($selectedOption);
-
-    if ($propertyDisplayName == "Channel")
-    {
-        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' onchange='getVersions()' name='" . $propertyName . "'>";
-    }
-    else
-    {
-        $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
+    if(in_array($selectedOption, array_values($options))) {
+        $selectedOption = array_search($selectedOption, $options);
     }
 
-    foreach($options as $option) {
-        $tableRowSelect .= "<option value='" . $option . "'". (($option == $selectedOption)?"selected=\"selected\"":"") .">" . $option . "</option>";
+    $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
+    foreach($options as $key => $option) {
+        $tableRowSelect .= "<option value='" . $key . "'". (($key == $selectedOption)?"selected=\"selected\"":"") .">" . $option . "</option>";
     }
 
     $tableRowSelect .= "</select></td></tr>";
@@ -442,7 +488,8 @@ function bitmovin_player_save_configuration($post_id)
     }
 
     // check permissions
-    if ('bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
+
+    if (array_key_exists('post_type', $_POST) && 'bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
 
         $dash_url = getParameter("config_src_dash");
         $hls_url = getParameter("config_src_hls");
@@ -542,6 +589,17 @@ function getParameter($param)
     return strip_tags(json_encode($param));
 }
 
+function parsePlayerVersion($versionString) {
+    $matches = null;
+    if(preg_match('/^(?<=Latest\\sVersion\\s)?\\d$/', $versionString, $matches) == 1) {
+        return $matches[0];
+    } else if(preg_match('/\\d(\\.\\d(\\.\\d)?)?/', $versionString, $matches) == 1) {
+        return $matches[0];
+    } else {
+        return null;
+    }
+}
+
 add_shortcode("bitmovin_player", "generate_player");
 function generate_player($id)
 {
@@ -554,17 +612,24 @@ function generate_player($id)
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
     }
 
+    $wpPlayerVersion = json_decode(get_post_meta( $id, "_config_player_version", true ));
+    $player_version = parsePlayerVersion($wpPlayerVersion);
+    if($player_version === false) {
+        return "<pre>Invalid player version: " . htmlspecialchars($player_version) . "</pre>";
+    }
+
     $advancedConfig = getAdvancedConfig($id);
+    $player_init_cmd = "typeof bitmovin !== \"undefined\" ? bitmovin.player(\"bitmovin-player\") : bitdash(\"bitmovin-player\");";
     if ($advancedConfig == 0)
     {
         getPlayerConfig($id);
     }
 
-    $html = "<div id='bitmovin-player'></div>\n";
 
+    $html = "<div id='bitmovin-player'></div>\n";
     $html .= "<script type='text/javascript'>\n";
     $html .= "window.onload = function() {\n";
-    $html .= "var player = bitdash('bitmovin-player');\n";
+    $html .= "var player = " . $player_init_cmd . ";\n";
     $html .= "var conf = {\n";
     $html .= "key: '" . $playerKey ."',\n";
     $html .= "source: {\n";
@@ -605,7 +670,7 @@ function generate_player($id)
     $html .= "};\n";
 
     $html .= "player.setup(conf).then(function(value) {\n";
-    $html .= "console.log('Successfully created bitdash player instance'); console.log('Player Version: ' + player.getVersion());\n";
+    $html .= "console.log('Successfully created bitdash player instance');\n";
     $html .= "}, function(reason) {\n";
     $html .= "console.log('Error while creating bitdash player instance');\n";
     $html .= "});\n";
@@ -656,21 +721,27 @@ function getVideoConfig($id) {
 function getPlayerConfig($id)
 {
     $player_channel = json_decode(get_post_meta($id, "_config_player_channel", true));
-    $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
-
     $player_channel = strtolower($player_channel);
 
-    if ($player_version == 'Latest Version 5')
+    $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
+    $parsedPlayerVersion = parsePlayerVersion($player_version);
+
+    if(is_null($parsedPlayerVersion)) {
+        $parsedPlayerVersion = 7;
+    }
+
+    $srcRoot = "https://bitmovin-a.akamaihd.net/bitmovin-player/" . $player_channel . "/";
+    $src = $srcRoot . $parsedPlayerVersion . "/bitmovinplayer.js";
+
+    if (intval($parsedPlayerVersion) == 6)
     {
-        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/5/bitdash.min.js";
+        $src = $srcRoot . $parsedPlayerVersion . "/bitmovinplayer.min.js";
     }
-    else if ($player_version == 'Latest Version 4')
+    else if (intval($parsedPlayerVersion) <= 5)
     {
-        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/4/bitdash.min.js";
+        $src = $srcRoot . $parsedPlayerVersion . "/bitdash.min.js";
     }
-    else {
-        $src = "https://bitmovin-a.akamaihd.net/bitmovin-player/{$player_channel}/{$player_version}/bitdash.min.js";
-    }
+
     wp_register_script('bitmovin_player_core', $src);
     wp_enqueue_script('bitmovin_player_core');
 }
@@ -921,7 +992,7 @@ function bitmovin_plugin_display_settings()
             <h2>Bitmovin Wordpress Plugin Settings</h2>'. wp_nonce_field('update-options') .'
             <table class="form-table">
                 <tr><td class="tooltip">Bitmovin Api Key
-                <img src="' . $image_url . '" alt="Info" height="15" weight="15">
+                <img src="' . $image_url . '" alt="Info" height="15" width="15">
                 <span class="tooltiptext">Please insert Bitmovin API key here. <br> Do not confound it with your Player key.
                 <br> You can find your API key in the settings section of your Bitmovin Account <a href="https://app.bitmovin.com/settings">here</a>.</span></td>
                 <td><input id="apiKey" type="text" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/></td>
@@ -939,5 +1010,3 @@ function bitmovin_plugin_display_settings()
         </div>';
     echo $html;
 }
-
-?>
