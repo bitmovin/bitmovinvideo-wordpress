@@ -94,15 +94,19 @@ function bitmovin_encoding_service() {
             sleep(1);
         }
 
-        // TRANSFER JOB OUTPUT
-        $output = Output::get($_POST['outputProfileID']);
-        $job->transfer($output);
-
-        // send mpd and m3u8 data
         $response = new stdClass();
-        $response->host     = $output->host;
-        $response->path     = $output->path;
-        $response->folder   = $job->jobFolder;
+
+        // TRANSFER JOB OUTPUT
+        if ($_POST['outputProfileID'] != 'default') {
+
+            $output = Output::get($_POST['outputProfileID']);
+            $job->transfer($output);
+
+            $response->host     = $output->host;
+            $response->path     = $output->path;
+            $response->folder   = $job->jobFolder;
+        }
+
         $response->mpd      = $job->manifestUrls->mpdUrl;
         $response->m3u8     = $job->manifestUrls->m3u8Url;
 
@@ -189,17 +193,25 @@ function create_s3_output_profile() {
 function addToLibrary($data, $thumbnail) {
 
     // PARSING OUTPUT URLS FOR MPD AND M3U8 MANIFEST
+    if ($_POST['outputProfileID'] != 'default') {
 
-    $mpd = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
-    $m3u8 = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
-    if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->mpd, $matches)) {
+        $mpd = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
+        $m3u8 = "https://" . $data->host . "/" . $data->path . "/" . $data->folder;
+        if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->mpd, $matches)) {
 
-        $mpd = $mpd . $matches[0];
+            $mpd = $mpd . $matches[0];
+        }
+        if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->m3u8, $matches)) {
+
+            $m3u8 = $m3u8 . $matches[0];
+        }
     }
-    if (preg_match('/\/(([A-Za-z]+)?|([0-9]+)?)*((\.mpd)|(\.m3u8))/', $data->m3u8, $matches)) {
-
-        $m3u8 = $m3u8 . $matches[0];
+    //SKIP PARSING IF DEFAULT OUTPUT IS EU CLOUD STORAGE
+    else {
+        $mpd = $data->mpd;
+        $m3u8 = $data->m3u8;
     }
+
 
     // CREATING BITMOVIN WATERMARK
 
@@ -208,7 +220,7 @@ function addToLibrary($data, $thumbnail) {
 
     $watermark = imagecreatefrompng(plugins_url('images/watermark.png', __FILE__));
     if (!$watermark) {
-        echo "error creating watermark";
+        echo "Fatal error: creating watermark";
     }
 
     $watermark_width = imagesx($watermark);
@@ -217,7 +229,7 @@ function addToLibrary($data, $thumbnail) {
     $image_path = $file;
     $image = imagecreatefromjpeg($image_path);
     if (!$image) {
-        echo "error creating thumbnail";
+        echo "Fatal error: creating thumbnail";
     }
 
     $size = getimagesize($image_path);
@@ -243,7 +255,7 @@ function addToLibrary($data, $thumbnail) {
         $attachment = array(
             'post_mime_type' => $wp_filetype['type'],
             'post_parent' => null,
-            'post_title' => "Bitcoded" . $matches[0] . "/mpd",
+            'post_title' => "Bitcoded",
             'post_content' => (string)$mpd,
             'post_excerpt' => (string)$m3u8,
             'post_status' => 'inherit'
