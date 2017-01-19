@@ -165,6 +165,10 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 
 == Changelog ==
 
+= v0.6.0 =
+* Added initial support to use our latest player versions as well
+* Minor updates / improvements
+
 = v0.5.1 =
 * Implemented the possibility to manually change the player version depending on the channel.
 * Implemented a tooltip at the "Bitmovin Settings" page to provide the right API key.
