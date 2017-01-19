@@ -1,5 +1,5 @@
 === Bitmovin Wordpress Plugin ===
-Contributors: Lukas Kröpfl, Tristan Boyd, Patrick Struger
+Contributors: Gernot Zwantschko, Lukas Kröpfl, Tristan Boyd, Patrick Struger
 Donate link:
 Tags:
 Requires at least: 4.5.3
