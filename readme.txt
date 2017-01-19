@@ -1,6 +1,6 @@
 === Bitmovin Wordpress Plugin ===
-Contributors: Lukas Kröpfl, Tristan Boyd, Patrick Struger
-Donate link: http://bitmovin.com
+Contributors: Gernot Zwantschko, Lukas Kröpfl, Tristan Boyd, Patrick Struger
+Donate link:
 Tags:
 Requires at least: 4.5.3
 Tested up to: 4.5.3
@@ -165,8 +165,9 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 
 == Changelog ==
 
-= v1.0.1 =
-* Minor bugfixes
+= v0.6.0 =
+* Added initial support to use our latest player versions as well
+* Minor updates / improvements
 
 = v0.5.1 =
 * Implemented the possibility to manually change the player version depending on the channel.

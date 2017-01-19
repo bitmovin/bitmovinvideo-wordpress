@@ -1,5 +1,0 @@
-{
-    "require": {
-        "bitmovin/bitcodin-php": "*"
-    }
-}

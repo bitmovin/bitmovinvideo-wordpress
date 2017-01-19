@@ -1,13 +1,14 @@
 Bitmovin Wordpress Plugin
 =========================
 
-Version: v1.0.1
+Version: v0.6.0
 
 === Changelog ===
-**v1.0.1**
+**v0.6.0**
 
-  * Made encoding work, changed encoding dialog message
-  
+  * Added initial support for latest player versions
+  * minor fixes / improvements
+
 **v0.5.0**
 
   * Implemented beta version 0.5.0 of Bitmovin Wordpress plugin
