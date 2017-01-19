@@ -35,35 +35,35 @@ add_action('init', 'bitmovin_register');
 function bitmovin_register()
 {
     $labels = array(
-        'name' => __('Videos', 'bitmovin_player'),
+        'name'          => __('Videos', 'bitmovin_player'),
         'singular_name' => __('Video', 'bitmovin_player'),
-        'menu_name' => __('Bitmovin', 'bitmovin_player'),
-        'add_new' => __('Add New Video', 'bitmovin_player'),
-        'add_new_item' => __('Add New Video', 'bitmovin_player'),
-        'new_item' => __('New Video', 'bitmovin_player'),
-        'edit_item' => __('Edit Video', 'bitmovin_player'),
-        'view_item' => __('View Video', 'bitmovin_player'),
-        'all_items' => __('All Videos', 'bitmovin_player'),
-        'search_items' => __('Search Videos', 'bitmovin_player')
+        'menu_name'     => __('Bitmovin', 'bitmovin_player'),
+        'add_new'       => __('Add New Video', 'bitmovin_player'),
+        'add_new_item'  => __('Add New Video', 'bitmovin_player'),
+        'new_item'      => __('New Video', 'bitmovin_player'),
+        'edit_item'     => __('Edit Video', 'bitmovin_player'),
+        'view_item'     => __('View Video', 'bitmovin_player'),
+        'all_items'     => __('All Videos', 'bitmovin_player'),
+        'search_items'  => __('Search Videos', 'bitmovin_player')
     );
 
     $args = array(
-        'labels' => $labels,
-        'hierarchical' => true,
-        'description' => 'Video',
-        'supports' => array('title'),
-        'public' => true,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'show_in_nav_menus' => false,
-        'publicly_queryable' => true,
+        'labels'              => $labels,
+        'hierarchical'        => true,
+        'description'         => 'Video',
+        'supports'            => array('title'),
+        'public'              => true,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'show_in_nav_menus'   => false,
+        'publicly_queryable'  => true,
         'exclude_from_search' => true,
-        'has_archive' => true,
-        'query_var' => true,
-        'can_export' => true,
-        'rewrite' => true,
-        'capability_type' => 'post',
-        'menu_icon' => plugins_url('images/bitlogo.png', __FILE__)
+        'has_archive'         => true,
+        'query_var'           => true,
+        'can_export'          => true,
+        'rewrite'             => true,
+        'capability_type'     => 'post',
+        'menu_icon'           => plugins_url('images/bitlogo.png', __FILE__)
     );
 
     register_post_type('bitmovin_player', $args);
@@ -80,7 +80,8 @@ function bitmovin_player_columns($columns)
 add_action('manage_bitmovin_player_posts_custom_column', 'bitmovin_player_column', 10, 2);
 function bitmovin_player_column($column, $post_id)
 {
-    switch ($column) {
+    switch ($column)
+    {
         case 'bitmovin_player_shortcode':
             echo "[bitmovin_player id='$post_id']";
             break;
@@ -212,7 +213,7 @@ function bitmovin_player_preview()
     $html = '<div>';
     $html .= '<p>To apply your changes in the config click "Update" on the right side menu. To include the player in a post just copy and paste this <strong>[bitmovin_player id=\'' . $post->ID . '\']</strong> shortcode to your post.</strong>';
     $html .= '<div style="width: 600px; margin: auto">';
-    $html .= generate_player(array("id"=>$post->ID));
+    $html .= generate_player(array("id" => $post->ID));
     $html .= '</div>';
     $html .= '</div>';
 
@@ -239,37 +240,8 @@ function getVideoTable($id)
     return $videoTable;
 }
 
-function getSupportedPlayerVersions() {
-    $versions = array(
-        "stable" => array(
-            "Latest Version 7", "Latest Version 6", "Latest Version 5", "Latest Version 4",
-            "7.0","7.0.1",
-            "6.0","6.0.1","6.0.2","6.0.3","6.0.4","6.0.5",
-            "6.1","6.1.1","6.1.2","6.1.3","6.1.4","6.1.5","6.1.6","6.1.7","6.1.8",
-            "5.0","5.0.1","5.0.2","5.1",
-            "5.2.0","5.2.1","5.2.2","5.2.3","5.2.4","5.2.5","5.2.6","5.2.7","5.2.8","5.2.9","5.2.10","5.2.13","5.2.14","5.2.15","5.2.16","5.2.17","5.2.18","5.2.19",
-            "4.0","4.0.1","4.0.2","4.0.3",
-            "4.1","4.1.1","4.1.2",
-            "4.2","4.2.1",
-            "4.3","4.3.1",
-            "4.4","4.4.1"
-        ),
-        "staging" => array(
-            "Latest Version 7", "Latest Version 6", "Latest Version 5",
-            "7.0", "7.0.0-rc1", "7.0.0-rc2", "7.0.0-rc3", "7.0.0-rc4", "7.0.0-rc5", "7.0.0-rc6",
-            "6.1", "6.1.0-rc1", "6.1.0-rc2", "6.1.0-rc3", "6.1.0-rc4", "6.1.0-rc5", "6.1.0-rc6","6.1.0-rc7",
-            "5.2", "5.2.0-rc1", "5.2.0-rc2",
-            "5.1", "5.1.0-rc1"
-        ),
-        "beta" => array(
-            "Latest Version 7", "Latest Version 6", "Latest Version 5",
-            "7.0", "7.0.0-b1","7.0.0-b2",
-            "6.1", "6.1.0-b1","6.1.0-b2","6.1.0-b3","6.1.0-b4","6.1.0-b5","6.1.0-b6","6.1.0-b7","6.1.0-b8","6.1.0-b9","6.1.0-b10","6.1.0-b11","6.1.0-b12","6.1.0-b13","6.1.0-b14","6.1.0-b15","6.1.0-b16",
-            "5.2", "5.2.0-b1","5.2.0-b2","5.2.0-b3","5.2.0-b4","5.2.0-b5","5.2.0-b6","5.2.0-b7","5.2.0-b8","5.2.0-b9",
-            "5.1", "5.1.0-b1","5.1.0-b9","5.1.0-b10"
-        )
-    );
-
+function getSupportedPlayerVersions()
+{
     $versions = array(
         "7" => "Latest Version 7",
         "6" => "Latest Version 6",
@@ -287,9 +259,9 @@ function getPlayerTable($id)
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
     $playerTable .= "<tr><td class='heading' colspan='2'>Player Channels/Versions</td></tr>";
     $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, array(
-        "stable" => "Stable",
+        "stable"  => "Stable",
         "staging" => "Staging",
-        "beta" => "Beta"
+        "beta"    => "Beta"
     ));
     $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, getSupportedPlayerVersions());
     $playerTable .= "</table>";
@@ -306,7 +278,7 @@ function getAdvancedTable($id)
     $advancedTable .= "<tr><td class='heading' colspan='2'>Custom Player Version</td></tr><tr><td colspan='2'>To provide our users the right version of our player, we have four public player channels available.
     In order of latest stable to most stable, we offer the Developer Channel, the Beta Channel, the Staging Channel, and finally the Stable Channel (default for every account).
     More information about the different channels and their meaning can be found in our <a href='https://bitmovin.com/player-documentation/release-channels/'>support section</a>.</td></tr>";
-    $advancedTable .= "<tr><td colspan='2'>".getInputField("config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/CHANNEL/VERSION/bitmovinplayer.js")."</td></tr>";
+    $advancedTable .= "<tr><td colspan='2'>" . getInputField("config_version_link", $version_link, "https://bitmovin-a.akamaihd.net/bitmovin-player/CHANNEL/VERSION/bitmovinplayer.js") . "</td></tr>";
     $advancedTable .= "</table>";
 
     return $advancedTable;
@@ -446,7 +418,8 @@ function getCustomTable($id)
     return $customTable;
 }
 
-function getInputField($propertyName, $propertyValue, $placeHolder) {
+function getInputField($propertyName, $propertyValue, $placeHolder)
+{
     return "<input id='" . $propertyName . "' name='" . $propertyName . "' type='text' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "'/>";
 }
 
@@ -459,19 +432,21 @@ function getTableRowInputNumber($propertyDisplayName, $propertyName, $propertyVa
 {
     return "<tr>
         <th>" . $propertyDisplayName . "</th>
-        <td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='". $placeHolder . "' step='any'/></td></tr>";
+        <td><input id='" . $propertyName . "' name='" . $propertyName . "' type='number' value='" . json_decode($propertyValue) . "' placeholder='" . $placeHolder . "' step='any'/></td></tr>";
 }
 
 function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption, $options)
 {
     $selectedOption = json_decode($selectedOption);
-    if(in_array($selectedOption, array_values($options))) {
+    if (in_array($selectedOption, array_values($options)))
+    {
         $selectedOption = array_search($selectedOption, $options);
     }
 
     $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
-    foreach($options as $key => $option) {
-        $tableRowSelect .= "<option value='" . $key . "'". (($key == $selectedOption)?"selected=\"selected\"":"") .">" . $option . "</option>";
+    foreach ($options as $key => $option)
+    {
+        $tableRowSelect .= "<option value='" . $key . "'" . (($key == $selectedOption) ? "selected=\"selected\"" : "") . ">" . $option . "</option>";
     }
 
     $tableRowSelect .= "</select></td></tr>";
@@ -483,13 +458,15 @@ add_action('save_post', 'bitmovin_player_save_configuration');
 function bitmovin_player_save_configuration($post_id)
 {
     // check autosave
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+    {
         return $post_id;
     }
 
     // check permissions
 
-    if (array_key_exists('post_type', $_POST) && 'bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id)) {
+    if (array_key_exists('post_type', $_POST) && 'bitmovin_player' == $_POST['post_type'] && current_user_can('edit_post', $post_id))
+    {
 
         $dash_url = getParameter("config_src_dash");
         $hls_url = getParameter("config_src_hls");
@@ -578,7 +555,9 @@ function bitmovin_player_save_configuration($post_id)
         update_post_meta($post_id, "_config_custom_source", $customSource);
         update_post_meta($post_id, "_config_custom_conf", $customConf);
 
-    } else {
+    }
+    else
+    {
         return $post_id;
     }
 }
@@ -589,13 +568,19 @@ function getParameter($param)
     return strip_tags(json_encode($param));
 }
 
-function parsePlayerVersion($versionString) {
+function parsePlayerVersion($versionString)
+{
     $matches = null;
-    if(preg_match('/^(?<=Latest\\sVersion\\s)?\\d$/', $versionString, $matches) == 1) {
+    if (preg_match('/^(?<=Latest\\sVersion\\s)?\\d$/', $versionString, $matches) == 1)
+    {
         return $matches[0];
-    } else if(preg_match('/\\d(\\.\\d(\\.\\d)?)?/', $versionString, $matches) == 1) {
+    }
+    else if (preg_match('/\\d(\\.\\d(\\.\\d)?)?/', $versionString, $matches) == 1)
+    {
         return $matches[0];
-    } else {
+    }
+    else
+    {
         return null;
     }
 }
@@ -608,13 +593,15 @@ function generate_player($id)
     ), $id));
 
     $playerKey = get_option('bitmovin_player_key');
-    if($playerKey == "") {
+    if ($playerKey == "")
+    {
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
     }
 
-    $wpPlayerVersion = json_decode(get_post_meta( $id, "_config_player_version", true ));
+    $wpPlayerVersion = json_decode(get_post_meta($id, "_config_player_version", true));
     $player_version = parsePlayerVersion($wpPlayerVersion);
-    if($player_version === false) {
+    if ($player_version === false)
+    {
         return "<pre>Invalid player version: " . htmlspecialchars($player_version) . "</pre>";
     }
 
@@ -631,39 +618,45 @@ function generate_player($id)
     $html .= "window.onload = function() {\n";
     $html .= "var player = " . $player_init_cmd . ";\n";
     $html .= "var conf = {\n";
-    $html .= "key: '" . $playerKey ."',\n";
+    $html .= "key: '" . $playerKey . "',\n";
     $html .= "source: {\n";
     $html .= getVideoConfig($id);
 
     $drm = getDrmConfig($id);
-    if ($drm != "") {
+    if ($drm != "")
+    {
         $html .= ",drm: " . $drm . "\n";
     }
 
     $vr = getVrConfig($id);
-    if ($vr != "") {
+    if ($vr != "")
+    {
         $html .= ",vr: " . $vr . "\n";
     }
 
-    $custom = json_decode(get_post_meta( $id, "_config_custom_source", true ));
-    if ( $custom != "" ) {
+    $custom = json_decode(get_post_meta($id, "_config_custom_source", true));
+    if ($custom != "")
+    {
         $html .= $custom;
     }
 
     $html .= "}\n";
 
     $ads = getAdsConfig($id);
-    if ($ads != "") {
+    if ($ads != "")
+    {
         $html .= ",advertising: " . $ads . "\n";
     }
 
     $style = getStyleConfig($id);
-    if ($style != "") {
+    if ($style != "")
+    {
         $html .= ",style: " . $style . "\n";
     }
 
-    $custom = json_decode(get_post_meta( $id, "_config_custom_conf", true ));
-    if ( $custom != "" ) {
+    $custom = json_decode(get_post_meta($id, "_config_custom_conf", true));
+    if ($custom != "")
+    {
         $html .= $custom;
     }
 
@@ -681,7 +674,8 @@ function generate_player($id)
     return $html;
 }
 
-function getVideoConfig($id) {
+function getVideoConfig($id)
+{
     $dash = json_decode(get_post_meta($id, "_config_src_dash", true));
     $hls = json_decode(get_post_meta($id, "_config_src_hls", true));
     $prog = json_decode(get_post_meta($id, "_config_src_prog", true));
@@ -690,26 +684,33 @@ function getVideoConfig($id) {
     $video = "";
     $hasElementBefore = false;
 
-    if($dash != "") {
+    if ($dash != "")
+    {
         $video .= "dash: '" . $dash . "'";
         $hasElementBefore = true;
     }
-    if($hls != "") {
-        if ($hasElementBefore) {
+    if ($hls != "")
+    {
+        if ($hasElementBefore)
+        {
             $video .= ",";
         }
         $video .= "hls: '" . $hls . "'";
         $hasElementBefore = true;
     }
-    if($prog != "") {
-        if ($hasElementBefore) {
+    if ($prog != "")
+    {
+        if ($hasElementBefore)
+        {
             $video .= ",";
         }
         $video .= "progressive: '" . $prog . "'";
         $hasElementBefore = true;
     }
-    if($poster != "") {
-        if ($hasElementBefore) {
+    if ($poster != "")
+    {
+        if ($hasElementBefore)
+        {
             $video .= ",";
         }
         $video .= "poster: '" . $poster . "'";
@@ -726,7 +727,8 @@ function getPlayerConfig($id)
     $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
     $parsedPlayerVersion = parsePlayerVersion($player_version);
 
-    if(is_null($parsedPlayerVersion)) {
+    if (is_null($parsedPlayerVersion))
+    {
         $parsedPlayerVersion = 7;
     }
 
@@ -773,14 +775,17 @@ function getDrmConfig($id)
     $drm = "{";
     $hasElementBefore = false;
 
-    if ($widevine_la_url != "") {
+    if ($widevine_la_url != "")
+    {
         $drm .= "widevine: {";
         $drm .= "LA_URL: '" . $widevine_la_url . "'";
         $drm .= "}";
         $hasElementBefore = true;
     }
-    if ($playready_la_url != "") {
-        if ($hasElementBefore) {
+    if ($playready_la_url != "")
+    {
+        if ($hasElementBefore)
+        {
             $drm .= ",";
         }
         $drm .= "playready: {";
@@ -789,8 +794,10 @@ function getDrmConfig($id)
         $drm .= "}";
         $hasElementBefore = true;
     }
-    if ($access_la_url != "" && $access_authToken != "") {
-        if ($hasElementBefore) {
+    if ($access_la_url != "" && $access_authToken != "")
+    {
+        if ($hasElementBefore)
+        {
             $drm .= ",";
         }
         $drm .= "access: {";
@@ -799,8 +806,10 @@ function getDrmConfig($id)
         $drm .= "}";
         $hasElementBefore = true;
     }
-    if ($primetime_la_url != "") {
-        if ($hasElementBefore) {
+    if ($primetime_la_url != "")
+    {
+        if ($hasElementBefore)
+        {
             $drm .= ",";
         }
         $drm .= "primetime: {";
@@ -809,8 +818,10 @@ function getDrmConfig($id)
         $drm .= "}";
         $hasElementBefore = true;
     }
-    if ($fairplay_la_url != "" && $fairplay_certificateURL != "") {
-        if ($hasElementBefore) {
+    if ($fairplay_la_url != "" && $fairplay_certificateURL != "")
+    {
+        if ($hasElementBefore)
+        {
             $drm .= ",";
         }
         $drm .= "fairplay: {";
@@ -822,7 +833,8 @@ function getDrmConfig($id)
 
     $drm .= "}";
 
-    if (!$hasElementBefore) {
+    if (!$hasElementBefore)
+    {
         $drm = "";
     }
 
@@ -833,7 +845,8 @@ function getAdsConfig($id)
 {
     $client = json_decode(get_post_meta($id, "_config_advertising_client", true));
 
-    if ($client == "") {
+    if ($client == "")
+    {
         return "";
     }
 
@@ -847,7 +860,8 @@ function getAdsConfig($id)
     $schedule4Offset = json_decode(get_post_meta($id, "_config_advertising_schedule4_offset", true));
     $schedule4Tag = json_decode(get_post_meta($id, "_config_advertising_schedule4_tag", true));
 
-    if (!((($schedule1Offset != "") && ($schedule1Tag != "")) || (($schedule2Offset) && ($schedule2Tag != "")) || (($schedule3Offset != "") && ($schedule3Tag != "")) || (($schedule4Offset != "") && ($schedule4Tag != "")))) {
+    if (!((($schedule1Offset != "") && ($schedule1Tag != "")) || (($schedule2Offset) && ($schedule2Tag != "")) || (($schedule3Offset != "") && ($schedule3Tag != "")) || (($schedule4Offset != "") && ($schedule4Tag != ""))))
+    {
         return "";
     }
 
@@ -855,22 +869,26 @@ function getAdsConfig($id)
 
     $ads .= "client: '" . $client . "',";
 
-    if ($admessage != "") {
+    if ($admessage != "")
+    {
         $ads .= "admessage: '" . $admessage . "',";
     }
 
     $ads .= "schedule : {";
     $hasElementBefore = false;
 
-    if (($schedule1Offset != "") && ($schedule1Tag != "")) {
+    if (($schedule1Offset != "") && ($schedule1Tag != ""))
+    {
         $ads .= "'schedule1' : {";
         $ads .= "offset: '" . $schedule1Offset . "',";
         $ads .= "tag: '" . $schedule1Tag . "'";
         $ads .= "}";
         $hasElementBefore = true;
     }
-    if (($schedule2Offset != "") && ($schedule2Tag != "")) {
-        if ($hasElementBefore) {
+    if (($schedule2Offset != "") && ($schedule2Tag != ""))
+    {
+        if ($hasElementBefore)
+        {
             $ads .= ",";
         }
         $ads .= "'schedule2' : {";
@@ -879,8 +897,10 @@ function getAdsConfig($id)
         $ads .= "}";
         $hasElementBefore = true;
     }
-    if (($schedule3Offset != "") && ($schedule3Tag != "")) {
-        if ($hasElementBefore) {
+    if (($schedule3Offset != "") && ($schedule3Tag != ""))
+    {
+        if ($hasElementBefore)
+        {
             $ads .= ",";
         }
         $ads .= "'schedule3' : {";
@@ -889,8 +909,10 @@ function getAdsConfig($id)
         $ads .= "}";
         $hasElementBefore = true;
     }
-    if (($schedule4Offset != "") && ($schedule4Tag != "")) {
-        if ($hasElementBefore) {
+    if (($schedule4Offset != "") && ($schedule4Tag != ""))
+    {
+        if ($hasElementBefore)
+        {
             $ads .= ",";
         }
         $ads .= "'schedule4' : {";
@@ -913,21 +935,25 @@ function getVrConfig($id)
     $initialRotation = json_decode(get_post_meta($id, "_config_src_vr_initialRotation", true));
     $initialRotationRate = json_decode(get_post_meta($id, "_config_src_vr_initialRotateRate", true));
 
-    if ($startupMode == "disabled" || $startupMode == "") {
+    if ($startupMode == "disabled" || $startupMode == "")
+    {
         return "";
     }
 
     $vr = "{";
     $vr .= "startupMode: '" . $startupMode . "'";
-    if($startPosition != "") {
+    if ($startPosition != "")
+    {
         $vr .= ",startPosition: " . $startPosition;
     }
 
-    if($initialRotation != "" && $initialRotation != "disabled") {
+    if ($initialRotation != "" && $initialRotation != "disabled")
+    {
         $vr .= ",initialRotation: " . $initialRotation;
     }
 
-    if($initialRotationRate != "") {
+    if ($initialRotationRate != "")
+    {
         $vr .= ",initialRotationRate: " . $initialRotationRate;
     }
     $vr .= "}";
@@ -944,21 +970,26 @@ function getStyleConfig($id)
     $style = "{";
     $hasElementBefore = false;
 
-    if($width != "") {
+    if ($width != "")
+    {
         $style .= "width: '" . $width . "'";
         $hasElementBefore = true;
     }
 
-    if($height != "") {
-        if ($hasElementBefore) {
+    if ($height != "")
+    {
+        if ($hasElementBefore)
+        {
             $style .= ",";
         }
         $style .= "height: '" . $height . "'";
         $hasElementBefore = true;
     }
 
-    if($aspectRatio != "") {
-        if ($hasElementBefore) {
+    if ($aspectRatio != "")
+    {
+        if ($hasElementBefore)
+        {
             $style .= ",";
         }
         $style .= "aspectratio: '" . $aspectRatio . "'";
@@ -966,7 +997,8 @@ function getStyleConfig($id)
     }
     $style .= "}";
 
-    if(!$hasElementBefore) {
+    if (!$hasElementBefore)
+    {
         $style = "";
     }
 
@@ -989,19 +1021,19 @@ function bitmovin_plugin_display_settings()
     $html = '<div class="wrap">
             <form id="bitmovinSettingsForm" method="post" name="options" action="options.php">
 
-            <h2>Bitmovin Wordpress Plugin Settings</h2>'. wp_nonce_field('update-options') .'
+            <h2>Bitmovin Wordpress Plugin Settings</h2>' . wp_nonce_field('update-options') . '
             <table class="form-table">
                 <tr><td class="tooltip">Bitmovin Api Key
                 <img src="' . $image_url . '" alt="Info" height="15" width="15">
                 <span class="tooltiptext">Please insert Bitmovin API key here. <br> Do not confound it with your Player key.
                 <br> You can find your API key in the settings section of your Bitmovin Account <a href="https://app.bitmovin.com/settings">here</a>.</span></td>
-                <td><input id="apiKey" type="text" name="bitmovin_api_key" size="50" value="' . $apiKey. '"/></td>
+                <td><input id="apiKey" type="text" name="bitmovin_api_key" size="50" value="' . $apiKey . '"/></td>
                 </tr>
             </table>
             <p id="messages"></p>
             <p class="submit">
                 <input type="hidden" name="action" value="update" />
-                <input id="playerKey" type="hidden" name="bitmovin_player_key" size="50" value="' . $playerKey. '"/>
+                <input id="playerKey" type="hidden" name="bitmovin_player_key" size="50" value="' . $playerKey . '"/>
                 <input type="hidden" name="page_options" value="bitmovin_player_key,bitmovin_api_key" />
                 <input type="button" value="Save" onclick="checkApiKey()"/>
             </p>
