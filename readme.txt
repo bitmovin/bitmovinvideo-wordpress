@@ -4,7 +4,7 @@ Donate link:
 Tags:
 Requires at least: 4.5.3
 Tested up to: 4.5.3
-Stable tag: 4.5.3
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,9 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 
 == Changelog ==
 
+= v0.6.1 =
+* Fixed VR settings menu
+
 = v0.6.0 =
 * Added initial support to use our latest player versions as well
 * Minor updates / improvements
@@ -180,6 +183,10 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 
 
 == Upgrade Notice ==
+
+= v0.6.1 =
+Due to recent changes, after saving a new player config, invalid value for VR settings were saved.
+If you experienced that, edit your player configuration, update your VR settings, and save it again. Then it will work as expected again.
 
 = v0.5.1 =
 With the newest upgrade you are now able to change to the player version you prefer.
