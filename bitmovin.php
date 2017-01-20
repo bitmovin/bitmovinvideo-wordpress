@@ -446,7 +446,8 @@ function getTableRowSelect($propertyDisplayName, $propertyName, $selectedOption,
     $tableRowSelect = "<tr><th>" . $propertyDisplayName . "</th><td><select id='" . $propertyName . "' name='" . $propertyName . "'>";
     foreach ($options as $key => $option)
     {
-        $tableRowSelect .= "<option value='" . $key . "'" . (($key == $selectedOption) ? "selected=\"selected\"" : "") . ">" . $option . "</option>";
+        $value = is_int($key) ? $option : $key;
+        $tableRowSelect .= "<option value='" . $value . "'" . (($key == $selectedOption) ? "selected=\"selected\"" : "") . ">" . $option . "</option>";
     }
 
     $tableRowSelect .= "</select></td></tr>";
