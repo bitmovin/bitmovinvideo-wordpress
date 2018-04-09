@@ -166,6 +166,9 @@ function getVideoTable($id)
 
     $videoTable .= "</table>";
 
+    $videoTable .= "<input id='apiKey' type='hidden' value='" . $apiKey = get_option('bitmovin_api_key') . "'/>";
+    $videoTable .= "<input id='config_player_key_selected' name='config_player_key_selected' type='hidden' value='" . get_post_meta($id, "_config_player_key_selected", true) . "'/>";
+
     return $videoTable;
 }
 
@@ -198,13 +201,17 @@ function getPlayerTable($id)
 
     $player_channel = get_post_meta($id, "_config_player_channel", true);
     $player_version = get_post_meta($id, "_config_player_version", true);
+    $player_version_url = get_post_meta($id, "_config_player_version_url", true);
+    $player_key = get_post_meta($id, "_config_player_key", true);
 
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
-    $playerTable .= "<tr><td class='heading' colspan='2'>Player Channels/Versions</td></tr>";
+    $playerTable .= "<tr><td class='heading' colspan='2'>Player Version and License Key</td></tr>";
 
 
     $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, $playerChannels);
-    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array("asdf" => "asdf"));
+    $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array());
+    $playerTable .= getTableRowInput("Version Url", "config_player_version_url", $player_version_url);
+    $playerTable .= getTableRowSelect("License Key", "config_player_key", $player_key, array());
     $playerTable .= "</table>";
 
     return $playerTable;
@@ -213,14 +220,12 @@ function getPlayerTable($id)
 function getCustomTable($id)
 {
     $customConf = json_decode(get_post_meta($id, "_config_custom_conf", true));
-    $customSource = json_decode(get_post_meta($id, "_config_custom_source", true));
 
     $customTable = "<table class='wp-list-table widefat fixed striped'>";
     $customTable .= "<tr><td class='heading' colspan='2'>Custom Configuration</td></tr>";
 
-    $customTable .= "<tr><td>Appended to configuration</td><td><pre>var conf = {<br><div class='intend1'>...<br>...<br><textarea id='config_custom' name='config_custom_conf'>" . $customConf . "</textarea></div>};</pre></td></tr>";
-    $customTable .= "<tr><td>Appended to configuration -> source</td><td><pre>var conf = {<br><div class='intend1'>source: {<div class='intend1'>...<br>...<br><textarea id='config_custom_source' name='config_custom_source'>" . $customSource . "</textarea></div>},<br>...<br>...</div>};</pre></td></tr>";
-    $customTable .= "<tr><td colspan='2' class='hint'>Make sure you start your custom configuration with an ','</td></tr>";
+    $customTable .= "<tr><td>Custom configuration</td><td><pre>var conf = {<br><div class='intend1'><textarea id='config_custom' name='config_custom_conf'>" . $customConf . "</textarea></div>};</pre></td></tr>";
+    $customTable .= "<tr><td colspan='2' class='hint'>The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
 
     $customTable .= "</table>";
 
@@ -285,14 +290,16 @@ function bitmovin_player_save_configuration($post_id)
 
         $player_channel = getParameter("config_player_channel");
         $player_version = getParameter("config_player_version");
+        $player_version_url = getParameter("config_player_version_url");
+        $player_key = getParameter("config_player_key");
 
         update_post_meta($post_id, "_config_player_channel", $player_channel);
         update_post_meta($post_id, "_config_player_version", $player_version);
+        update_post_meta($post_id, "_config_player_version_url", $player_version_url);
+        update_post_meta($post_id, "_config_player_key", $player_key);
 
-        $customSource = getParameter("config_custom_source");
         $customConf = getParameter("config_custom_conf");
 
-        update_post_meta($post_id, "_config_custom_source", $customSource);
         update_post_meta($post_id, "_config_custom_conf", $customConf);
     } else {
         return $post_id;
@@ -314,46 +321,41 @@ function generate_player($id)
         'id' => ''
     ), $id));
 
-    $playerKey = get_option('bitmovin_player_key');
+    $playerKey = json_decode(get_post_meta($id, '_config_player_key', true));
+
     if ($playerKey == "") {
         return "<pre>No correct api key set in Bitmovin Settings.</pre>";
     }
 
-    $wpPlayerVersion = json_decode(get_post_meta($id, "_config_player_version", true));
-    $player_version = parsePlayerVersion($wpPlayerVersion);
-    if ($player_version === false) {
-        return "<pre>Invalid player version: " . htmlspecialchars($player_version) . "</pre>";
-    }
+    $player_version = json_decode(get_post_meta($id, "_config_player_version_url", true));
 
-    $advancedConfig = getAdvancedConfig($id);
-    $player_init_cmd = "typeof bitmovin !== \"undefined\" ? bitmovin.player(\"bitmovin-player\") : bitdash(\"bitmovin-player\");";
-    if ($advancedConfig == 0) {
-        getPlayerConfig($id);
-    }
+    wp_register_script('bitmovin_player_core', $player_version);
+    wp_enqueue_script('bitmovin_player_core');
+
+    $dash = json_decode(get_post_meta($id, "_config_src_dash", true));
+    $hls = json_decode(get_post_meta($id, "_config_src_hls", true));
+    $prog = json_decode(get_post_meta($id, "_config_src_prog", true));
+    $poster = json_decode(get_post_meta($id, "_config_src_poster", true));
 
 
     $html = "<div id='bitmovin-player'></div>\n";
     $html .= "<script type='text/javascript'>\n";
     $html .= "window.onload = function() {\n";
-    $html .= "var player = " . $player_init_cmd . ";\n";
+    $html .= "var player = bitmovin.player(\"bitmovin-player\");\n";
     $html .= "var conf = {\n";
-    $html .= "key: '" . $playerKey . "',\n";
-    $html .= "source: {\n";
-    $html .= getVideoConfig($id);
-
-    $custom = json_decode(get_post_meta($id, "_config_custom_source", true));
-    if ($custom != "") {
-        $html .= $custom;
-    }
-
-    $html .= "}\n";
-
     $custom = json_decode(get_post_meta($id, "_config_custom_conf", true));
     if ($custom != "") {
         $html .= $custom;
     }
-
     $html .= "};\n";
+
+    $html .= "conf.key = '" . $playerKey . "';\n";
+
+    $html .= "conf.source = conf.source || {}\n";
+    $html .= "conf.source.dash = '" . $dash . "';\n";
+    $html .= "conf.source.hls = '" . $hls . "';\n";
+    $html .= "conf.source.progressive = '" . $prog . "';\n";
+    $html .= "conf.source.poster = '" . $poster . "';\n";
 
     $html .= "player.setup(conf).then(function(value) {\n";
     $html .= "console.log('Successfully created bitdash player instance');\n";
@@ -367,69 +369,6 @@ function generate_player($id)
     return $html;
 }
 
-function getVideoConfig($id)
-{
-    $dash = json_decode(get_post_meta($id, "_config_src_dash", true));
-    $hls = json_decode(get_post_meta($id, "_config_src_hls", true));
-    $prog = json_decode(get_post_meta($id, "_config_src_prog", true));
-    $poster = json_decode(get_post_meta($id, "_config_src_poster", true));
-
-    $video = "";
-    $hasElementBefore = false;
-
-    if ($dash != "") {
-        $video .= "dash: '" . $dash . "'";
-        $hasElementBefore = true;
-    }
-    if ($hls != "") {
-        if ($hasElementBefore) {
-            $video .= ",";
-        }
-        $video .= "hls: '" . $hls . "'";
-        $hasElementBefore = true;
-    }
-    if ($prog != "") {
-        if ($hasElementBefore) {
-            $video .= ",";
-        }
-        $video .= "progressive: '" . $prog . "'";
-        $hasElementBefore = true;
-    }
-    if ($poster != "") {
-        if ($hasElementBefore) {
-            $video .= ",";
-        }
-        $video .= "poster: '" . $poster . "'";
-    }
-
-    return $video;
-}
-
-function getPlayerConfig($id)
-{
-    $player_channel = json_decode(get_post_meta($id, "_config_player_channel", true));
-    $player_channel = strtolower($player_channel);
-
-    $player_version = json_decode(get_post_meta($id, "_config_player_version", true));
-    $parsedPlayerVersion = parsePlayerVersion($player_version);
-
-    if (is_null($parsedPlayerVersion)) {
-        $parsedPlayerVersion = 7;
-    }
-
-    $srcRoot = "https://bitmovin-a.akamaihd.net/bitmovin-player/" . $player_channel . "/";
-    $src = $srcRoot . $parsedPlayerVersion . "/bitmovinplayer.js";
-
-    if (intval($parsedPlayerVersion) == 6) {
-        $src = $srcRoot . $parsedPlayerVersion . "/bitmovinplayer.min.js";
-    } else if (intval($parsedPlayerVersion) <= 5) {
-        $src = $srcRoot . $parsedPlayerVersion . "/bitdash.min.js";
-    }
-
-    wp_register_script('bitmovin_player_core', $src);
-    wp_enqueue_script('bitmovin_player_core');
-}
-
 function getAdvancedConfig($id)
 {
     $version_link = json_decode(get_post_meta($id, "_config_version_link", true));
@@ -440,19 +379,6 @@ function getAdvancedConfig($id)
     }
     return 0;
 }
-
-function parsePlayerVersion($versionString)
-{
-    $matches = null;
-    if (preg_match('/^(?<=Latest\\sVersion\\s)?\\d$/', $versionString, $matches) == 1) {
-        return $matches[0];
-    } else if (preg_match('/\\d(\\.\\d(\\.\\d)?)?/', $versionString, $matches) == 1) {
-        return $matches[0];
-    } else {
-        return null;
-    }
-}
-
 
 // Settings Page
 
@@ -470,7 +396,7 @@ function bitmovin_plugin_display_settings()
     $html = '<div class="wrap">
             <form id="bitmovinSettingsForm" method="post" name="options" action="options.php">
 
-            <h2>Bitmovin Wordpress Plugin Settingssss</h2>' . wp_nonce_field('update-options') . '
+            <h2>Bitmovin Wordpress Plugin Settings</h2>' . wp_nonce_field('update-options') . '
             <table class="form-table">
                 <tr><td class="tooltip">Bitmovin Api Key
                 <img src="' . $image_url . '" alt="Info" height="15" width="15">
