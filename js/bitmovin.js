@@ -1,15 +1,17 @@
+var apiBaseUrl = 'https://api.bitmovin.com/v1';
+
 $j = jQuery.noConflict();
+
 $j(document).ready(function() {
     var configSections = [
-        "bitmovin_player_configuration_drm", "bitmovin_player_configuration_ads",
-        "bitmovin_player_configuration_vr", "bitmovin_player_configuration_style",
-        "bitmovin_player_configuration_custom"
+               "bitmovin_player_configuration_custom"
     ];
     for(var i=0;i<configSections.length;i++) {
         if(!hasContent(configSections[i]))
             $j("#"+configSections[i]).addClass("closed");
     }
 });
+
 function hasContent(configSection) {
     var contentFound = false;
     var inputTypes = ["input[type='text']", "input[type='number']", "select", "textarea"];
@@ -25,16 +27,16 @@ function hasContent(configSection) {
     }
     return contentFound;
 }
+
 function checkApiKey() {
     var apiKey = $j("#apiKey").val();
     $j.ajax({
-        url: "https://app.bitmovin.com/api/settings/player/key",
+        url: apiBaseUrl + '/account/information',
         type: "GET",
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('bitcodin-api-key', apiKey);
+            xhr.setRequestHeader('X-Api-Key', apiKey);
         },
         success: function(data) {
-            $j("#playerKey").val(data.key);
             $j("#bitmovinSettingsForm").submit();
         },
         error: function(error) {
