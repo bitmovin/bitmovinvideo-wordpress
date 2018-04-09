@@ -157,7 +157,6 @@ function getVideoTable($id)
     $poster_url = get_post_meta($id, "_config_src_poster", true);
 
     $videoTable = '<table class="wp-list-table widefat fixed striped">';
-    $videoTable .= "<tr><td class='heading' colspan='2'>Video Configuration<a href='https://bitmovin.com/player-documentation/player-configuration/#Source' target='_blank'>Documentation</a></td></tr>";
 
     $videoTable .= getTableRowInput("Dash URL", "config_src_dash", $dash_url, "http://path/to/mpd/file.mpd");
     $videoTable .= getTableRowInput("HLS URL", "config_src_hls", $hls_url, "http://path/to/hls/playlist/file.m3u8");
@@ -205,8 +204,6 @@ function getPlayerTable($id)
     $player_key = get_post_meta($id, "_config_player_key", true);
 
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
-    $playerTable .= "<tr><td class='heading' colspan='2'>Player Version and License Key</td></tr>";
-
 
     $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, $playerChannels);
     $playerTable .= getTableRowSelect("Version", "config_player_version", $player_version, array());
@@ -222,7 +219,6 @@ function getCustomTable($id)
     $customConf = json_decode(get_post_meta($id, "_config_custom_conf", true));
 
     $customTable = "<table class='wp-list-table widefat fixed striped'>";
-    $customTable .= "<tr><td class='heading' colspan='2'>Custom Configuration</td></tr>";
 
     $customTable .= "<tr><td>Custom configuration</td><td><pre>var conf = {<br><div class='intend1'><textarea id='config_custom' name='config_custom_conf'>" . $customConf . "</textarea></div>};</pre></td></tr>";
     $customTable .= "<tr><td colspan='2' class='hint'>The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";

@@ -12,6 +12,8 @@ $j(document).ready(function() {
 
 function collapseAdvancedPanels() {
   var configSections = [
+
+    "bitmovin_player_configuration_player",
     "bitmovin_player_configuration_custom"
   ];
   for (var i = 0; i < configSections.length; i++) {
@@ -39,10 +41,12 @@ function populateVersions() {
 
     versions.reverse();
 
+    var setPlayerVersionUrl = $j('#config_player_version_url').val();
+
     var knownVersionUrl = false;
 
     versions.forEach(function(item) {
-      knownVersionUrl = item.cdnUrl === $j('#config_player_version_url').val();
+      knownVersionUrl = item.cdnUrl === setPlayerVersionUrl;
 
       versionSelect.append($j('<option>', {
         value: item.cdnUrl,
@@ -52,7 +56,7 @@ function populateVersions() {
     });
 
 
-    if (knownVersionUrl) {
+    if (knownVersionUrl || !setPlayerVersionUrl) {
       updateSelectedVersionUrl();
     }
   })
