@@ -3,7 +3,7 @@
   Plugin Name: Bitmovin
   Plugin URI: https://github.com/bitmovin/bitmovinvideo-wordpress
   Description: <strong>Bitmovin's</strong> HTML5 Adaptive Streaming Video Plugin for Wordpress.
-  Version: 0.6.1
+  Version: 2.0.0-alpha
   Author: Bitmovin
   Author URI: https://bitmovin.com
   License: GPLv2 or later
