@@ -1,9 +1,14 @@
 Bitmovin Wordpress Plugin
 =========================
 
-Version: v2.0.0-alpha
+Version: v2.0.0
 
 === Changelog ===
+
+**v2.0.0**
+
+  * Wordpress plugin now working with the new Bitmovin API
+
 
 **v2.0.0-alpha**
 
