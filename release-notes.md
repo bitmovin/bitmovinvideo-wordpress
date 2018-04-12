@@ -1,9 +1,14 @@
 Bitmovin Wordpress Plugin
 =========================
 
-Version: v0.6.1
+Version: v2.0.0-alpha
 
 === Changelog ===
+
+**v2.0.0-alpha**
+
+  * First version of Wordpress plugin working now with the new Bitmovin API
+
 **v0.6.1**
 
   * Fixed VR settings menu

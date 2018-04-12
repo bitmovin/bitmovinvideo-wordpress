@@ -18,10 +18,6 @@
     margin-top: 10px;
 }
 
-.configSection table tr:first-child {
-    text-align: center;
-}
-
 .configSection table td.heading {
     font-size: 1.2em;
     font-weight: bold;

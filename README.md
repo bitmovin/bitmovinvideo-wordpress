@@ -11,9 +11,9 @@
 Installation
 --------
 
-1. Follow this guide to create a [Bitmovin account](https://bitmovin.com/tutorials/get-started-bitmovin-html5-adaptive-player).
-2. Once logged in, go to **settings of your Bitmovin user account**, as shown in the figure below and get your **API key**.
-3. Do not forget to add the domain your Wordpress is running on to the allowed domains in the **player overview**.
+1. Sign up for Bitmovin [here](https://dashboard.bitmovin.com/signup).
+2. Once logged in, go to [account settings of your Bitmovin user account](https://dashboard.bitmovin.com/account), get your **API key**.
+3. Do not forget to add the domain your Wordpress is running on to the allowed domains in the [player licenses view](https://dashboard.bitmovin.com/player/licenses).
 5. Install Bitmovin Player Wordpress Plugin from your Wordpress dashboard or unzip the plugin archive in the `wp-content/plugins` directory.
 6. Activate the plugin through the **Plugins** menu in Wordpress.
 7. Go to the **Bitmovin Settings** left menu page and fill in your API key.
@@ -32,6 +32,4 @@ In this section you can add, remove and edit your videos.
 #### Bitmovin Settings
 
 In this section you have to set your Bitmovin API key to get the player working on your Wordpress site.
-Your API key can be found in the **settings of your Bitmovin user account**, as shown in the figure below.
-
-![APIKey](https://cloudfront-prod.bitmovin.com/wp-content/uploads/2016/04/api-key.png)
+Your API key can be found in the [account settings of your Bitmovin user account](https://dashboard.bitmovin.com/account).
