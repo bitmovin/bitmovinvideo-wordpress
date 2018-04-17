@@ -108,7 +108,7 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 == Changelog ==
 
 = v2.0.1 =
-* Plugin works with Bitmovin API now (IMPORTANT: it is no longer compatible with accounts that were created at app.bitmovin.com)
+* Plugin works with Bitmovin API now (IMPORTANT: it is no longer compatible with accounts that were created at app.bitmovin.com! Please see the installation instructions for more details)
 
 = v0.6.1 =
 * Fixed VR settings menu
