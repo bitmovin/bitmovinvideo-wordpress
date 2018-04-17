@@ -82,7 +82,7 @@ function populatePlayerLicenses() {
     licenses.forEach(function(item) {
       keySelect.append($j('<option>', {
         value: item.licenseKey,
-        text : item.licenseKey,
+        text : (item.hasOwnProperty("name") ? item.licenseKey + ' (' + item.name + ')': item.licenseKey),
         selected: item.licenseKey === $j('#config_player_key_selected').val()
       }));
     });
