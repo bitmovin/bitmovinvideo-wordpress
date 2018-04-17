@@ -28,8 +28,8 @@ It also comes with a lot of features:
 
 - DRM support
 - Ad support
-- VR and 360°
-- Encoding Service (HLS or MPEG-DASH)
+- VR / 360°
+- HLS, MPEG-DASH, Smooth, progressive content (mp4, and more)
 - Fastest loading times
 
 VR and 360° Video and Adaptive Bitrate Streaming
