@@ -1,6 +1,5 @@
 === Bitmovin Wordpress Plugin ===
 Contributors: Gernot Zwantschko, Lukas Kröpfl, Tristan Boyd, Patrick Struger
-Donate link:
 Tags: bitmovin, video, vr, ads, html5, dash, hls, mpeg-dash, mp4, smooth
 Requires at least: 4.5.3
 Tested up to: 4.9.5
