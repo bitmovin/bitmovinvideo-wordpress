@@ -1,10 +1,10 @@
 === Bitmovin Wordpress Plugin ===
 Contributors: Gernot Zwantschko, Lukas Kröpfl, Tristan Boyd, Patrick Struger
 Donate link:
-Tags:
+Tags: bitmovin, video, vr, ads, html5, dash, hls, mpeg-dash, mp4, smooth
 Requires at least: 4.5.3
-Tested up to: 4.5.3
-Stable tag: 0.6.1
+Tested up to: 4.9.5
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,20 +32,6 @@ It also comes with a lot of features:
 - Encoding Service (HLS or MPEG-DASH)
 - Fastest loading times
 
-
-Bitmovin Encoding Service
-
-The Bitmovin Wordpress Plugin also encodes your videos into modern Adaptive Bitrate Streaming formats such as MPEG-DASH and HLS.
-When uploading multimedia files via Wordpress, the Plugin automatically convert them via the Bitmovin Encoding service running in background into those formats.
-
-The general workflow is a follows: Your input videos can be uploaded by the provided wordpress upload page and can the be
-encoded with the Encoding Feature of the Bitmovin Plugin into MPEG-DASH and HLS formats used for streaming.
-Bitmovin transfers the encoded asset back to your storage. From this storage you can directly deliver your videos to your customers.
-These cutting edge adaptive streaming formats enable smooth playback without buffering and low startup delay at the highest possible quality.
-Your input videos can be transfered to our cloud encoding service through various input protocols
-such as HTTP or FTP servers, Google Cloud Storage, Amazon S3, Microsoft Azure, Aspera
-
-
 VR and 360° Video and Adaptive Bitrate Streaming
 
 The Bitmovin Wordpress Plugin utilizes the browser build-in HTML5 Media Source Extensions (MSE)
@@ -58,14 +44,14 @@ This playout technique is available on most modern web browsers.
 
 This section describes how to install the plugin and get it working.
 
-1.  If not already done you firstly have to create an Bitmovin Account at https://bitmovin.com/signup-player/.
-2.  Once logged in, go to the settings of your Bitmovin user account and get your API key (Do not confound it with your Player key).
-3.  Do not forget to add the domain of your Wordpress website to the allowed domains in the player overview.
-4.  Install the Bitmovin Player Wordpress Plugin through your Wordpress dashboard or upload via FTP and unzip the plugin archive into the wp-content/plugins directory.
-5.  Activate the plugin through the Plugins menu in Wordpress.
-6.  Go to the Bitmovin Settings page via in the main admin menu and fill in your API key.
-7.  Go to the Bitmovin videos page via in the main admin menu and add a video with your configuration.
-8.  Copy the shortcode from the videos page table, which looks like this [bitmovin_player id='1'], to your post.
+1. Sign up for Bitmovin [here](https://dashboard.bitmovin.com/signup).
+2. Once logged in, go to [account settings of your Bitmovin user account](https://dashboard.bitmovin.com/account), get your **API key**.
+3. Do not forget to add the domain your Wordpress is running on to the allowed domains in the [player licenses view](https://dashboard.bitmovin.com/player/licenses).
+4. Install Bitmovin Player Wordpress Plugin from your Wordpress dashboard or unzip the plugin archive in the `wp-content/plugins` directory.
+5. Activate the plugin through the **Plugins** menu in Wordpress.
+6. Go to the **Bitmovin Settings** left menu page and fill in your API key.
+7. Go to the **Bitmovin** left menu videos page and add a video with your configuration.
+8. Copy the shortcode from the videos page table which looks like this **[bitmovin_player id='1']** to your post.
 
 
 
@@ -164,6 +150,9 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 
 
 == Changelog ==
+
+= v2.0.1 =
+* Plugin works with Bitmovin API now (IMPORTANT: it is no longer compatible with accounts that were created at app.bitmovin.com)
 
 = v0.6.1 =
 * Fixed VR settings menu
