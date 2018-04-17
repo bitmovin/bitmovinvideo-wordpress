@@ -104,50 +104,6 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 (for the Flash based version of bitdash) is placed on the server containing the element.
 
 
-== Screenshots ==
-
-1.  This screen shot description corresponds to plugin.png.
-    This screen shot describes the Plugin site of the Wordpress instance.
-    After you have installed the Bitmovin Player Wordpress Plugin through your Wordpress dashboard or
-    uploaded via FTP and unzipped the plugin archive into the wp-content/plugins directory, you should now be able to
-    see the Plugin in the list with the state "Deactivated". Next step is just to click on "Activate" to go ahead.
-
-2.  This screen shot description corresponds to setting.png.
-    This screen shot describes the "Bitmovin Settings" site in your Wordpress Dashboard after activating the plugin.
-    Here you have to insert your Bitmovin API key which could be found under Settings of your Bitmovin Account and click
-    on the "Save" button to full enjoy your player plugin. If you need additional help there is an information sign
-    which is linked to the login of your bitmovin account.
-
-3.  This screen shot description corresponds to all-videos.png.
-    This screen shot describes the "Bitmovin > All Videos" page, where you can find all your configured videos.
-    You can also see the shortcode which is used to reference to the player with the given video in your posts.
-
-4.  This screen shot description corresponds to video-source.png.
-    This screen shot describes the video page when you clicked on a individual video in the "Bitmovin > All Videos" page.
-    As you can see you have the possibility to set or edit your video source by the given text inputs here.
-    It is the same page as "Add new Video", so feel free to change or set links to videos with the right formats here.
-
-5.  This screen shot description corresponds to video-features.png.
-    This screen shot describes also the video page with the possibility to change your player version manually or to add
-    Ads, change the style of the player, set DRM or to edit your VR settings. After clicking on "Update" at the right side
-    above of the page, your changes are going to apply immediately.
-
-6.  This screen shot description corresponds to player-preview.png.
-    This screen shot describes the player preview at the bottom of the video page.
-    If everything was done well, you are now able to see the preview of the player, which is also shown in your posts.
-    Here you can see, if your settings matches with the player configuration and if your links to the streams are working as well.
-
-7.  This screen shot description corresponds to bitmovin-post.png.
-    This screen shot describes the implementation of the player in your post.
-    Firstly you have to change to the page where you create and edit posts under wordpress.
-    When adding a post you just have to copy the shortcut provided by your video e.g. [bitmovin_player id='4'] to the
-    text area of your post editor.
-
-8.  This screen shot description corresponds to player-post.png.
-    This screen shot describes the correct implementation of your bitmovin player in your posts.
-    After you correctly followed the instructions of the installation you should now be able to enjoy your streams in your posts.
-
-
 
 == Changelog ==
 
