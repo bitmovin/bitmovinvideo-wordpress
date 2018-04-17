@@ -3,7 +3,7 @@
   Plugin Name: Bitmovin
   Plugin URI: https://github.com/bitmovin/bitmovinvideo-wordpress
   Description: <strong>Bitmovin's</strong> HTML5 Adaptive Streaming Video Plugin for Wordpress.
-  Version: 2.0.0
+  Version: 2.0.1
   Author: Bitmovin
   Author URI: https://bitmovin.com
   License: GPLv2 or later
@@ -35,35 +35,35 @@ add_action('init', 'bitmovin_register');
 function bitmovin_register()
 {
     $labels = array(
-        'name'          => __('Videos', 'bitmovin_player'),
+        'name' => __('Videos', 'bitmovin_player'),
         'singular_name' => __('Video', 'bitmovin_player'),
-        'menu_name'     => __('Bitmovin', 'bitmovin_player'),
-        'add_new'       => __('Add New Video', 'bitmovin_player'),
-        'add_new_item'  => __('Add New Video', 'bitmovin_player'),
-        'new_item'      => __('New Video', 'bitmovin_player'),
-        'edit_item'     => __('Edit Video', 'bitmovin_player'),
-        'view_item'     => __('View Video', 'bitmovin_player'),
-        'all_items'     => __('All Videos', 'bitmovin_player'),
-        'search_items'  => __('Search Videos', 'bitmovin_player')
+        'menu_name' => __('Bitmovin', 'bitmovin_player'),
+        'add_new' => __('Add New Video', 'bitmovin_player'),
+        'add_new_item' => __('Add New Video', 'bitmovin_player'),
+        'new_item' => __('New Video', 'bitmovin_player'),
+        'edit_item' => __('Edit Video', 'bitmovin_player'),
+        'view_item' => __('View Video', 'bitmovin_player'),
+        'all_items' => __('All Videos', 'bitmovin_player'),
+        'search_items' => __('Search Videos', 'bitmovin_player')
     );
 
     $args = array(
-        'labels'              => $labels,
-        'hierarchical'        => true,
-        'description'         => 'Video',
-        'supports'            => array('title'),
-        'public'              => true,
-        'show_ui'             => true,
-        'show_in_menu'        => true,
-        'show_in_nav_menus'   => false,
-        'publicly_queryable'  => true,
+        'labels' => $labels,
+        'hierarchical' => true,
+        'description' => 'Video',
+        'supports' => array('title'),
+        'public' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'show_in_nav_menus' => false,
+        'publicly_queryable' => true,
         'exclude_from_search' => true,
-        'has_archive'         => true,
-        'query_var'           => true,
-        'can_export'          => true,
-        'rewrite'             => true,
-        'capability_type'     => 'post',
-        'menu_icon'           => plugins_url('images/bitlogo.png', __FILE__)
+        'has_archive' => true,
+        'query_var' => true,
+        'can_export' => true,
+        'rewrite' => true,
+        'capability_type' => 'post',
+        'menu_icon' => plugins_url('images/bitlogo.png', __FILE__)
     );
 
     register_post_type('bitmovin_player', $args);
@@ -194,9 +194,9 @@ function getFromApi($path)
 function getPlayerTable($id)
 {
     $playerChannels = array(
-        "stable"  => "Stable",
+        "stable" => "Stable",
         "staging" => "Staging",
-        "beta"    => "Beta"
+        "beta" => "Beta"
     );
 
     $player_channel = get_post_meta($id, "_config_player_channel", true);
