@@ -1,0 +1,22 @@
+{
+	"name": "bitmovin/bitmovinvideo-wordpress",
+	"type": "wordpress-plugin",
+	"description": "The Bitmovin Wordpress Plugin",
+	"keywords": [
+	  "wordpress",
+	  "muplugin",
+	  "player",
+	  "bitmovin"
+	],
+	"authors": [
+	  {
+		"name": "Gernot",
+		"homepage": "https://bitmovin.com/"
+	  }
+	],
+	"homepage": "https://github.com/bitmovin/bitmovinvideo-wordpress",
+	"license": "GPL-2.0",
+	"extra": {
+	  "installer-name": "bitmovinvideo-wordpress"
+	}
+  }
