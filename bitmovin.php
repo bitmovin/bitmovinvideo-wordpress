@@ -167,7 +167,7 @@ function getVideoTable($id)
     $videoTable .= "</table>";
 
     $videoTable .= "<input id='apiKey' type='hidden' value='" . $apiKey = get_option('bitmovin_api_key') . "'/>";
-    $videoTable .= "<input id='config_player_key_selected' name='config_player_key_selected' type='hidden' value='" . get_post_meta($id, "_config_player_key_selected", true) . "'/>";
+    $videoTable .= "<input id='config_player_key_selected' name='config_player_key_selected' type='hidden' value='" . json_decode(get_post_meta($id, "_config_player_key", true)) . "'/>";
 
     return $videoTable;
 }
