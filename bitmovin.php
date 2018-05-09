@@ -3,10 +3,10 @@
   Plugin Name: Bitmovin
   Plugin URI: https://github.com/bitmovin/bitmovinvideo-wordpress
   Description: <strong>Bitmovin's</strong> HTML5 Adaptive Streaming Video Plugin for Wordpress.
-  Version: 2.0.1
+  Version: 2.0.2
   Author: Bitmovin
   Author URI: https://bitmovin.com
-  License: GPLv2 or later
+  License: MIT
 */
 
 register_activation_hook(__FILE__, 'bitmovin_plugin_activation');
@@ -167,7 +167,7 @@ function getVideoTable($id)
     $videoTable .= "</table>";
 
     $videoTable .= "<input id='apiKey' type='hidden' value='" . $apiKey = get_option('bitmovin_api_key') . "'/>";
-    $videoTable .= "<input id='config_player_key_selected' name='config_player_key_selected' type='hidden' value='" . get_post_meta($id, "_config_player_key_selected", true) . "'/>";
+    $videoTable .= "<input id='config_player_key_selected' name='config_player_key_selected' type='hidden' value='" . json_decode(get_post_meta($id, "_config_player_key", true)) . "'/>";
 
     return $videoTable;
 }

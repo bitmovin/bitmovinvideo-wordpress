@@ -1,0 +1,42 @@
+{
+  "name": "bitmovin/bitmovinvideo-wordpress",
+  "type": "wordpress-plugin",
+  "version": "2.0.2",
+  "description": "The Bitmovin Wordpress Plugin",
+  "keywords": [
+    "wordpress",
+    "player",
+    "bitmovin",
+    "bitmovin",
+    "video",
+    "vr",
+    "ads",
+    "html5",
+    "dash",
+    "smooth",
+    "hls",
+    "mpeg-dash",
+    "mp4"
+  ],
+  "authors": [
+    {
+      "name": "Lukas",
+      "homepage": "https://bitmovin.com/"
+    },
+    {
+      "name": "Gernot",
+      "homepage": "https://bitmovin.com/"
+    }
+  ],
+  "support": {
+    "email": "support@bitmovin.com",
+    "issues": "https://github.com/bitmovin/bitmovinvideo-wordpress/issues",
+    "source": "https://github.com/bitmovin/bitmovinvideo-wordpress",
+    "docs": "https://developer.bitmovin.com"
+  },
+  "homepage": "https://github.com/bitmovin/bitmovinvideo-wordpress",
+  "license": "MIT",
+  "extra": {
+    "installer-name": "bitmovinvideo-wordpress"
+  }
+}

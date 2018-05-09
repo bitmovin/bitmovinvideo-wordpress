@@ -3,9 +3,9 @@ Contributors: Gernot Zwantschko, Lukas Kröpfl, Tristan Boyd, Patrick Struger
 Tags: bitmovin, video, vr, ads, html5, dash, hls, mpeg-dash, mp4, smooth
 Requires at least: 4.5.3
 Tested up to: 4.9.5
-Stable tag: 2.0.1
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Stable tag: 2.0.2
+License: MIT
+License URI: https://opensource.org/licenses/MIT
 
 The Bitmovin Wordpress Plugin provides best video quality via HTML5 adaptive streaming
 with fast startup, no buffering and without additional plugins!
@@ -105,6 +105,10 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 
 
 == Changelog ==
+
+= v2.0.2 =
+* fixed display of selected player key
+* added composer.json
 
 = v2.0.1 =
 * Plugin works with Bitmovin API now (IMPORTANT: it is no longer compatible with accounts that were created at app.bitmovin.com! Please see the installation instructions for more details)
