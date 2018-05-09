@@ -106,6 +106,9 @@ make sure CORS (for the HTML5 player) is enabled a crossdomain.xml
 
 == Changelog ==
 
+= v2.0.3 =
+* fixed readme
+
 = v2.0.2 =
 * fixed display of selected player key
 * added composer.json
