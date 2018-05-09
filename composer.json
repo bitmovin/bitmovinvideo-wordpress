@@ -35,7 +35,7 @@
     "docs": "https://developer.bitmovin.com"
   },
   "homepage": "https://github.com/bitmovin/bitmovinvideo-wordpress",
-  "license": "MIT",
+  "license": "GPLv2 or later",
   "extra": {
     "installer-name": "bitmovinvideo-wordpress"
   }

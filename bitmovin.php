@@ -6,7 +6,7 @@
   Version: 2.0.2
   Author: Bitmovin
   Author URI: https://bitmovin.com
-  License: MIT
+  License: GPLv2 or later
 */
 
 register_activation_hook(__FILE__, 'bitmovin_plugin_activation');
