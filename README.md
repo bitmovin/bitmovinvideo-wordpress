@@ -1,11 +1,11 @@
 # Bitmovin Wordpress Plugin
 
-![Latest version](https://img.shields.io/badge/latest-0.5.0-green.svg)
-![Wordpress 4.2](https://img.shields.io/badge/wordpress-4.2.x-blue.svg)
-![Wordpress 4.1](https://img.shields.io/badge/wordpress-4.1.x-blue.svg)
-![Wordpress 4.0](https://img.shields.io/badge/wordpress-4.0.x-blue.svg)
-![Wordpress 3.9](https://img.shields.io/badge/wordpress-3.9.x-blue.svg)
-![Wordpress 3.8](https://img.shields.io/badge/wordpress-3.8.x-blue.svg)
+![Latest version](https://img.shields.io/badge/latest-2.0.2-green.svg)
+![Wordpress 4.5](https://img.shields.io/badge/wordpress-4.5.x-blue.svg)
+![Wordpress 4.6](https://img.shields.io/badge/wordpress-4.6.x-blue.svg)
+![Wordpress 4.7](https://img.shields.io/badge/wordpress-4.7.x-blue.svg)
+![Wordpress 4.8](https://img.shields.io/badge/wordpress-4.8.x-blue.svg)
+![Wordpress 4.9](https://img.shields.io/badge/wordpress-4.9.x-blue.svg)
 ![PHP >= 5.3](https://img.shields.io/badge/php-%3E=5.3-green.svg)
 
 Installation
