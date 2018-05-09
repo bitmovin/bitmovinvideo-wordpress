@@ -1,7 +1,7 @@
 {
   "name": "bitmovin/bitmovinvideo-wordpress",
   "type": "wordpress-plugin",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "The Bitmovin Wordpress Plugin",
   "keywords": [
     "wordpress",
@@ -35,7 +35,7 @@
     "docs": "https://developer.bitmovin.com"
   },
   "homepage": "https://github.com/bitmovin/bitmovinvideo-wordpress",
-  "license": "MIT",
+  "license": "GPLv2 or later",
   "extra": {
     "installer-name": "bitmovinvideo-wordpress"
   }
