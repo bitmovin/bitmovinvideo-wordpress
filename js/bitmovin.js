@@ -8,6 +8,7 @@ $j(document).ready(function() {
   populateVersions();
   setupChangeListeners();
   populatePlayerLicenses();
+  populateAnalyticsLicenses();
 });
 
 function collapseAdvancedPanels() {
@@ -88,6 +89,25 @@ function populatePlayerLicenses() {
     });
 
   })
+}
+
+function populateAnalyticsLicenses() {
+    var apiKey = $j("#apiKey").val();
+
+    var keySelect = $j('#config_analytics_key');
+
+    callApi(apiKey, '/analytics/licenses', function(data) {
+        var licenses = data.data.result.items;
+
+        licenses.forEach(function(item) {
+            keySelect.append($j('<option>', {
+                value: item.licenseKey,
+                text : (item.hasOwnProperty("name") ? item.licenseKey + ' (' + item.name + ')': item.licenseKey),
+                selected: item.licenseKey === $j('#config_analytics_key_selected').val()
+            }));
+        });
+
+    })
 }
 
 function hasContent(configSection) {

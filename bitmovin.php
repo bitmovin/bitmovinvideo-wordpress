@@ -93,6 +93,7 @@ function bitmovin_video_meta_box()
 {
     add_meta_box("bitmovin_player_configuration_video", "Video Sources", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_player", "Player Version", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_analytics", "Analytics Configuration", 'bitmovin_player_configuration_analytics', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Player Configuration", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
 
     add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
@@ -118,6 +119,21 @@ function bitmovin_player_configuration_player()
     $html = '<div class="configSection">';
     $html .= '<div id="video">';
     $html .= getPlayerTable($post->ID);
+    $html .= '</div>';
+    $html .= '</div>';
+
+    echo $html;
+}
+
+function bitmovin_player_configuration_analytics()
+{
+    global $post;
+
+    $html = '<div class="configSection">';
+    $html .= '<div id="video">';
+    $html .= '<div id="custom">';
+    $html .= getAnalyticsTable($post->ID);
+    $html .= '</div>';
     $html .= '</div>';
     $html .= '</div>';
 
@@ -215,6 +231,26 @@ function getPlayerTable($id)
     return $playerTable;
 }
 
+function getAnalyticsTable($id)
+{
+    $analytics_enabled = get_post_meta($id, "_analytics_enabled", true);
+    $analytics_key = get_post_meta($id, "_config_analytics_key", true);
+    $analytics_videoid = get_post_meta($id, "_config_analytics_videoid", true);
+    $analytics_customConf = json_decode(get_post_meta($id, "_config_analytics_custom_conf", true));
+
+    $analyticsTable = '<table class="wp-list-table widefat fixed striped">';
+    $analyticsTable .= '<br/><input type="checkbox" name="analytics_enabled" checked="'.$analytics_enabled.'"> Enable Analytics';
+    $analyticsTable .= getTableRowSelect("Analytics Key", "config_analytics_key", $analytics_key, array());
+    $analyticsTable .= getTableRowInput("Video ID", "config_analytics_videoid", $analytics_videoid, "Video id");
+
+    $analyticsTable .= "<tr><td>Custom configuration</td><td><pre>var conf = {<br><div class='intend1'><textarea id='config_analytics_custom' name='config_analytics_custom_conf' placeholder='Insert your custom configuration here, e.g.:\n title: \"A descriptive video title\"\n'>" . $analytics_customConf . "</textarea></div>};</pre></td></tr>";
+    $analyticsTable .= "<tr><td colspan='2' class='hint'>An Overview about all available configuration options can be found in our <a href='https://developer.bitmovin.com/hc/en-us/articles/115001689833' target='_blank'>documentation</a>. <br/>HINT: The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
+
+    $analyticsTable .= "</table>";
+
+    return $analyticsTable;
+}
+
 function getCustomTable($id)
 {
     $customConf = json_decode(get_post_meta($id, "_config_custom_conf", true));
@@ -222,7 +258,7 @@ function getCustomTable($id)
     $customTable = "<table class='wp-list-table widefat fixed striped'>";
 
     $customTable .= "<tr><td>Custom configuration</td><td><pre>var conf = {<br><div class='intend1'><textarea id='config_custom' name='config_custom_conf' placeholder='Insert your custom configuration here, e.g.:\nplayback: { \n    autoplay: true\n}\n'>" . $customConf . "</textarea></div>};</pre></td></tr>";
-    $customTable .= "<tr><td colspan='2' class='hint'>An Overview about all available configuration options can be found in our <a href='https://developer.bitmovin.com/hc/en-us/articles/115001689833' target='_blank'>documentation</a>. HINT: The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
+    $customTable .= "<tr><td colspan='2' class='hint'>An Overview about all available configuration options can be found in our <a href='https://developer.bitmovin.com/hc/en-us/articles/115001689833' target='_blank'>documentation</a>. <br/> HINT: The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
 
     $customTable .= "</table>";
 
@@ -293,11 +329,19 @@ function bitmovin_player_save_configuration($post_id)
         $player_version = getParameter("config_player_version");
         $player_version_url = getParameter("config_player_version_url");
         $player_key = getParameter("config_player_key");
+        $analytics_enabled = getParameter("analytics_enabled");
+        $analytics_key = getParameter("config_analytics_key");
+        $analytics_videoid = getParameter("config_analytics_videoid");
+        $analytics_customConf = getParameter("config_analytics_custom_conf");
 
         update_post_meta($post_id, "_config_player_channel", $player_channel);
         update_post_meta($post_id, "_config_player_version", $player_version);
         update_post_meta($post_id, "_config_player_version_url", $player_version_url);
         update_post_meta($post_id, "_config_player_key", $player_key);
+        update_post_meta($post_id, "_analytics_enabled", $analytics_enabled);
+        update_post_meta($post_id, "_config_analytics_key", $analytics_key);
+        update_post_meta($post_id, "_config_analytics_videoid", $analytics_videoid);
+        update_post_meta($post_id, "_config_analytics_custom_conf", $analytics_videoid);
 
         $customConf = getParameter("config_custom_conf");
 
@@ -361,6 +405,17 @@ function generate_player($id)
     $html .= "conf.source.hls = '" . $hls . "';\n";
     $html .= "conf.source.progressive = '" . $prog . "';\n";
     $html .= "conf.source.poster = '" . $poster . "';\n";
+
+    $analyticsKey = json_decode(get_post_meta($id, '_config_analytics_key', true));
+    $analytics_enabled = json_decode(get_post_meta($id, "_analytics_enabled", true));
+    if ($analytics_enabled)
+    {
+        $html .= "conf.analytics = {}";
+        $html .= "conf.analytics.key = '" . $analyticsKey . "';\n";
+        $custom_analytics = json_decode(get_post_meta($id, "_config_analytics_custom_conf", true));
+    }
+
+    $html .= "bitmovin.analytics.augment(player);/n";
 
     $html .= "player.setup(conf).then(function(value) {\n";
     $html .= "console.log('Successfully created bitdash player instance');\n";

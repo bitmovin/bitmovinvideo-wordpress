@@ -6,7 +6,7 @@
     text-align: center;
 }
 
-.configSection input:not([type='radio']), select {
+.configSection input:not([type='checkbox']):not([type='radio']), select {
     width: 100%;
 }
 
