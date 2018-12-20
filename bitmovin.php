@@ -240,9 +240,9 @@ function getAnalyticsTable($id)
     $analytics_customConf = json_decode(get_post_meta($id, "_config_analytics_custom_conf", true));
 
     $analyticsTable = '<table class="wp-list-table widefat fixed striped">';
+
     $analyticsTable .= getTableRowSelect("Analytics Key", "config_analytics_key", $analytics_key, array());
     $analyticsTable .= getTableRowInput("Video ID", "config_analytics_videoid", $analytics_videoid, "Video id");
-
     $analyticsTable .= "<tr><td>Custom configuration</td><td><pre>var analyticsConf = {<br><div class='intend1'><textarea id='config_analytics_custom' name='config_analytics_custom_conf' placeholder='Insert your custom configuration here, e.g.:\n title: \"A descriptive video title\"\n'>" . $analytics_customConf . "</textarea></div>};</pre></td></tr>";
     $analyticsTable .= "<tr><td colspan='2' class='hint'>An Overview about all available configuration options can be found in our <a href='https://developer.bitmovin.com/hc/en-us/articles/115001689833' target='_blank'>documentation</a>. <br/>HINT: The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
 
@@ -377,8 +377,8 @@ function generate_player($id)
 
     $player_version = json_decode(get_post_meta($id, "_config_player_version_url", true));
     $player_version_name = json_decode(get_post_meta($id, "_config_player_version", true));
-    $startString = '7.';
-    $isOldPlayer = substr($player_version_name, 0, strlen($startString)) === $startString;
+    $majorVersion = intval(explode('.', $player_version_name)[0]);
+    $isOldPlayer = $majorVersion < 8;
 
     wp_register_script('bitmovin_player_core', $player_version);
     wp_enqueue_script('bitmovin_player_core');
@@ -387,7 +387,6 @@ function generate_player($id)
     $hls = json_decode(get_post_meta($id, "_config_src_hls", true));
     $prog = json_decode(get_post_meta($id, "_config_src_prog", true));
     $poster = json_decode(get_post_meta($id, "_config_src_poster", true));
-
 
     $html = "<div id='bitmovin-player'></div>\n";
     $html .= "<script type='text/javascript'>\n";
@@ -409,9 +408,9 @@ function generate_player($id)
     $html .= "source.poster = '" . $poster . "';\n";
 
     $analyticsKey = json_decode(get_post_meta($id, '_config_analytics_key', true));
-    $analytics_enabled = json_decode(get_post_meta($id, "_analytics_enabled", true));
+    $includeAnalytics = json_decode(get_post_meta($id, "_analytics_enabled", true)) == "on";
 
-    if($analytics_enabled == "on"){
+    if($includeAnalytics){
         $analytics_link = "https://cdn.bitmovin.com/analytics/web/1.7/bitmovinanalytics.min.js";
         wp_register_script('bitmovin_analytics', $analytics_link);
         wp_enqueue_script('bitmovin_analytics');
@@ -427,7 +426,7 @@ function generate_player($id)
     if($isOldPlayer){
         $html .= "conf.source = source;\n";
         $html .= "var player = bitmovin.player(\"bitmovin-player\");\n";
-        if($analytics_enabled == "on"){
+        if($includeAnalytics == "on"){
             $html .= "bitmovin.analytics.augment(player);\n";
         }
         $html .= "player.setup(conf).then(function(value) {\n";
