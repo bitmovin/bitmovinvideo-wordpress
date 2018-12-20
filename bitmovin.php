@@ -244,8 +244,6 @@ function getAnalyticsTable($id)
     $analyticsTable .= getTableRowSelect("Analytics Key", "config_analytics_key", $analytics_key, array());
     $analyticsTable .= getTableRowInput("Video ID", "config_analytics_videoid", $analytics_videoid, "Video id");
     $analyticsTable .= "<tr><td>Custom configuration</td><td><pre>var analyticsConf = {<br><div class='intend1'><textarea id='config_analytics_custom' name='config_analytics_custom_conf' placeholder='Insert your custom configuration here, e.g.:\n title: \"A descriptive video title\"\n'>" . $analytics_customConf . "</textarea></div>};</pre></td></tr>";
-    $analyticsTable .= "<tr><td colspan='2' class='hint'>An Overview about all available configuration options can be found in our <a href='https://developer.bitmovin.com/hc/en-us/articles/115001689833' target='_blank'>documentation</a>. <br/>HINT: The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
-
     $analyticsTable .= "</table>";
 
     return $analyticsTable;
@@ -258,7 +256,7 @@ function getCustomTable($id)
     $customTable = "<table class='wp-list-table widefat fixed striped'>";
 
     $customTable .= "<tr><td>Custom configuration</td><td><pre>var conf = {<br><div class='intend1'><textarea id='config_custom' name='config_custom_conf' placeholder='Insert your custom configuration here, e.g.:\nplayback: { \n    autoplay: true\n}\n'>" . $customConf . "</textarea></div>};</pre></td></tr>";
-    $customTable .= "<tr><td colspan='2' class='hint'>An Overview about all available configuration options can be found in our <a href='https://developer.bitmovin.com/hc/en-us/articles/115001689833' target='_blank'>documentation</a>. <br/> HINT: The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
+    $customTable .= "<tr><td colspan='2' class='hint'>An Overview about all available configuration options can be found in our <a href='https://bitmovin.com/docs/player/api-reference/web/web-sdk-config-api-reference-v7' target='_blank'>documentation</a>. <br/> HINT: The configuration properties set above the custom configuration will override conflicts in this configuration.</td></tr>";
 
     $customTable .= "</table>";
 
@@ -411,7 +409,7 @@ function generate_player($id)
     $includeAnalytics = json_decode(get_post_meta($id, "_analytics_enabled", true)) == "on";
 
     if($includeAnalytics){
-        $analytics_link = "https://cdn.bitmovin.com/analytics/web/1.7/bitmovinanalytics.min.js";
+        $analytics_link = "https://cdn.bitmovin.com/analytics/web/2.0/bitmovinanalytics.min.js";
         wp_register_script('bitmovin_analytics', $analytics_link);
         wp_enqueue_script('bitmovin_analytics');
         $custom_analytics = json_decode(get_post_meta($id, "_config_analytics_custom_conf", true));

@@ -48,10 +48,8 @@ function populateVersions() {
     var versions = data.data.result.items;
 
     versions.sort(function(a, b) {
-      return (new Date(a.createdAt)).getTime() - (new Date(b.createdAt)).getTime()
+      return b.version.localeCompare(a.version, undefined, { numeric: true })
     });
-
-    versions.reverse();
 
     var setPlayerVersionUrl = $j('#config_player_version_url').val();
 
