@@ -227,7 +227,7 @@ function getPlayerTable($id)
     $playerTable .= getTableRowInput("Version Url", "config_player_version_url", $player_version_url);
     $playerTable .= getTableRowSelect("Player Key", "config_player_key", $player_key, array());
     $playerTable .= "</table>";
-    $playerTable .= '<br/><input ' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
+    $playerTable .= '<br/><input onClick="handleAnalyticsCheckboxChange(this)"' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
     $playerTable .= '<label for="analytics_enabled">Enable Analytics</label>';
 
     return $playerTable;

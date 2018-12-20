@@ -26,6 +26,15 @@ function collapseAdvancedPanels() {
   }
 }
 
+function handleAnalyticsCheckboxChange(checkbox) {
+    if(checkbox.checked){
+        $j("#bitmovin_player_configuration_analytics").removeClass("closed");
+    }
+    else{
+        $j("#bitmovin_player_configuration_analytics").addClass("closed");
+    }
+}
+
 function populateVersions() {
   var apiKey = $j("#apiKey").val();
 
