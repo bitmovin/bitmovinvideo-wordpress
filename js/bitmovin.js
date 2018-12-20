@@ -13,7 +13,6 @@ $j(document).ready(function() {
 
 function collapseAdvancedPanels() {
   var configSections = [
-
     "bitmovin_player_configuration_player",
     "bitmovin_player_configuration_custom"
   ];
@@ -21,6 +20,9 @@ function collapseAdvancedPanels() {
     if (!hasContent(configSections[i])) {
       $j("#" + configSections[i]).addClass("closed");
     }
+  }
+  if(!document.getElementById('analytics_enabled').checked){
+      $j("#bitmovin_player_configuration_analytics").addClass("closed");
   }
 }
 
@@ -50,9 +52,10 @@ function populateVersions() {
       knownVersionUrl = item.cdnUrl === setPlayerVersionUrl;
 
       versionSelect.append($j('<option>', {
-        value: item.cdnUrl,
+        value: item.version,
         text : item.version,
-        selected: knownVersionUrl
+        selected: knownVersionUrl,
+        url: item.cdnUrl
       }));
     });
 
@@ -64,7 +67,7 @@ function populateVersions() {
 }
 
 function updateSelectedVersionUrl() {
-  $j('#config_player_version_url').val($j('#config_player_version').val())
+  $j('#config_player_version_url').val($j('#config_player_version option:selected').attr('url'));
 }
 
 function setupChangeListeners() {
