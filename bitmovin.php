@@ -354,7 +354,7 @@ function bitmovin_player_save_configuration($post_id)
 function getParameter($param)
 {
     $param = (isset($_POST[$param]) ? $_POST[$param] : '');
-    return json_encode(strip_tags(preg_replace('/(\r|\n)/', '', $param)));
+    return strip_tags(json_encode($param));
 }
 
 // Player generation
@@ -409,7 +409,7 @@ function generate_player($id)
     $includeAnalytics = json_decode(get_post_meta($id, "_analytics_enabled", true)) == "on";
 
     if($includeAnalytics){
-        $analytics_link = "https://cdn.bitmovin.com/analytics/web/2.0/bitmovinanalytics.min.js";
+        $analytics_link = "https://cdn.bitmovin.com/analytics/web/2/bitmovinanalytics.min.js";
         wp_register_script('bitmovin_analytics', $analytics_link);
         wp_enqueue_script('bitmovin_analytics');
         $custom_analytics = json_decode(get_post_meta($id, "_config_analytics_custom_conf", true));
