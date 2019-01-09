@@ -426,12 +426,13 @@ function generate_player($id)
         $html .= "conf.source = source;\n";
         $html .= "var player = bitmovin.player(\"bitmovin-player\");\n";
         if($includeAnalytics == "on"){
-            $html .= "bitmovin.analytics.augment(player);\n";
+            $html .= "new bitmovin.analytics.adapters.Bitmovin7Adapter(player);\n";
         }
         $html .= "player.setup(conf).then(function(value) {\n";
     }
     else {
         $html .= "var container = document.getElementById('bitmovin-player');\n";
+        $html .= "bitmovin.player.Player.addModule(bitmovin.analytics.PlayerModule);\n";
         $html .= "var player = new bitmovin.player.Player(container, conf);\n";
         $html .= "player.load(source).then(function(value) {\n";
     }
