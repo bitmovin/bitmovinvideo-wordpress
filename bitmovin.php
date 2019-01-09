@@ -354,8 +354,8 @@ function bitmovin_player_save_configuration($post_id)
 
 function getParameter($param)
 {
-    $param = (isset($_POST[$param]) ? $_POST[$param] : ‘’);
-    return json_encode(strip_tags(preg_replace(‘/(\r|\n)/‘, ‘’, $param)));
+    $param = (isset($_POST[$param]) ? $_POST[$param] : '');
+    return json_encode(strip_tags(preg_replace('/(\r|\n)/', '', $param)));
 }
 
 // Player generation
