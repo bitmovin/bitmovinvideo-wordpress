@@ -237,8 +237,9 @@ function getAnalyticsTable($id)
 
     $analytics_enabled = json_decode(get_post_meta($id, "_analytics_enabled", true));
 
-    $analyticsTable = '<input onClick="handleAnalyticsCheckboxChange(this)"' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
-    $analyticsTable .= '<label for="analytics_enabled">Enable</label><br/>';
+    $analyticsTable = '<div id="analytics-enabled-checkbox"><label for="analytics_enabled">';
+    $analyticsTable .= '<input onClick="handleAnalyticsCheckboxChange(this)"' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
+    $analyticsTable .= 'Enable</label></div>';
     $analyticsTable .= '<table id="analytics_config_table" class="wp-list-table widefat fixed striped">';
 
     $analyticsTable .= getTableRowSelect("Analytics Key", "config_analytics_key", $analytics_key, array());
