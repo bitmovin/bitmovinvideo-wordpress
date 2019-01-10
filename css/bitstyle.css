@@ -64,3 +64,8 @@
     visibility: visible;
 
 }
+
+#analytics-enabled-checkbox {
+    float: right;
+    margin-right: 2rem;
+}

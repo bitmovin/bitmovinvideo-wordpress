@@ -24,7 +24,10 @@ function collapseAdvancedPanels() {
   handleAnalyticsCheckboxChange(document.getElementById('analytics_enabled'));
 }
 
-function handleAnalyticsCheckboxChange(checkbox) {
+function handleAnalyticsCheckboxChange(checkbox, event) {
+    if(event){
+        event.stopPropagation();
+    }
     if(checkbox.checked){
         $j("#config_analytics_key").removeProp("disabled");
         $j("#config_analytics_videoid").removeProp("disabled");

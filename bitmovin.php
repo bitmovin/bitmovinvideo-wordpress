@@ -91,9 +91,18 @@ function bitmovin_player_column($column, $post_id)
 add_action('add_meta_boxes', 'bitmovin_video_meta_box');
 function bitmovin_video_meta_box()
 {
+    global $post;
+
+    $analytics_enabled = json_decode(get_post_meta($post->ID, "_analytics_enabled", true));
+    $analytics_header = "Analytics Configuration";
+    $analytics_header .= '<form id="analytics-enabled-checkbox">';
+    $analytics_header .= '<input onClick="handleAnalyticsCheckboxChange(this, event)"' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
+    $analytics_header .= '<span>Enable</span>';
+    $analytics_header .= '</form>';
+
     add_meta_box("bitmovin_player_configuration_video", "Video Sources", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_player", "Player Version", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_analytics", "Analytics Configuration", 'bitmovin_player_configuration_analytics', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_analytics", $analytics_header, 'bitmovin_player_configuration_analytics', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Player Configuration", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
 
     add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
@@ -218,8 +227,6 @@ function getPlayerTable($id)
     $player_version_url = get_post_meta($id, "_config_player_version_url", true);
     $player_key = get_post_meta($id, "_config_player_key", true);
 
-    $analytics_enabled = json_decode(get_post_meta($id, "_analytics_enabled", true));
-
     $playerTable = '<table class="wp-list-table widefat fixed striped">';
 
     $playerTable .= getTableRowSelect("Channel", "config_player_channel", $player_channel, $playerChannels);
@@ -227,8 +234,6 @@ function getPlayerTable($id)
     $playerTable .= getTableRowInput("Version Url", "config_player_version_url", $player_version_url);
     $playerTable .= getTableRowSelect("Player Key", "config_player_key", $player_key, array());
     $playerTable .= "</table>";
-    $playerTable .= '<br/><input onClick="handleAnalyticsCheckboxChange(this)"' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
-    $playerTable .= '<label for="analytics_enabled">Enable Analytics</label>';
 
     return $playerTable;
 }
