@@ -91,18 +91,9 @@ function bitmovin_player_column($column, $post_id)
 add_action('add_meta_boxes', 'bitmovin_video_meta_box');
 function bitmovin_video_meta_box()
 {
-    global $post;
-
-    $analytics_enabled = json_decode(get_post_meta($post->ID, "_analytics_enabled", true));
-    $analytics_header = "Analytics Configuration";
-    $analytics_header .= '<form id="analytics-enabled-checkbox">';
-    $analytics_header .= '<input onClick="handleAnalyticsCheckboxChange(this, event)"' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
-    $analytics_header .= '<span>Enable</span>';
-    $analytics_header .= '</form>';
-
     add_meta_box("bitmovin_player_configuration_video", "Video Sources", 'bitmovin_player_configuration_video', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_player", "Player Version", 'bitmovin_player_configuration_player', "bitmovin_player", "normal", "high");
-    add_meta_box("bitmovin_player_configuration_analytics", $analytics_header, 'bitmovin_player_configuration_analytics', "bitmovin_player", "normal", "high");
+    add_meta_box("bitmovin_player_configuration_analytics", "Analytics Configuration", 'bitmovin_player_configuration_analytics', "bitmovin_player", "normal", "high");
     add_meta_box("bitmovin_player_configuration_custom", "Player Configuration", 'bitmovin_player_configuration_custom', "bitmovin_player", "normal", "high");
 
     add_meta_box("bitmovin_player_preview", "Player Preview", 'bitmovin_player_preview', "bitmovin_player", "normal");
@@ -244,7 +235,11 @@ function getAnalyticsTable($id)
     $analytics_videoid = get_post_meta($id, "_config_analytics_videoid", true);
     $analytics_customConf = json_decode(get_post_meta($id, "_config_analytics_custom_conf", true));
 
-    $analyticsTable = '<table class="wp-list-table widefat fixed striped">';
+    $analytics_enabled = json_decode(get_post_meta($id, "_analytics_enabled", true));
+
+    $analyticsTable = '<input onClick="handleAnalyticsCheckboxChange(this)"' . ($analytics_enabled == 'on' ? 'checked="checked"' : '') . ' type="checkbox" id="analytics_enabled" name="analytics_enabled">';
+    $analyticsTable .= '<label for="analytics_enabled">Enable</label><br/>';
+    $analyticsTable .= '<table id="analytics_config_table" class="wp-list-table widefat fixed striped">';
 
     $analyticsTable .= getTableRowSelect("Analytics Key", "config_analytics_key", $analytics_key, array());
     $analyticsTable .= getTableRowInput("Video ID", "config_analytics_videoid", $analytics_videoid, "Video id");
@@ -412,9 +407,9 @@ function generate_player($id)
     $html .= "source.poster = '" . $poster . "';\n";
 
     $analyticsKey = json_decode(get_post_meta($id, '_config_analytics_key', true));
-    $includeAnalytics = json_decode(get_post_meta($id, "_analytics_enabled", true)) == "on";
+    $includeAnalytics = json_decode(get_post_meta($id, "_analytics_enabled", true));
 
-    if($includeAnalytics){
+    if($includeAnalytics == "on"){
         $analytics_link = "https://cdn.bitmovin.com/analytics/web/2/bitmovinanalytics.min.js";
         wp_register_script('bitmovin_analytics', $analytics_link);
         wp_enqueue_script('bitmovin_analytics');
