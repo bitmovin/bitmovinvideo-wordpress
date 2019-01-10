@@ -21,16 +21,20 @@ function collapseAdvancedPanels() {
       $j("#" + configSections[i]).addClass("closed");
     }
   }
-  if(!document.getElementById('analytics_enabled').checked){
-      $j("#bitmovin_player_configuration_analytics").addClass("closed");
-  }
+  handleAnalyticsCheckboxChange(document.getElementById('analytics_enabled'));
 }
 
 function handleAnalyticsCheckboxChange(checkbox) {
     if(checkbox.checked){
+        $j("#config_analytics_key").removeProp("disabled");
+        $j("#config_analytics_videoid").removeProp("disabled");
+        $j("#config_analytics_custom").removeProp("disabled");
         $j("#bitmovin_player_configuration_analytics").removeClass("closed");
     }
     else{
+        $j("#config_analytics_key").prop("disabled", "disabled");
+        $j("#config_analytics_videoid").prop("disabled", "disabled");
+        $j("#config_analytics_custom").prop("disabled", "disabled");
         $j("#bitmovin_player_configuration_analytics").addClass("closed");
     }
 }
