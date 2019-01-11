@@ -8,11 +8,11 @@ $j(document).ready(function() {
   populateVersions();
   setupChangeListeners();
   populatePlayerLicenses();
+  populateAnalyticsLicenses();
 });
 
 function collapseAdvancedPanels() {
   var configSections = [
-
     "bitmovin_player_configuration_player",
     "bitmovin_player_configuration_custom"
   ];
@@ -21,6 +21,16 @@ function collapseAdvancedPanels() {
       $j("#" + configSections[i]).addClass("closed");
     }
   }
+  handleAnalyticsCheckboxChange(document.getElementById('analytics_enabled'));
+}
+
+function handleAnalyticsCheckboxChange(checkbox) {
+    if(checkbox.checked){
+        $j("#analytics_config_table").show();
+    }
+    else{
+        $j("#analytics_config_table").hide();
+    }
 }
 
 function populateVersions() {
@@ -36,10 +46,8 @@ function populateVersions() {
     var versions = data.data.result.items;
 
     versions.sort(function(a, b) {
-      return (new Date(a.createdAt)).getTime() - (new Date(b.createdAt)).getTime()
+      return b.version.localeCompare(a.version, undefined, { numeric: true })
     });
-
-    versions.reverse();
 
     var setPlayerVersionUrl = $j('#config_player_version_url').val();
 
@@ -49,9 +57,10 @@ function populateVersions() {
       knownVersionUrl = item.cdnUrl === setPlayerVersionUrl;
 
       versionSelect.append($j('<option>', {
-        value: item.cdnUrl,
+        value: item.version,
         text : item.version,
-        selected: knownVersionUrl
+        selected: knownVersionUrl,
+        url: item.cdnUrl
       }));
     });
 
@@ -63,7 +72,7 @@ function populateVersions() {
 }
 
 function updateSelectedVersionUrl() {
-  $j('#config_player_version_url').val($j('#config_player_version').val())
+  $j('#config_player_version_url').val($j('#config_player_version option:selected').attr('url'));
 }
 
 function setupChangeListeners() {
@@ -88,6 +97,25 @@ function populatePlayerLicenses() {
     });
 
   })
+}
+
+function populateAnalyticsLicenses() {
+    var apiKey = $j("#apiKey").val();
+
+    var keySelect = $j('#config_analytics_key');
+
+    callApi(apiKey, '/analytics/licenses', function(data) {
+        var licenses = data.data.result.items;
+
+        licenses.forEach(function(item) {
+            keySelect.append($j('<option>', {
+                value: item.licenseKey,
+                text : (item.hasOwnProperty("name") ? item.licenseKey + ' (' + item.name + ')': item.licenseKey),
+                selected: item.licenseKey === $j('#config_analytics_key_selected').val()
+            }));
+        });
+
+    })
 }
 
 function hasContent(configSection) {
